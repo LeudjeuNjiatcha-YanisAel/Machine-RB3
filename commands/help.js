@@ -11,30 +11,23 @@ async function helpCommand(sock, chatId, message) {
    YT : ${global.ytch}
 ╚═══════════════════╝
 
-*Available Commands:*
+*Commande Disponible:*
 
 ╔═══════════════════╗
-🌐 *General Commands*:
+🌐 *Commandes Generales*:
 ║  .help or .menu
-║  .ping
+║  .ping --> Teste La Connectivite
 ║  .alive
 ║  .tts <text>
-║  .owner
-║  .joke
-║  .quote
+║  .owner --> Affiche Le Contact Du Proprietaire
 ║  .fact
-║  .weather <city>
-║  .news
-║  .attp <text>
+║  .news --> Affiche Les Infos
 ║  .lyrics <song_title>
 ║  .8ball <question>
-║  .groupinfo
+║  .groupinfo --> Affiche Les Infos Du Groupe
 ║  .staff or .admins 
-║  .vv
-║  .trt <text> <lang>
-║  .ss <link>
-║  .jid
-║  .url
+║  .vv --> Extraire Les Vues Uniques
+
 ╚═══════════════════╝ 
 
 ╔═══════════════════╗
@@ -60,9 +53,6 @@ async function helpCommand(sock, chatId, message) {
 ║  .antitag <on/off>
 ║  .welcome <on/off>
 ║  .goodbye <on/off>
-║  .setgdesc <description>
-║  .setgname <new name>
-║  .setgpp (reply to image)
 ╚═══════════════════╝
 
 ╔═══════════════════╗
