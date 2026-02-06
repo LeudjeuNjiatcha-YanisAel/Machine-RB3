@@ -218,7 +218,7 @@ async function startXeonBotInc() {
         if (!!global.phoneNumber) {
             phoneNumber = global.phoneNumber
         } else {
-            phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Entrer Votre Numeor WhatsApp ⏩ \nFormat: 2376xxxxxxxx (Avec + Ou espaces) : `)))
+            phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Entrer Votre Numero WhatsApp ⏩ \nFormat: 2376xxxxxxxx (Avec + Ou espaces) : `)))
         }
 
         // Clean the phone number - remove any non-digit characters
@@ -227,7 +227,7 @@ async function startXeonBotInc() {
         // Validate the phone number using awesome-phonenumber
         const pn = require('awesome-phonenumber');
         if (!pn('+' + phoneNumber).isValid()) {
-            console.log(chalk.red('Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, etc.) without + or spaces.'));
+            console.log(chalk.red('Numéro de téléphone invalide. Veuillez saisir votre numéro international complet (par exemple, 15551234567 pour les États-Unis, 447911123456 pour le Royaume-Uni, etc.) sans + ni espaces.'));
             process.exit(1);
         }
 
@@ -235,11 +235,11 @@ async function startXeonBotInc() {
             try {
                 let code = await XeonBotInc.requestPairingCode(phoneNumber)
                 code = code?.match(/.{1,4}/g)?.join("-") || code
-                console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)))
-                console.log(chalk.yellow(`\nPlease enter this code in your WhatsApp app:\n1. Open WhatsApp\n2. Go to Settings > Linked Devices\n3. Tap "Link a Device"\n4. Enter the code shown above`))
+                console.log(chalk.black(chalk.bgGreen(`Votre code de jumelage : `)), chalk.black(chalk.white(code)))
+                console.log(chalk.yellow(`\nVeuillez saisir ce code dans votre application WhatsApp : \n1. Ouvrez WhatsApp. \n2. Accédez à Paramètres > Appareils associés. \n3. Appuyez sur « Associer un appareil ». \n4. Saisissez le code affiché ci-dessus.`))
             } catch (error) {
                 console.error('Error requesting pairing code:', error)
-                console.log(chalk.red('Failed to get pairing code. Please check your phone number and try again.'))
+                console.log(chalk.red('Impossible d\'obtenir le code d\'appairage. Veuillez vérifier votre numéro de téléphone et réessayer.'))
             }
         }, 3000)
     }
@@ -249,11 +249,11 @@ async function startXeonBotInc() {
         const { connection, lastDisconnect, qr } = s
         
         if (qr) {
-            console.log(chalk.yellow('📱 QR Code generated. Please scan with WhatsApp.'))
+            console.log(chalk.yellow('📱 QR Code generer. Scanner avec WhatsApp.'))
         }
         
         if (connection === 'connecting') {
-            console.log(chalk.yellow('🔄 Connecting to WhatsApp...'))
+            console.log(chalk.yellow('🔄 Connection a WhatsApp...'))
         }
         
         if (connection == "open") {
@@ -263,13 +263,13 @@ async function startXeonBotInc() {
             try {
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
                 await XeonBotInc.sendMessage(botNumber, {
-                    text: `🤖 Bot Connected Successfully!\n\n⏰ Time: ${new Date().toLocaleString()}\n✅ Status: Online and Ready!\n\n✅Make sure to join below channel`,
+                    text: `🤖 Bot Connecte Avec Succes!\n\n⏰ Time: ${new Date().toLocaleString()}\n✅ Status: Online and Ready!\n\n✅Make sure to join below channel`,
                     contextInfo: {
                         forwardingScore: 1,
                         isForwarded: true,
                         forwardedNewsletterMessageInfo: {
                             newsletterJid: '120363161513685998@newsletter',
-                            newsletterName: 'KnightBot MD',
+                            newsletterName: 'Machine RB3',
                             serverMessageId: -1
                         }
                     }
@@ -285,7 +285,7 @@ async function startXeonBotInc() {
             console.log(chalk.magenta(`${global.themeemoji || '•'} GITHUB: mrunqiuehacker`))
             console.log(chalk.magenta(`${global.themeemoji || '•'} WA NUMBER: ${owner}`))
             console.log(chalk.magenta(`${global.themeemoji || '•'} CREDIT: MR UNIQUE HACKER`))
-            console.log(chalk.green(`${global.themeemoji || '•'} 🤖 Bot Connected Successfully! ✅`))
+            console.log(chalk.green(`${global.themeemoji || '•'} 🤖 Bot Connecte Avec Succes! ✅`))
             console.log(chalk.blue(`Bot Version: ${settings.version}`))
         }
         
