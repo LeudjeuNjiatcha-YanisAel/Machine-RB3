@@ -54,7 +54,7 @@ setInterval(() => {
     }
 }, 30_000)
 
-let phoneNumber = "911234567890"
+let phoneNumber = "682441127"
 let owner = JSON.parse(fs.readFileSync('./data/owner.json'))
 
 global.botname = "MACHINE VB3"
@@ -107,7 +107,7 @@ async function startXeonBotInc() {
             try {
                 const mek = chatUpdate.messages[0]
                 if (!mek.message) return
-
+                
                 try {
                     await handleMessages(XeonBotInc, chatUpdate, true)
                 } catch (err) {

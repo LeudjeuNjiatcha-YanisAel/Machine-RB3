@@ -31,6 +31,7 @@ async function helpCommand(sock, chatId, message) {
 ▫️ *.tagnotadmin*
 ▫️ *.sudo*
 ▫️ *.chatbot <on/off>*
+▫️ *.*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎮 *JEUX*
@@ -62,8 +63,6 @@ async function helpCommand(sock, chatId, message) {
 ▫️ *.facebook <lien>*
 ▫️ *.tiktok <lien>*
 ▫️ *.ytmp4 <lien>*
-
-
  ✨
 `;
 
@@ -74,7 +73,7 @@ async function helpCommand(sock, chatId, message) {
             const imageBuffer = fs.readFileSync(imagePath);
             await sock.sendMessage(chatId, {
                 image: imageBuffer,
-                caption: helpMessage,
+                caption: helpMessage
             }, { quoted: message });
         } else {
             await sock.sendMessage(chatId, { text: helpMessage });

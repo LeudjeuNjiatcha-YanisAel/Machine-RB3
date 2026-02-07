@@ -123,7 +123,7 @@ const aiCommand = require('./commands/ai');
 const urlCommand = require('./commands/url');
 const { handleTranslateCommand } = require('./commands/translate');
 const { handleSsCommand } = require('./commands/ss');
-const { addCommandReaction, handleAreactCommand } = require('./lib/reactions');
+const { reactToAllMessages, handleAreactCommand } = require('./lib/reactions');
 const { goodnightCommand } = require('./commands/goodnight');
 const { shayariCommand } = require('./commands/shayari');
 const { rosedayCommand } = require('./commands/roseday');
@@ -1193,7 +1193,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
         if (userMessage.startsWith('.')) {
             // After command is processed successfully
-            await addCommandReaction(sock, message);
+            await reactToAllMessages(sock, message);
         }
     } catch (error) {
         console.error('❌ Error in message handler:', error.message);
