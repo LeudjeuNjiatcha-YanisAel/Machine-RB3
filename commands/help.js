@@ -4,70 +4,75 @@ const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
     const helpMessage = `
-╔═════════════════════╗
-║        🤖 *${settings.botName || 'MachineBot-RB3'}*        ║
-║─────────────────────║
-║ 📌 Version : *${settings.version || '3.0.0'}*
-║ 👤 Dev     : ${settings.botOwner || 'Mr Robot'}
-║ 📺 YouTube : ${global.ytch}
-╚═════════════════════╝
+╭━━━〔 🤖 ${settings.botName || 'MachineBot-RB3'} 〕━━━╮
+┃ ✨ Version : ${settings.version || '3.0.0'}
+┃ 👤 Dev     : ${settings.botOwner || 'Mr Robot'}
+┃ 📺 YouTube : ${global.ytch}
+╰━━━━━━━━━━━━━━━━━━━━━━╯
 
-🌟 *MENU DES COMMANDES* 🌟
+🌟 *MENU PRINCIPAL* 🌟
+_Tape une commande avec le préfixe (.)_
 
-━━━━━━━━━━━━━━━━━━━━━━
+══════════════════════
 🌐 *COMMANDES GÉNÉRALES*
-━━━━━━━━━━━━━━━━━━━━━━
-▫️ *.help | .menu*
-▫️ *.ping* 
-▫️ *.alive*
-▫️ *.tts <texte>*
-▫️ *.owner* 
-▫️ *.news* 
-▫️ *.groupinfo*  
-▫️ *.extract*
-▫️ *.autoreact <on/off>*
-▫️ *.autostatus <on/off>*
-▫️ *.autoread <on/off>*
-▫️ *.delete number_message*
-▫️ *.sticker*
-▫️ *.tagall* 
-▫️ *.tagnotadmin*
-▫️ *.sudo*
-▫️ *.chatbot <on/off>*
-▫️ *.*
+══════════════════════
+*• .help / .menu*
+*• .ping*
+*• .alive*
+*• .tts <texte>*
+*• .owner*
+*• .news*
+*• .groupinfo*
+*• .extract*
+*• .autoreact <on/off>*
+*• .autostatus <on/off>*
+*• .autoread <on/off>*
+*• .delete <num_message>*
+*• .sticker*
+*• .tagall*
+*• .tagnotadmin*
+*• .sudo*
+*• .chatbot <on/off>*
 
-━━━━━━━━━━━━━━━━━━━━━━
+══════════════════════
 🎮 *JEUX*
-━━━━━━━━━━━━━━━━━━━━━━
-▫️ *.tictactoe @user*
-▫️ *.hangman*
-▫️ *.guess <lettre>*
-▫️ *.trivia*
-▫️ *.answer <réponse>*
-▫️ *.truth*
+══════════════════════
+*• .tictactoe @user*
+*• .hangman*
+*• .guess <lettre>*
+*• .trivia*
+*• .answer <réponse>*
+*• .truth*
 
-━━━━━━━━━━━━━━━━━━━━━━
+══════════════════════
 🤖 *INTELLIGENCE ARTIFICIELLE*
-━━━━━━━━━━━━━━━━━━━━━━
-▫️ *.gpt <question>*
-▫️ *.gemini <question>*
-▫️ *.imagine <prompt>*
-▫️ *.flux <prompt>*
-▫️ *.sora <prompt>*
+══════════════════════
+*• .gpt <question>*
+*• .gemini <question>*
+*• .imagine <prompt>*
+*• .flux <prompt>*
+*• .sora <prompt>*
 
+══════════════════════
+📥 *DOWNLOAD / MÉDIAS*
+══════════════════════
+*• .play <musique>*
+*• .song <musique>*
+*• .spotify <recherche>*
+*• .instagram <lien>*
+*• .facebook <lien>*
+*• .tiktok <lien>*
+*• .ytmp4 <lien>*
 
-━━━━━━━━━━━━━━━━━━━━━━
-📥 *DOWNLOAD*
-━━━━━━━━━━━━━━━━━━━━━━
-▫️ *.play <musique>*
-▫️ *.song <musique>*
-▫️ *.spotify <recherche>*
-▫️ *.instagram <lien>*
-▫️ *.facebook <lien>*
-▫️ *.tiktok <lien>*
-▫️ *.ytmp4 <lien>*
- ✨
+══════════════════════
+✨ *${settings.botName || 'MachineBot-RB3'}*
+⚡ Rapide *• 🔒 Sécurisé *• 🤖 Intelligent
+══════════════════════
 `;
+
+    await sock.sendMessage(chatId, { text: helpMessage });
+}
+
 
     try {
         const imagePath = path.join(__dirname, '../assets/bot_image.jpeg');
@@ -85,6 +90,6 @@ async function helpCommand(sock, chatId, message) {
         console.error('Error in help command:', error);
         await sock.sendMessage(chatId, { text: helpMessage });
     }
-}
+
 
 module.exports = helpCommand;
