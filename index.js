@@ -56,18 +56,7 @@ app.listen(PORT, () => {
     console.log(`🌍 Serveur HTTP actif sur le port ${PORT}`);
 });
 
-// C'est Pour Pinger Le Bot Toutes Les 5 Minutes Pour Eviter Qu'il Se Deconnecte Sur render
-setInterval(async () => {
-    try {
-        const url = process.env.RENDER_EXTERNAL_URL;
-        if (!url) return;
 
-        await axios.get(url);
-        console.log('🔁 Auto-ping Render OK');
-    } catch (err) {
-        console.log('⚠️ Auto-ping échoué');
-    }
-}, 5 * 60 * 1000); // toutes les 5 minutes
 
 setInterval(() => {
     if (global.gc) {
