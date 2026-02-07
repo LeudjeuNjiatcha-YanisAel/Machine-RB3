@@ -17,53 +17,52 @@ async function helpCommand(sock, chatId, message) {
 ━━━━━━━━━━━━━━━━━━━━━━
 🌐 *COMMANDES GÉNÉRALES*
 ━━━━━━━━━━━━━━━━━━━━━━
-*▫️ .help | .menu*
-*▫️ .ping* 
-*▫️ .alive*
-*▫️ .tts <texte>*
-*▫️ .owner* 
-*▫️ .news* 
-*▫️ .groupinfo*  
-*▫️ .staff | .admins*
-*▫️ .extract*
-*▫️ .autoreact <on/off>*
-*▫️ .sticker*
-*▫️ .tagall* 
-*▫️ .tagnotadmin*
-*▫️ .sudo*
-*▫️ .chatbot <on/off>*
+▫️ *.help | .menu*
+▫️ *.ping* 
+▫️ *.alive*
+▫️ *.tts <texte>*
+▫️ *.owner* 
+▫️ *.news* 
+▫️ *.groupinfo*  
+▫️ *.extract*
+▫️ *.autoreact <on/off>*
+▫️ *.sticker*
+▫️ *.tagall* 
+▫️ *.tagnotadmin*
+▫️ *.sudo*
+▫️ *.chatbot <on/off>*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎮 *JEUX*
 ━━━━━━━━━━━━━━━━━━━━━━
-*▫️ .tictactoe @user*
-*▫️ .hangman*
-*▫️ .guess <lettre>*
-*▫️ .trivia*
-*▫️ .answer <réponse>*
-*▫️ .truth*
-*▫️ .dare*
+▫️ *.tictactoe @user*
+▫️ *.hangman*
+▫️ *.guess <lettre>*
+▫️ *.trivia*
+▫️ *.answer <réponse>*
+▫️ *.truth*
+▫️ *.dare*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🤖 *INTELLIGENCE ARTIFICIELLE*
 ━━━━━━━━━━━━━━━━━━━━━━
-*▫️ .gpt <question>*
-*▫️ .gemini <question>*
-*▫️ .imagine <prompt>*
-*▫️ .flux <prompt>*
-*▫️ .sora <prompt>*
+▫️ *.gpt <question>*
+▫️ *.gemini <question>*
+▫️ *.imagine <prompt>*
+▫️ *.flux <prompt>*
+▫️ *.sora <prompt>*
 
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📥 *DOWNLOAD*
 ━━━━━━━━━━━━━━━━━━━━━━
-*▫️ .play <musique>*
-*▫️ .song <musique>*
-*▫️ .spotify <recherche>*
-*▫️ .instagram <lien>*
-*▫️ .facebook <lien>*
-*▫️ .tiktok <lien>*
-*▫️ .ytmp4 <lien>*
+▫️ *.play <musique>*
+▫️ *.song <musique>*
+▫️ *.spotify <recherche>*
+▫️ *.instagram <lien>*
+▫️ *.facebook <lien>*
+▫️ *.tiktok <lien>*
+▫️ *.ytmp4 <lien>*
 
 
  ✨

@@ -2,9 +2,9 @@ const gTTS = require('gtts');
 const fs = require('fs');
 const path = require('path');
 
-async function ttsCommand(sock, chatId, text, message, language = 'en') {
+async function ttsCommand(sock, chatId, text, message, language = 'fr') {
     if (!text) {
-        await sock.sendMessage(chatId, { text: 'Please provide the text for TTS conversion.' });
+        await sock.sendMessage(chatId, { text: 'Veuillez fournir le texte à convertir en audio.' });
         return;
     }
 
@@ -14,7 +14,7 @@ async function ttsCommand(sock, chatId, text, message, language = 'en') {
     const gtts = new gTTS(text, language);
     gtts.save(filePath, async function (err) {
         if (err) {
-            await sock.sendMessage(chatId, { text: 'Error generating TTS audio.' });
+            await sock.sendMessage(chatId, { text: 'Erreur lors de la génération de l’audio TTS.' });
             return;
         }
 
