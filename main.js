@@ -594,7 +594,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 }
                 break;
             
-            case userMessage === '.pp':
+            case userMessage === '.chip':
                 await viewPhotoCommand(sock, chatId, message);
             break;
             case userMessage === '.topmembers':
