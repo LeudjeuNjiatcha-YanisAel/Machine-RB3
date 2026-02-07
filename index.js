@@ -39,6 +39,36 @@ store.readFromFile()
 const settings = require('./settings')
 setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 
+
+// C'est Pour Ouvrir Le Bot Sur Un Serveur Web 
+const express = require('express');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Route de ping
+app.get('/', (req, res) => {
+    res.status(200).send('🤖 Bot MACHINE VB3 est actif');
+});
+
+// Démarrage du serveur web
+app.listen(PORT, () => {
+    console.log(`🌍 Serveur HTTP actif sur le port ${PORT}`);
+});
+
+// C'est Pour Pinger Le Bot Toutes Les 5 Minutes Pour Eviter Qu'il Se Deconnecte Sur render
+setInterval(async () => {
+    try {
+        const url = process.env.RENDER_EXTERNAL_URL;
+        if (!url) return;
+
+        await axios.get(url);
+        console.log('🔁 Auto-ping Render OK');
+    } catch (err) {
+        console.log('⚠️ Auto-ping échoué');
+    }
+}, 5 * 60 * 1000); // toutes les 5 minutes
+
 setInterval(() => {
     if (global.gc) {
         global.gc()
