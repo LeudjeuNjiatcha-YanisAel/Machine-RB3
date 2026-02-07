@@ -147,7 +147,7 @@ const soraCommand = require('./commands/sora');
 global.packname = settings.packname;
 global.author = settings.author;
 global.channelLink = "https://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A";
-global.ytch = "Mr Robot";
+global.ytch = "Mr Unique Hacker";
 
 // Add this near the top of main.js with other global configurations
 const channelInfo = {
@@ -156,7 +156,7 @@ const channelInfo = {
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
             newsletterJid: '120363161513685998@newsletter',
-            newsletterName: 'Machine VB3 Updates',
+            newsletterName: 'KnightBot MD',
             serverMessageId: -1
         }
     }
@@ -195,13 +195,12 @@ async function handleMessages(sock, messageUpdate, printLog) {
             const buttonId = message.message.buttonsResponseMessage.selectedButtonId;
             const chatId = message.key.remoteJid;
             
-            // if (buttonId === 'channel') {
-            //     await sock.sendMessage(chatId, { 
-            //         text: '📢 *Join our Channel:*\nhttps://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A' 
-            //     }, { quoted: message });
-            //     return;
-            // } 
-            if (buttonId === 'owner') {
+            if (buttonId === 'channel') {
+                await sock.sendMessage(chatId, { 
+                    text: '📢 *Join our Channel:*\nhttps://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A' 
+                }, { quoted: message });
+                return;
+            } else if (buttonId === 'owner') {
                 const ownerCommand = require('./commands/owner');
                 await ownerCommand(sock, chatId);
                 return;
@@ -822,7 +821,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await stickerTelegramCommand(sock, chatId, message);
                 break;
 
-            case userMessage === '.extract':
+            case userMessage === '.vv':
                 await viewOnceCommand(sock, chatId, message);
                 break;
             case userMessage === '.clearsession' || userMessage === '.clearsesi':
