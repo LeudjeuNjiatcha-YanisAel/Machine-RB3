@@ -24,8 +24,6 @@ async function helpCommand(sock, chatId, message) {
 ▫️ .owner 
 ▫️ .fact
 ▫️ .news 
-▫️ .lyrics <titre>
-▫️ .8ball <question>
 ▫️ .groupinfo  
 ▫️ .staff | .admins
 ▫️ .extract
