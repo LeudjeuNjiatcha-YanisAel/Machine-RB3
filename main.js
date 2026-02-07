@@ -144,7 +144,7 @@ const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
 const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
-const { use } = require('react');
+
 
 // Global settings
 global.packname = settings.packname;
