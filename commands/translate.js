@@ -2,53 +2,80 @@ const fetch = require('node-fetch');
 
 async function handleTranslateCommand(sock, chatId, message, match) {
     try {
-        // Show typing indicator
+        // Indicateur "en train d'écrire"
         await sock.presenceSubscribe(chatId);
         await sock.sendPresenceUpdate('composing', chatId);
 
         let textToTranslate = '';
         let lang = '';
 
-        // Check if it's a reply
+        // Vérifier si c'est une réponse à un message
         const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
         if (quotedMessage) {
-            // Get text from quoted message
-            textToTranslate = quotedMessage.conversation || 
-                            quotedMessage.extendedTextMessage?.text || 
-                            quotedMessage.imageMessage?.caption || 
-                            quotedMessage.videoMessage?.caption || 
-                            '';
+            // Récupérer le texte du message cité
+            textToTranslate =
+                quotedMessage.conversation ||
+                quotedMessage.extendedTextMessage?.text ||
+                quotedMessage.imageMessage?.caption ||
+                quotedMessage.videoMessage?.caption ||
+                '';
 
-            // Get language from command
+            // Langue fournie dans la commande
             lang = match.trim();
         } else {
-            // Parse command arguments for direct message
+            // Analyse des arguments pour une traduction directe
             const args = match.trim().split(' ');
             if (args.length < 2) {
                 return sock.sendMessage(chatId, {
-                    text: `*TRANSLATOR*\n\nUsage:\n1. Reply to a message with: .translate <lang> or .trt <lang>\n2. Or type: .translate <text> <lang> or .trt <text> <lang>\n\nExample:\n.translate hello fr\n.trt hello fr\n\nLanguage codes:\nfr - French\nes - Spanish\nde - German\nit - Italian\npt - Portuguese\nru - Russian\nja - Japanese\nko - Korean\nzh - Chinese\nar - Arabic\nhi - Hindi`,
+                    text: `*TRADUCTEUR*\n
+Utilisation :
+1️⃣ Répondez à un message avec :
+   .translate <langue> ou .trt <langue>
+
+2️⃣ Ou tapez directement :
+   .translate <texte> <langue>
+   .trt <texte> <langue>
+
+Exemples :
+.translate hello fr
+.trt hello fr
+
+Codes de langue :
+fr - Français
+es - Espagnol
+de - Allemand
+it - Italien
+pt - Portugais
+ru - Russe
+ja - Japonais
+ko - Coréen
+zh - Chinois
+ar - Arabe
+hi - Hindi`,
                     quoted: message
                 });
             }
 
-            lang = args.pop(); // Get language code
-            textToTranslate = args.join(' '); // Get text to translate
+            lang = args.pop(); // Code de la langue
+            textToTranslate = args.join(' '); // Texte à traduire
         }
 
         if (!textToTranslate) {
             return sock.sendMessage(chatId, {
-                text: '❌ No text found to translate. Please provide text or reply to a message.',
+                text: '❌ Aucun texte à traduire trouvé. Veuillez fournir un texte ou répondre à un message.',
                 quoted: message
             });
         }
 
-        // Try multiple translation APIs in sequence
+        // Tentative de traduction via plusieurs APIs
         let translatedText = null;
         let error = null;
 
-        // Try API 1 (Google Translate API)
+        // API 1 : Google Translate
         try {
-            const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(textToTranslate)}`);
+            const response = await fetch(
+                `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${encodeURIComponent(textToTranslate)}`
+            );
             if (response.ok) {
                 const data = await response.json();
                 if (data && data[0] && data[0][0] && data[0][0][0]) {
@@ -59,13 +86,15 @@ async function handleTranslateCommand(sock, chatId, message, match) {
             error = e;
         }
 
-        // If API 1 fails, try API 2
+        // API 2 : MyMemory
         if (!translatedText) {
             try {
-                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToTranslate)}&langpair=auto|${lang}`);
+                const response = await fetch(
+                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToTranslate)}&langpair=auto|${lang}`
+                );
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.responseData && data.responseData.translatedText) {
+                    if (data?.responseData?.translatedText) {
                         translatedText = data.responseData.translatedText;
                     }
                 }
@@ -74,13 +103,15 @@ async function handleTranslateCommand(sock, chatId, message, match) {
             }
         }
 
-        // If API 2 fails, try API 3
+        // API 3 : API alternative
         if (!translatedText) {
             try {
-                const response = await fetch(`https://api.dreaded.site/api/translate?text=${encodeURIComponent(textToTranslate)}&lang=${lang}`);
+                const response = await fetch(
+                    `https://api.dreaded.site/api/translate?text=${encodeURIComponent(textToTranslate)}&lang=${lang}`
+                );
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.translated) {
+                    if (data?.translated) {
                         translatedText = data.translated;
                     }
                 }
@@ -90,20 +121,28 @@ async function handleTranslateCommand(sock, chatId, message, match) {
         }
 
         if (!translatedText) {
-            throw new Error('All translation APIs failed');
+            throw new Error('Toutes les APIs de traduction ont échoué');
         }
 
-        // Send translation
+        // Envoi de la traduction
         await sock.sendMessage(chatId, {
-            text: `${translatedText}`,
+            text: translatedText,
         }, {
             quoted: message
         });
 
     } catch (error) {
-        console.error('❌ Error in translate command:', error);
+        console.error('❌ Erreur dans la commande de traduction :', error);
         await sock.sendMessage(chatId, {
-            text: '❌ Failed to translate text. Please try again later.\n\nUsage:\n1. Reply to a message with: .translate <lang> or .trt <lang>\n2. Or type: .translate <text> <lang> or .trt <text> <lang>',
+            text: `❌ Échec de la traduction. Veuillez réessayer plus tard.
+
+Utilisation :
+1️⃣ Répondez à un message avec :
+   .translate <langue> ou .trt <langue>
+
+2️⃣ Ou tapez :
+   .translate <texte> <langue>
+   .trt <texte> <langue>`,
             quoted: message
         });
     }
@@ -111,4 +150,4 @@ async function handleTranslateCommand(sock, chatId, message, match) {
 
 module.exports = {
     handleTranslateCommand
-}; 
+};

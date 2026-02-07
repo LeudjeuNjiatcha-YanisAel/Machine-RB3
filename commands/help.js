@@ -21,19 +21,19 @@ _Tape une commande avec le préfixe (.)_
 *• .alive*
 *• .tts <texte>*
 *• .owner*
-*• .news*
 *• .groupinfo*
 *• .extract*
 *• .chip*
-*• .autoreact <on/off>*
-*• .autostatus <on/off>*
-*• .autoread <on/off>*
 *• .delete <num_message>*
 *• .sticker*
 *• .tagall*
-*• .tagnotadmin*
 *• .sudo*
-*• .chatbot <on/off>*
+*• .setpp*
+*• .mute*
+*• .unmute*
+*• .online*
+*• .compliment*
+*• .translate <text> <lang>*
 
 ══════════════════════
 🎮 *JEUX*
@@ -41,7 +41,6 @@ _Tape une commande avec le préfixe (.)_
 *• .tictactoe @user*
 *• .hangman*
 *• .guess <lettre>*
-*• .trivia*
 *• .answer <réponse>*
 
 ══════════════════════
@@ -49,16 +48,10 @@ _Tape une commande avec le préfixe (.)_
 ══════════════════════
 *• .gpt <question>*
 *• .gemini <question>*
-*• .imagine <prompt>*
-*• .flux <prompt>*
-
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
 ══════════════════════
 *• .play <musique>*
-*• .song <musique>*
-*• .instagram <lien>*
-*• .facebook <lien>*
 *• .tiktok <lien>*
 *• .ytmp4 <lien>*
 

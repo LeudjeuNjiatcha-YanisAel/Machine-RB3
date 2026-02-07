@@ -10,36 +10,36 @@ async function setProfilePicture(sock, chatId, msg) {
         
         if (!msg.key.fromMe && !isOwner) {
             await sock.sendMessage(chatId, { 
-                text: '❌ This command is only available for the owner!' 
+                text: '❌ Cette commande est réservée uniquement au propriétaire du bot !' 
             });
             return;
         }
 
-        // Check if message is a reply
+        // Vérifier si le message est une réponse
         const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
         if (!quotedMessage) {
             await sock.sendMessage(chatId, { 
-                text: '⚠️ Please reply to an image with the .setpp command!' 
+                text: '⚠️ Veuillez répondre à une image avec la commande .setpp !' 
             });
             return;
         }
 
-        // Check if quoted message contains an image
+        // Vérifier si le message cité contient une image
         const imageMessage = quotedMessage.imageMessage || quotedMessage.stickerMessage;
         if (!imageMessage) {
             await sock.sendMessage(chatId, { 
-                text: '❌ The replied message must contain an image!' 
+                text: '❌ Le message auquel vous répondez doit contenir une image !' 
             });
             return;
         }
 
-        // Create tmp directory if it doesn't exist
+        // Créer le dossier tmp s’il n’existe pas
         const tmpDir = path.join(process.cwd(), 'tmp');
         if (!fs.existsSync(tmpDir)) {
             fs.mkdirSync(tmpDir, { recursive: true });
         }
 
-        // Download the image
+        // Télécharger l’image
         const stream = await downloadContentFromMessage(imageMessage, 'image');
         let buffer = Buffer.from([]);
         
@@ -49,25 +49,25 @@ async function setProfilePicture(sock, chatId, msg) {
 
         const imagePath = path.join(tmpDir, `profile_${Date.now()}.jpg`);
         
-        // Save the image
+        // Sauvegarder l’image
         fs.writeFileSync(imagePath, buffer);
 
-        // Set the profile picture
+        // Mettre à jour la photo de profil du bot
         await sock.updateProfilePicture(sock.user.id, { url: imagePath });
 
-        // Clean up the temporary file
+        // Supprimer le fichier temporaire
         fs.unlinkSync(imagePath);
 
         await sock.sendMessage(chatId, { 
-            text: '✅ Successfully updated bot profile picture!' 
+            text: '✅ La photo de profil du bot a été mise à jour avec succès !' 
         });
 
     } catch (error) {
-        console.error('Error in setpp command:', error);
+        console.error('Erreur dans la commande setpp :', error);
         await sock.sendMessage(chatId, { 
-            text: '❌ Failed to update profile picture!' 
+            text: '❌ Échec de la mise à jour de la photo de profil !' 
         });
     }
 }
 
-module.exports = setProfilePicture; 
+module.exports = setProfilePicture;

@@ -142,7 +142,9 @@ const { anticallCommand, readState: readAnticallState } = require('./commands/an
 const { pmblockerCommand, readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
+const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
+const { use } = require('react');
 
 // Global settings
 global.packname = settings.packname;
@@ -597,6 +599,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage === '.chip':
                 await viewPhotoCommand(sock, chatId, message);
             break;
+
+            case userMessage === '.online':
+                await onlineCommand(sock, chatId, message);
+                break;
             case userMessage === '.topmembers':
                 topMembers(sock, chatId, isGroup);
                 break;

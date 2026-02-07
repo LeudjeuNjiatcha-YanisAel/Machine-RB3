@@ -6,18 +6,18 @@ const crypto = require('crypto');
 
 async function takeCommand(sock, chatId, message, args) {
     try {
-        // Check if message is a reply to a sticker
+        // Vérifier si le message est une réponse à un sticker
         const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
         if (!quotedMessage?.stickerMessage) {
-            await sock.sendMessage(chatId, { text: '❌ Reply to a sticker with .take <packname>' });
+            await sock.sendMessage(chatId, { text: '❌ Répondez à un sticker avec .take <nom_du_pack>' });
             return;
         }
 
-        // Get the packname from args or use default
+        // Récupérer le nom du pack depuis les arguments ou utiliser la valeur par défaut
         const packname = args.join(' ') || 'Machine Bot';
 
         try {
-            // Download the sticker
+            // Télécharger le sticker
             const stickerBuffer = await downloadMediaMessage(
                 {
                     key: message.message.extendedTextMessage.contextInfo.stanzaId,
@@ -33,34 +33,34 @@ async function takeCommand(sock, chatId, message, args) {
             );
 
             if (!stickerBuffer) {
-                await sock.sendMessage(chatId, { text: '❌ Failed to download sticker' });
+                await sock.sendMessage(chatId, { text: '❌ Échec du téléchargement du sticker' });
                 return;
             }
 
-            // Add metadata using webpmux
+            // Ajouter les métadonnées avec webpmux
             const img = new webp.Image();
             await img.load(stickerBuffer);
 
-            // Create metadata
+            // Créer les métadonnées
             const json = {
                 'sticker-pack-id': crypto.randomBytes(32).toString('hex'),
                 'sticker-pack-name': packname,
                 'emojis': ['🤖']
             };
 
-            // Create exif buffer
+            // Créer le buffer exif
             const exifAttr = Buffer.from([0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00]);
             const jsonBuffer = Buffer.from(JSON.stringify(json), 'utf8');
             const exif = Buffer.concat([exifAttr, jsonBuffer]);
             exif.writeUIntLE(jsonBuffer.length, 14, 4);
 
-            // Set the exif data
+            // Définir les données exif
             img.exif = exif;
 
-            // Get the final buffer with metadata
+            // Récupérer le buffer final avec les métadonnées
             const finalBuffer = await img.save(null);
 
-            // Send the sticker
+            // Envoyer le sticker
             await sock.sendMessage(chatId, {
                 sticker: finalBuffer
             }, {
@@ -68,14 +68,14 @@ async function takeCommand(sock, chatId, message, args) {
             });
 
         } catch (error) {
-            console.error('Sticker processing error:', error);
-            await sock.sendMessage(chatId, { text: '❌ Error processing sticker' });
+            console.error('Erreur lors du traitement du sticker :', error);
+            await sock.sendMessage(chatId, { text: '❌ Erreur lors du traitement du sticker' });
         }
 
     } catch (error) {
-        console.error('Error in take command:', error);
-        await sock.sendMessage(chatId, { text: '❌ Error processing command' });
+        console.error('Erreur dans la commande take :', error);
+        await sock.sendMessage(chatId, { text: '❌ Erreur lors du traitement de la commande' });
     }
 }
 
-module.exports = takeCommand; 
+module.exports = takeCommand;
