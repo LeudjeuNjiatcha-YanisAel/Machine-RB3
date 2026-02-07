@@ -7,7 +7,7 @@ async function aiCommand(sock, chatId, message) {
         
         if (!text) {
             return await sock.sendMessage(chatId, { 
-                text: "Please provide a question after .gpt or .gemini\n\nExample: .gpt write a basic html code"
+                text: "Veuillez fournir une question après .gpt ou .gemini\n\nExemple : .gpt écris un code HTML basique"
             }, {
                 quoted: message
             });
@@ -20,7 +20,7 @@ async function aiCommand(sock, chatId, message) {
 
         if (!query) {
             return await sock.sendMessage(chatId, { 
-                text: "Please provide a question after .gpt or .gemini"
+                text: "Veuillez fournir une question après .gpt ou .gemini"
             }, {quoted:message});
         }
 
@@ -43,7 +43,7 @@ async function aiCommand(sock, chatId, message) {
                     });
                     
                 } else {
-                    throw new Error('Invalid response from API');
+                    throw new Error('Réponse invalide de l’API');
                 }
             } else if (command === '.gemini') {
                 const apis = [
@@ -74,12 +74,12 @@ async function aiCommand(sock, chatId, message) {
                         continue;
                     }
                 }
-                throw new Error('All Gemini APIs failed');
+                throw new Error('Toutes les API Gemini ont échoué');
             }
         } catch (error) {
             console.error('API Error:', error);
             await sock.sendMessage(chatId, {
-                text: "❌ Failed to get response. Please try again later.",
+                text: "❌ Impossible d’obtenir une réponse. Veuillez réessayer plus tard.",
                 contextInfo: {
                     mentionedJid: [message.key.participant || message.key.remoteJid],
                     quotedMessage: message.message
@@ -91,7 +91,7 @@ async function aiCommand(sock, chatId, message) {
     } catch (error) {
         console.error('AI Command Error:', error);
         await sock.sendMessage(chatId, {
-            text: "❌ An error occurred. Please try again later.",
+            text: "❌ Une erreur est survenue. Veuillez réessayer plus tard.",
             contextInfo: {
                 mentionedJid: [message.key.participant || message.key.remoteJid],
                 quotedMessage: message.message
@@ -102,4 +102,4 @@ async function aiCommand(sock, chatId, message) {
     }
 }
 
-module.exports = aiCommand; 
+module.exports = aiCommand;

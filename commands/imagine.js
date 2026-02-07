@@ -12,7 +12,7 @@ async function imagineCommand(sock, chatId, message) {
         
         if (!imagePrompt) {
             await sock.sendMessage(chatId, {
-                text: 'Please provide a prompt for the image generation.\nExample: .imagine a beautiful sunset over mountains'
+                text: 'Veuillez fournir un prompt pour la génération d’image.\nExemple : .imagine un magnifique coucher de soleil sur des montagnes'
             }, {
                 quoted: message
             });
@@ -21,7 +21,7 @@ async function imagineCommand(sock, chatId, message) {
 
         // Send processing message
         await sock.sendMessage(chatId, {
-            text: '🎨 Generating your image... Please wait.'
+            text: '🎨 Génération de votre image en cours... Veuillez patienter.'
         }, {
             quoted: message
         });
@@ -40,7 +40,7 @@ async function imagineCommand(sock, chatId, message) {
         // Send the generated image
         await sock.sendMessage(chatId, {
             image: imageBuffer,
-            caption: `🎨 Generated image for prompt: "${imagePrompt}"`
+            caption: `🎨 Image générée pour le prompt : "${imagePrompt}"`
         }, {
             quoted: message
         });
@@ -48,7 +48,7 @@ async function imagineCommand(sock, chatId, message) {
     } catch (error) {
         console.error('Error in imagine command:', error);
         await sock.sendMessage(chatId, {
-            text: '❌ Failed to generate image. Please try again later.'
+            text: '❌ Échec de la génération de l’image. Veuillez réessayer plus tard.'
         }, {
             quoted: message
         });
@@ -59,16 +59,16 @@ async function imagineCommand(sock, chatId, message) {
 function enhancePrompt(prompt) {
     // Quality enhancing keywords
     const qualityEnhancers = [
-        'high quality',
-        'detailed',
-        'masterpiece',
-        'best quality',
-        'ultra realistic',
+        'haute qualité',
+        'détaillé',
+        'chef-d’œuvre',
+        'meilleure qualité',
+        'ultra réaliste',
         '4k',
-        'highly detailed',
-        'professional photography',
-        'cinematic lighting',
-        'sharp focus'
+        'très détaillé',
+        'photographie professionnelle',
+        'éclairage cinématographique',
+        'mise au point nette'
     ];
 
     // Randomly select 3-4 enhancers
@@ -81,4 +81,4 @@ function enhancePrompt(prompt) {
     return `${prompt}, ${selectedEnhancers.join(', ')}`;
 }
 
-module.exports = imagineCommand; 
+module.exports = imagineCommand;

@@ -50,7 +50,7 @@ async function playCommand(sock, chatId, message) {
         }, { quoted: message });
 
     } catch (error) {
-        console.error('Error in song2 command:', error);
+        console.error('Erreur dans la comamnde song2 :', error);
         await sock.sendMessage(chatId, { 
             text: "Échec du téléchargement. Veuillez réessayer plus tard."
         });

@@ -32,15 +32,6 @@ async function stickerCommand(sock, chatId, message) {
     if (!mediaMessage) {
         await sock.sendMessage(chatId, { 
             text: 'Please reply to an image/video with .sticker, or send an image/video with .sticker as the caption.',
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363161513685998@newsletter',
-                    newsletterName: 'KnightBot MD',
-                    serverMessageId: -1
-                }
-            }
         },{ quoted: messageToQuote });
         return;
     }

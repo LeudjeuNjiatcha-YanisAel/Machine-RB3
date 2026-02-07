@@ -41,7 +41,6 @@ async function helpCommand(sock, chatId, message) {
 ▫️ *.trivia*
 ▫️ *.answer <réponse>*
 ▫️ *.truth*
-▫️ *.dare*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🤖 *INTELLIGENCE ARTIFICIELLE*
