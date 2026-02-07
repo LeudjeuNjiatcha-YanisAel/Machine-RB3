@@ -26,6 +26,9 @@ async function helpCommand(sock, chatId, message) {
 ▫️ *.groupinfo*  
 ▫️ *.extract*
 ▫️ *.autoreact <on/off>*
+▫️ *.autostatus <on/off>*
+▫️ *.autoread <on/off>*
+▫️ *.delete number_message*
 ▫️ *.sticker*
 ▫️ *.tagall* 
 ▫️ *.tagnotadmin*
