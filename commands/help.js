@@ -69,11 +69,6 @@ _Tape une commande avec le préfixe (.)_
 ⚡ Rapide *• 🔒 Sécurisé *• 🤖 Intelligent
 ══════════════════════
 `;
-
-    await sock.sendMessage(chatId, { text: helpMessage });
-}
-
-
     try {
         const imagePath = path.join(__dirname, '../assets/bot_image.jpeg');
         
@@ -90,6 +85,6 @@ _Tape une commande avec le préfixe (.)_
         console.error('Error in help command:', error);
         await sock.sendMessage(chatId, { text: helpMessage });
     }
-
+}
 
 module.exports = helpCommand;
