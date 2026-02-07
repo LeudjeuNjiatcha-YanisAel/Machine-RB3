@@ -7,7 +7,7 @@ async function helpCommand(sock, chatId, message) {
 ╭━━━〔 🤖 ${settings.botName || 'MachineBot-RB3'} 〕━━━╮
 ┃ ✨ Version : ${settings.version || '3.0.0'}
 ┃ 👤 Dev     : ${settings.botOwner || 'Mr Robot'}
-┃ 📺 YouTube : ${global.ytch}
+┃ 📳 Contact  : 682441127
 ╰━━━━━━━━━━━━━━━━━━━━━━╯
 
 🌟 *MENU PRINCIPAL* 🌟
