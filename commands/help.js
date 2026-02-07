@@ -31,6 +31,7 @@ async function helpCommand(sock, chatId, message) {
 *▫️ .tagall* 
 *▫️ .tagnotadmin*
 *▫️ .sudo*
+*▫️ .chatbot <on/off>*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎮 *JEUX*
