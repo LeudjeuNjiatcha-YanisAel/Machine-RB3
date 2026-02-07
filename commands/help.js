@@ -4,72 +4,72 @@ const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
     const helpMessage = `
-╔════════════════════════════╗
+╔═════════════════════╗
 ║        🤖 *${settings.botName || 'MachineBot-RB3'}*        ║
-║────────────────────────────║
+║─────────────────────║
 ║ 📌 Version : *${settings.version || '3.0.0'}*
 ║ 👤 Dev     : ${settings.botOwner || 'Mr Robot'}
 ║ 📺 YouTube : ${global.ytch}
-╚════════════════════════════╝
+╚═════════════════════╝
 
 🌟 *MENU DES COMMANDES* 🌟
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🌐 *COMMANDES GÉNÉRALES*
 ━━━━━━━━━━━━━━━━━━━━━━
-▫️ .help | .menu
-▫️ .ping 
-▫️ .alive
-▫️ .tts <texte>
-▫️ .owner 
-▫️ .fact
-▫️ .news 
-▫️ .groupinfo  
-▫️ .staff | .admins
-▫️ .extract
-▫️ .autoreact <on/off>
-▫️ .sticker
-▫️ .tagall 
-▫️ .tagnotadmin
+*▫️ .help | .menu*
+*▫️ .ping* 
+*▫️ .alive*
+*▫️ .tts <texte>*
+*▫️ .owner* 
+*▫️ .news* 
+*▫️ .groupinfo*  
+*▫️ .staff | .admins*
+*▫️ .extract*
+*▫️ .autoreact <on/off>*
+*▫️ .sticker*
+*▫️ .tagall* 
+*▫️ .tagnotadmin*
+*▫️ .sudo*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🎮 *JEUX*
 ━━━━━━━━━━━━━━━━━━━━━━
-▫️ .tictactoe @user
-▫️ .hangman
-▫️ .guess <lettre>
-▫️ .trivia
-▫️ .answer <réponse>
-▫️ .truth
-▫️ .dare
+*▫️ .tictactoe @user*
+*▫️ .hangman*
+*▫️ .guess <lettre>*
+*▫️ .trivia*
+*▫️ .answer <réponse>*
+*▫️ .truth*
+*▫️ .dare*
 
 ━━━━━━━━━━━━━━━━━━━━━━
 🤖 *INTELLIGENCE ARTIFICIELLE*
 ━━━━━━━━━━━━━━━━━━━━━━
-▫️ .gpt <question>
-▫️ .gemini <question>
-▫️ .imagine <prompt>
-▫️ .flux <prompt>
-▫️ .sora <prompt>
+*▫️ .gpt <question>*
+*▫️ .gemini <question>*
+*▫️ .imagine <prompt>*
+*▫️ .flux <prompt>*
+*▫️ .sora <prompt>*
 
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📥 *DOWNLOAD*
 ━━━━━━━━━━━━━━━━━━━━━━
-▫️ .play <musique>
-▫️ .song <musique>
-▫️ .spotify <recherche>
-▫️ .instagram <lien>
-▫️ .facebook <lien>
-▫️ .tiktok <lien>
-▫️ .ytmp4 <lien>
+*▫️ .play <musique>*
+*▫️ .song <musique>*
+*▫️ .spotify <recherche>*
+*▫️ .instagram <lien>*
+*▫️ .facebook <lien>*
+*▫️ .tiktok <lien>*
+*▫️ .ytmp4 <lien>*
 
 
  ✨
 `;
 
     try {
-        const imagePath = path.join(__dirname, '../assets/bot_image.jpg');
+        const imagePath = path.join(__dirname, '../assets/bot_image.jpeg');
         
         if (fs.existsSync(imagePath)) {
             const imageBuffer = fs.readFileSync(imagePath);

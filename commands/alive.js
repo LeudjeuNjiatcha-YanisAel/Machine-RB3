@@ -1,16 +1,16 @@
 const settings = require("../settings");
 async function aliveCommand(sock, chatId, message) {
     try {
-        const message1 = `*🤖 Machine Bot is Active!*\n\n` +
-                       `*Version:* ${settings.version}\n` +
-                       `*Status:* Online\n` +
-                       `*Mode:* Public\n\n` +
-                       `*🌟 Features:*\n` +
-                       `• Group Management\n` +
-                       `• Antilink Protection\n` +
-                       `• Fun Commands\n` +
-                       `• And more!\n\n` +
-                       `Type *.menu* for full command list`;
+        const message1 = `*🤖 Machine Bot est Actif !*\n\n` +
+                       `*Version :* ${settings.version}\n` +
+                       `*Statut :* En ligne\n` +
+                       `*Mode :* Public\n\n` +
+                       `*🌟 Fonctionnalités :*\n` +
+                       `• Gestion des groupes\n` +
+                       `• Protection Anti-lien\n` +
+                       `• Commandes amusantes\n` +
+                       `• Et bien plus encore !\n\n` +
+                       `Tapez *.menu* pour voir la liste complète des commandes`;
 
         await sock.sendMessage(chatId, {
             text: message1,
@@ -25,8 +25,8 @@ async function aliveCommand(sock, chatId, message) {
             }
         }, { quoted: message });
     } catch (error) {
-        console.error('Error in alive command:', error);
-        await sock.sendMessage(chatId, { text: 'Bot is alive and running!' }, { quoted: message });
+        console.error('Erreur dans la commande alive :', error);
+        await sock.sendMessage(chatId, { text: 'Le bot est actif et fonctionne !' }, { quoted: message });
     }
 }
 
