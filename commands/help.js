@@ -24,6 +24,7 @@ _Tape une commande avec le préfixe (.)_
 *• .news*
 *• .groupinfo*
 *• .extract*
+*• .chip*
 *• .autoreact <on/off>*
 *• .autostatus <on/off>*
 *• .autoread <on/off>*
@@ -42,7 +43,6 @@ _Tape une commande avec le préfixe (.)_
 *• .guess <lettre>*
 *• .trivia*
 *• .answer <réponse>*
-*• .truth*
 
 ══════════════════════
 🤖 *INTELLIGENCE ARTIFICIELLE*
@@ -51,14 +51,12 @@ _Tape une commande avec le préfixe (.)_
 *• .gemini <question>*
 *• .imagine <prompt>*
 *• .flux <prompt>*
-*• .sora <prompt>*
 
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
 ══════════════════════
 *• .play <musique>*
 *• .song <musique>*
-*• .spotify <recherche>*
 *• .instagram <lien>*
 *• .facebook <lien>*
 *• .tiktok <lien>*
