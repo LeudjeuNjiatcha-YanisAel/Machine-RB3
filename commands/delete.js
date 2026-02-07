@@ -40,7 +40,7 @@ async function deleteCommand(sock, chatId, message, senderId) {
         // If no number provided and not replying/mentioning, show usage message
         else if (countArg === null && !repliedParticipant && !mentioned) {
             await sock.sendMessage(chatId, { 
-                text: '❌ Please specify the number of messages to delete.\n\nUsage:\n• `.del 5` - Delete last 5 messages from group\n• `.del 3 @user` - Delete last 3 messages from @user\n• `.del 2` (reply to message) - Delete last 2 messages from replied user' 
+                text: '❌ Svp Specifier Le Nombre De Message a Supprimer.\n\nUsage:\n• `.del 5` - Delete last 5 messages from group\n• `.del 3 @user` - Delete last 3 messages from @user\n• `.del 2` (reply to message) - Delete last 2 messages from replied user' 
             }, { quoted: message });
             return;
         }
@@ -152,7 +152,7 @@ async function deleteCommand(sock, chatId, message, senderId) {
 
     
     } catch (err) {
-        await sock.sendMessage(chatId, { text: 'Failed to delete messages.' }, { quoted: message });
+        await sock.sendMessage(chatId, { text: 'Echec De La Suppression Des Messages.' }, { quoted: message });
     }
 }
 

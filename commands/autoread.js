@@ -1,16 +1,16 @@
 /**
- * Knight Bot - A WhatsApp Bot
- * Autoread Command - Automatically read all messages
+ * Knight Bot - Un Bot WhatsApp
+ * Commande Autoread - Lire automatiquement tous les messages
  */
 
 const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
 
-// Path to store the configuration
+// Chemin pour stocker la configuration
 const configPath = path.join(__dirname, '..', 'data', 'autoread.json');
 
-// Initialize configuration file if it doesn't exist
+// Initialiser le fichier de configuration s'il n'existe pas
 function initConfig() {
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, JSON.stringify({ enabled: false }, null, 2));
@@ -18,7 +18,7 @@ function initConfig() {
     return JSON.parse(fs.readFileSync(configPath));
 }
 
-// Toggle autoread feature
+// Activer / désactiver la fonctionnalité autoread
 async function autoreadCommand(sock, chatId, message) {
     try {
         const senderId = message.key.participant || message.key.remoteJid;
@@ -26,29 +26,20 @@ async function autoreadCommand(sock, chatId, message) {
         
         if (!message.key.fromMe && !isOwner) {
             await sock.sendMessage(chatId, {
-                text: '❌ This command is only available for the owner!',
-                contextInfo: {
-                    forwardingScore: 1,
-                    isForwarded: true,
-                    forwardedNewsletterMessageInfo: {
-                        newsletterJid: '120363161513685998@newsletter',
-                        newsletterName: 'Machine V3',
-                        serverMessageId: -1
-                    }
-                }
+                text: '❌ Cette commande est réservée uniquement au propriétaire !',
             });
             return;
         }
 
-        // Get command arguments
+        // Récupérer les arguments de la commande
         const args = message.message?.conversation?.trim().split(' ').slice(1) || 
                     message.message?.extendedTextMessage?.text?.trim().split(' ').slice(1) || 
                     [];
         
-        // Initialize or read config
+        // Initialiser ou lire la configuration
         const config = initConfig();
         
-        // Toggle based on argument or toggle current state if no argument
+        // Activer / désactiver selon l’argument ou basculer l’état si aucun argument
         if (args.length > 0) {
             const action = args[0].toLowerCase();
             if (action === 'on' || action === 'enable') {
@@ -57,80 +48,53 @@ async function autoreadCommand(sock, chatId, message) {
                 config.enabled = false;
             } else {
                 await sock.sendMessage(chatId, {
-                    text: '❌ Invalid option! Use: .autoread on/off',
-                    contextInfo: {
-                        forwardingScore: 1,
-                        isForwarded: true,
-                        forwardedNewsletterMessageInfo: {
-                            newsletterJid: '120363161513685998@newsletter',
-                            newsletterName: 'Machine V3',
-                            serverMessageId: -1
-                        }
-                    }
+                    text: '❌ Option invalide ! Utilise : .autoread on/off',
                 });
                 return;
             }
         } else {
-            // Toggle current state
+            // Inverser l’état actuel
             config.enabled = !config.enabled;
         }
         
-        // Save updated configuration
+        // Sauvegarder la configuration mise à jour
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
         
-        // Send confirmation message
+        // Envoyer un message de confirmation
         await sock.sendMessage(chatId, {
-            text: `✅ Auto-read has been ${config.enabled ? 'enabled' : 'disabled'}!`,
-            contextInfo: {
-                forwardingScore: 1,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363161513685998@newsletter',
-                    newsletterName: 'Machine V3',
-                    serverMessageId: -1
-                }
-            }
+            text: `✅ La lecture automatique a été ${config.enabled ? 'activée' : 'désactivée'} !`,
         });
         
     } catch (error) {
-        console.error('Error in autoread command:', error);
+        console.error('Erreur dans la commande autoread :', error);
         await sock.sendMessage(chatId, {
-            text: '❌ Error processing command!',
-            contextInfo: {
-                forwardingScore: 1,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363161513685998@newsletter',
-                    newsletterName: 'Machine V3',
-                    serverMessageId: -1
-                }
-            }
+            text: '❌ Erreur lors du traitement de la commande !',
         });
     }
 }
 
-// Function to check if autoread is enabled
+// Fonction pour vérifier si l’autoread est activé
 function isAutoreadEnabled() {
     try {
         const config = initConfig();
         return config.enabled;
     } catch (error) {
-        console.error('Error checking autoread status:', error);
+        console.error('Erreur lors de la vérification du statut autoread :', error);
         return false;
     }
 }
 
-// Function to check if bot is mentioned in a message
+// Fonction pour vérifier si le bot est mentionné dans un message
 function isBotMentionedInMessage(message, botNumber) {
     if (!message.message) return false;
     
-    // Check for mentions in contextInfo (works for all message types)
+    // Vérifier les mentions via contextInfo (fonctionne pour tous les types de messages)
     const messageTypes = [
         'extendedTextMessage', 'imageMessage', 'videoMessage', 'stickerMessage',
         'documentMessage', 'audioMessage', 'contactMessage', 'locationMessage'
     ];
     
-    // Check for explicit mentions in mentionedJid array
+    // Vérifier les mentions explicites dans le tableau mentionedJid
     for (const type of messageTypes) {
         if (message.message[type]?.contextInfo?.mentionedJid) {
             const mentionedJid = message.message[type].contextInfo.mentionedJid;
@@ -140,7 +104,7 @@ function isBotMentionedInMessage(message, botNumber) {
         }
     }
     
-    // Check for text mentions in various message types
+    // Vérifier les mentions textuelles dans les différents types de messages
     const textContent = 
         message.message.conversation || 
         message.message.extendedTextMessage?.text ||
@@ -148,14 +112,14 @@ function isBotMentionedInMessage(message, botNumber) {
         message.message.videoMessage?.caption || '';
     
     if (textContent) {
-        // Check for @mention format
+        // Vérifier le format @mention
         const botUsername = botNumber.split('@')[0];
         if (textContent.includes(`@${botUsername}`)) {
             return true;
         }
         
-        // Check for bot name mentions (optional, can be customized)
-        const botNames = [global.botname?.toLowerCase(), 'bot', 'Machine', 'Machine bot'];
+        // Vérifier les mentions par nom du bot (optionnel, personnalisable)
+        const botNames = [global.botname?.toLowerCase(), 'bot', 'machine', 'machine bot'];
         const words = textContent.toLowerCase().split(/\s+/);
         if (botNames.some(name => words.includes(name))) {
             return true;
@@ -165,29 +129,32 @@ function isBotMentionedInMessage(message, botNumber) {
     return false;
 }
 
-// Function to handle autoread functionality
+// Fonction pour gérer la lecture automatique
 async function handleAutoread(sock, message) {
     if (isAutoreadEnabled()) {
-        // Get bot's ID
+        // Récupérer l’ID du bot
         const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
         
-        // Check if bot is mentioned
+        // Vérifier si le bot est mentionné
         const isBotMentioned = isBotMentionedInMessage(message, botNumber);
         
-        // If bot is mentioned, read the message internally but don't mark as read in UI
+        // Si le bot est mentionné, lire le message en interne sans le marquer comme lu dans l’interface
         if (isBotMentioned) {
-            
-            // We don't call sock.readMessages() here, so the message stays unread in the UI
-            return false; // Indicates message was not marked as read
+            // On n’appelle pas sock.readMessages(), donc le message reste non lu visuellement
+            return false; // Indique que le message n’a pas été marqué comme lu
         } else {
-            // For regular messages, mark as read normally
-            const key = { remoteJid: message.key.remoteJid, id: message.key.id, participant: message.key.participant };
+            // Pour les messages normaux, marquer comme lu
+            const key = { 
+                remoteJid: message.key.remoteJid, 
+                id: message.key.id, 
+                participant: message.key.participant 
+            };
             await sock.readMessages([key]);
-            //console.log('✅ Marked message as read from ' + (message.key.participant || message.key.remoteJid).split('@')[0]);
-            return true; // Indicates message was marked as read
+            //console.log('✅ Message marqué comme lu depuis ' + (message.key.participant || message.key.remoteJid).split('@')[0]);
+            return true; // Indique que le message a été marqué comme lu
         }
     }
-    return false; // Autoread is disabled
+    return false; // Autoread désactivé
 }
 
 module.exports = {
