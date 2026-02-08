@@ -47,14 +47,17 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
 
 En attente du tour de @${room.game.currentTurn.split('@')[0]}...
 
-${arr.slice(0, 3).join('')}
-${arr.slice(3, 6).join('')}
-${arr.slice(6).join('')}
+${arr.slice(0, 5).join('')}
+${arr.slice(5, 10).join('')}
+${arr.slice(10, 15).join('')}
+${arr.slice(15, 20).join('')}
+${arr.slice(20, 25).join('')}
+
 
 ▢ *ID de la salle :* ${room.id}
 ▢ *Règles :*
-• Alignez 3 symboles verticalement, horizontalement ou en diagonale pour gagner
-• Tapez un numéro (1-9) pour placer votre symbole
+• Alignez 4 symboles verticalement, horizontalement ou en diagonale pour gagner
+• Tapez un numéro (1-25) pour placer votre symbole
 • Tapez *surrender* pour abandonner
 `;
 
@@ -104,7 +107,7 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
         const isSurrender = /^(surrender|give up)$/i.test(text);
         
-        if (!isSurrender && !/^[1-9]$/.test(text)) return;
+        if (!isSurrender && !/^([1-9]|1[0-9]|2[0-5])$/.test(text)) return;
 
         // Autoriser l’abandon à tout moment
         if (senderId !== room.game.currentTurn && !isSurrender) {
@@ -127,7 +130,7 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
         }
 
         let winner = room.game.winner;
-        let isTie = room.game.turns === 9;
+        let isTie = room.game.turns === 25;
 
         const arr = room.game.render().map(v => ({
             'X': '❎',
@@ -170,9 +173,12 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
 ${gameStatus}
 
-${arr.slice(0, 3).join('')}
-${arr.slice(3, 6).join('')}
-${arr.slice(6).join('')}
+${arr.slice(0, 5).join('')}
+${arr.slice(5, 10).join('')}
+${arr.slice(10, 15).join('')}
+${arr.slice(15, 20).join('')}
+${arr.slice(20, 25).join('')}
+
 
 ▢ Joueur ❎ : @${room.game.playerX.split('@')[0]}
 ▢ Joueur ⭕ : @${room.game.playerO.split('@')[0]}
