@@ -8,7 +8,7 @@ const axios = require('axios')
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
-const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia,sleep, reSize } = require('./lib/myfunc')
+const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia,fetchJson,await,sleep, reSize } = require('./lib/myfunc')
 const {
     default: makeWASocket,
     useMultiFileAuthState,
@@ -42,6 +42,7 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 
 // C'est Pour Ouvrir Le Bot Sur Un Serveur Web 
 const express = require('express');
+const { reactToAllMessages } = require('./lib/reactions')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -111,7 +112,7 @@ async function startXeonBotInc() {
             version,
             logger: pino({ level: 'silent' }),
             printQRInTerminal: !pairingCode,
-            browser: ["Ubuntu", "Chrome", "20.0.04"],
+            browser: ["Machine", "Chrome", "20.0.04"],
             auth: {
                 creds: state.creds,
                 keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
@@ -138,6 +139,7 @@ async function startXeonBotInc() {
                 const mek = chatUpdate.messages[0]
                 if (!mek.message) return
                 
+                await reactToAllMessages(XeonBotInc, chatUpdate)
                 try {
                     await handleMessages(XeonBotInc, chatUpdate, true)
                 } catch (err) {

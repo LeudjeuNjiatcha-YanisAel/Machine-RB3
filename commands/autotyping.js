@@ -26,7 +26,7 @@ async function autotypingCommand(sock, chatId, message) {
         
         if (!message.key.fromMe && !isOwner) {
             await sock.sendMessage(chatId, {
-                text: '❌ This command is only available for the owner!',
+                text: '❌ Cette Commande est seulement dispo pour le proprietaire!',
                 
             });
             return;
@@ -49,7 +49,7 @@ async function autotypingCommand(sock, chatId, message) {
                 config.enabled = false;
             } else {
                 await sock.sendMessage(chatId, {
-                    text: '❌ Invalid option! Use: .autotyping on/off',
+                    text: '❌ Option Invalide! Utilisation: .autotyping on/off',
                     
                 });
                 return;
@@ -64,14 +64,14 @@ async function autotypingCommand(sock, chatId, message) {
         
         // Send confirmation message
         await sock.sendMessage(chatId, {
-            text: `✅ Auto-typing has been ${config.enabled ? 'enabled' : 'disabled'}!`,
+            text: `✅ Auto-typing a ete ${config.enabled ? 'enabled' : 'disabled'}!`,
             
         });
         
     } catch (error) {
         console.error('Error in autotyping command:', error);
         await sock.sendMessage(chatId, {
-            text: '❌ Error processing command!',
+            text: '❌ Erreur lors processus commande!',
             
         });
     }
