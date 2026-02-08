@@ -142,7 +142,7 @@ const { anticallCommand, readState: readAnticallState } = require('./commands/an
 const { pmblockerCommand, readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
-const {onlineCommand,trackActivity} = require('./commands/online');
+const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
 
 

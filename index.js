@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
 const axios = require('axios')
+const {trackActivity} = require('./commands/trackActivity');
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
@@ -139,7 +140,7 @@ async function startXeonBotInc() {
                 const mek = chatUpdate.messages[0]
                 if (!mek.message) return;
 
-                await trackActivity(mek)
+                trackActivity(mek);
                 
                 await reactToAllMessages(XeonBotInc, chatUpdate)
                 try {

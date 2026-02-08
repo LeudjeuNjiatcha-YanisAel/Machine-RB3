@@ -1,14 +1,3 @@
-
-// Stocke la dernière activité des utilisateurs
-const lastActivity = {};
-
-function trackActivity(message) {
-    const jid = message.key?.participant || message.key?.remoteJid;
-    if (jid) {
-        lastActivity[jid] = Date.now();
-    }
-}
-
 async function onlineCommand(sock, chatId, message) {
     try {
         if (!chatId.endsWith('@g.us')) {
@@ -61,4 +50,4 @@ async function onlineCommand(sock, chatId, message) {
     }
 }
 
-module.exports = {onlineCommand, trackActivity};
+module.exports = onlineCommand;
