@@ -16,44 +16,44 @@ _Tape une commande avec le préfixe (.)_
 ══════════════════════
 🌐 *COMMANDES GÉNÉRALES*
 ══════════════════════
-*• .help / .menu*
-*• .ping*
-*• .alive*
-*• .tts <texte>*
-*• .owner*
-*• .groupinfo*
-*• .extract*
-*• .chip*
-*• .delete <num_message>*
-*• .sticker*
-*• .tagall*
-*• .sudo*
-*• .setpp*
-*• .mute*
-*• .unmute*
-*• .online*
-*• .compliment*
-*• .translate <text> <lang>*
+*• *help / .menu*
+*• *ping*
+*• *alive*
+*• *tts <texte>*
+*• *owner*
+*• *groupinfo*
+*• *extract*
+*• *chip*
+*• *delete <num_message>*
+*• *sticker*
+*• *tagall*
+*• *sudo*
+*• *setpp*
+*• *mute*
+*• *unmute*
+*• *online*
+*• *compliment*
+*• *translate <text> <lang>*
 
 ══════════════════════
 🎮 *JEUX*
 ══════════════════════
-*• .tictactoe @user*
-*• .hangman*
-*• .guess <lettre>*
-*• .answer <réponse>*
+*• *tictactoe @user*
+*• *hangman*
+*• *guess <lettre>*
+*• *answer <réponse>*
 
 ══════════════════════
 🤖 *INTELLIGENCE ARTIFICIELLE*
 ══════════════════════
-*• .gpt <question>*
-*• .gemini <question>*
+*• *gpt <question>*
+*• *gemini <question>*
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
 ══════════════════════
-*• .play <musique>*
-*• .tiktok <lien>*
-*• .ytmp4 <lien>*
+*• *play <musique>*
+*• *tiktok <lien>*
+*• *ytmp4 <lien>*
 
 ══════════════════════
 ✨ *${settings.botName || 'MachineBot-RB3'}*
