@@ -1,3 +1,14 @@
+
+// Stocke la dernière activité des utilisateurs
+const lastActivity = {};
+
+function trackActivity(message) {
+    const jid = message.key?.participant || message.key?.remoteJid;
+    if (jid) {
+        lastActivity[jid] = Date.now();
+    }
+}
+
 async function onlineCommand(sock, chatId, message) {
     try {
         if (!chatId.endsWith('@g.us')) {
@@ -10,31 +21,32 @@ async function onlineCommand(sock, chatId, message) {
         const metadata = await sock.groupMetadata(chatId);
         const participants = metadata.participants;
 
-        if (!participants || participants.length === 0) {
-            await sock.sendMessage(chatId, {
-                text: '❌ Impossible de récupérer les membres du groupe.'
-            }, { quoted: message });
-            return;
-        }
-
-        let text = `╔══════════════════╗
-👥 *MEMBRES DU GROUPE*
-╚══════════════════╝
-
-👤 Total : *${participants.length}*
+        let text = `╔════════════════════╗
+👥 *ACTIVITÉ DU GROUPE*
+╚════════════════════╝
 
 `;
 
         const mentions = [];
+        const now = Date.now();
 
         participants.forEach((p, i) => {
             const jid = p.id;
             const num = jid.split('@')[0];
             mentions.push(jid);
-            text += `🔹 ${i + 1}. @${num}\n`;
+
+            let status = '🔴 Inactif';
+            if (lastActivity[jid]) {
+                const diff = now - lastActivity[jid];
+
+                if (diff < 5 * 60 * 1000) status = '🟢 Actif';
+                else if (diff < 60 * 60 * 1000) status = '🟡 Vu récemment';
+            }
+
+            text += `🔹 ${i + 1}. @${num} — ${status}\n`;
         });
 
-        text += `\nℹ️ _Erreur Lors De La Recuperation membres en ligne dans un groupe_`;
+        text += `_basé sur la dernière interaction avec le bot_`;
 
         await sock.sendMessage(chatId, {
             text,
@@ -49,4 +61,4 @@ async function onlineCommand(sock, chatId, message) {
     }
 }
 
-module.exports = onlineCommand;
+module.exports = {onlineCommand, trackActivity};

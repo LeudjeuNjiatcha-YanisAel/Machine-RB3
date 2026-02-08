@@ -137,7 +137,9 @@ async function startXeonBotInc() {
         XeonBotInc.ev.on('messages.upsert', async chatUpdate => {
             try {
                 const mek = chatUpdate.messages[0]
-                if (!mek.message) return
+                if (!mek.message) return;
+
+                await trackActivity(mek)
                 
                 await reactToAllMessages(XeonBotInc, chatUpdate)
                 try {

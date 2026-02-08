@@ -1,33 +1,25 @@
 const insults = [
-    "You're like a cloud. When you disappear, it's a beautiful day!",
-    "You bring everyone so much joy when you leave the room!",
-    "I'd agree with you, but then we'd both be wrong.",
-    "You're not stupid; you just have bad luck thinking.",
-    "Your secrets are always safe with me. I never even listen to them.",
-    "You're proof that even evolution takes a break sometimes.",
-    "You have something on your chin... no, the third one down.",
-    "You're like a software update. Whenever I see you, I think, 'Do I really need this right now?'",
-    "You bring everyone happiness... you know, when you leave.",
-    "You're like a penny—two-faced and not worth much.",
-    "You have something on your mind... oh wait, never mind.",
-    "You're the reason they put directions on shampoo bottles.",
-    "You're like a cloud. Always floating around with no real purpose.",
-    "Your jokes are like expired milk—sour and hard to digest.",
-    "You're like a candle in the wind... useless when things get tough.",
-    "You have something unique—your ability to annoy everyone equally.",
-    "You're like a Wi-Fi signal—always weak when needed most.",
-    "You're proof that not everyone needs a filter to be unappealing.",
-    "Your energy is like a black hole—it just sucks the life out of the room.",
-    "You have the perfect face for radio.",
-    "You're like a traffic jam—nobody wants you, but here you are.",
-    "You're like a broken pencil—pointless.",
-    "Your ideas are so original, I'm sure I've heard them all before.",
-    "You're living proof that even mistakes can be productive.",
-    "You're not lazy; you're just highly motivated to do nothing.",
-    "Your brain's running Windows 95—slow and outdated.",
-    "You're like a speed bump—nobody likes you, but everyone has to deal with you.",
-    "You're like a cloud of mosquitoes—just irritating.",
-    "You bring people together... to talk about how annoying you are."
+    "C'est une honte pour ta famille!",
+    "Tu as le QI d'une huître!",
+    "Tu es fiere de ta nullité?",
+    "Va la bas dechet!",
+    "Sale Con!",
+    "Idiot",
+    "Crétin",
+    "Imbécile",
+    "Sale Chien!",
+    "Débile",
+    "Abruti",
+    "Ton cerveau est en mode avion!",
+    "Regarde comment tu fais les trucs de yaourt-nature!",
+    "Je vais te giffler!",
+    "Kungnaffe!",
+    "Salopard!",
+    "Ton modia petit frere!",
+    "T'es qu'une merde!",
+    "Espèce de tocard!",
+    "je vais demander a machine de pirater ton compte!",
+    "Ekiee dont touch me!",
 ];
 
 async function insultCommand(sock, chatId, message) {
@@ -50,7 +42,7 @@ async function insultCommand(sock, chatId, message) {
         
         if (!userToInsult) {
             await sock.sendMessage(chatId, { 
-                text: 'Please mention someone or reply to their message to insult them!'
+                text: 'Veuillez Mentionner Une Personne Pour l\'insulter!'
             });
             return;
         }
@@ -70,7 +62,7 @@ async function insultCommand(sock, chatId, message) {
             await new Promise(resolve => setTimeout(resolve, 2000));
             try {
                 await sock.sendMessage(chatId, { 
-                    text: 'Please try again in a few seconds.'
+                    text: '🙏 Veuillez Reessayer Apres qq secondes 🙏.'
                 });
             } catch (retryError) {
                 console.error('Error sending retry message:', retryError);
@@ -78,7 +70,7 @@ async function insultCommand(sock, chatId, message) {
         } else {
             try {
                 await sock.sendMessage(chatId, { 
-                    text: 'An error occurred while sending the insult.'
+                    text: '❌ Une erreur est survenue lors de l\'exécution de la commande d\'insulte.'
                 });
             } catch (sendError) {
                 console.error('Error sending error message:', sendError);

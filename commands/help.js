@@ -27,12 +27,15 @@ _Tape une commande avec le préfixe (.)_
 *• *delete <num_message>*
 *• *sticker*
 *• *tagall*
+*• *character*
+*• *emojimix*
 *• *sudo*
 *• *setpp*
 *• *mute*
 *• *unmute*
 *• *online*
 *• *compliment*
+*• *insult*
 *• *translate <text> <lang>*
 
 ══════════════════════

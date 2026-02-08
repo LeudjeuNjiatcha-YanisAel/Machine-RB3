@@ -12,13 +12,13 @@ async function emojimixCommand(sock, chatId, msg) {
         const args = text.split(' ').slice(1);
         
         if (!args[0]) {
-            await sock.sendMessage(chatId, { text: '🎴 Example: .emojimix 😎+🥰' });
+            await sock.sendMessage(chatId, { text: '🎴 Exemple : .emojimix 😎+🥰' });
             return;
         }
 
         if (!text.includes('+')) {
             await sock.sendMessage(chatId, { 
-                text: '✳️ Separate the emoji with a *+* sign\n\n📌 Example: \n*.emojimix* 😎+🥰' 
+                text: '✳️ Séparez les emojis avec le signe *+*\n\n📌 Exemple :\n*.emojimix* 😎+🥰' 
             });
             return;
         }
@@ -33,7 +33,7 @@ async function emojimixCommand(sock, chatId, msg) {
 
         if (!data.results || data.results.length === 0) {
             await sock.sendMessage(chatId, { 
-                text: '❌ These emojis cannot be mixed! Try different ones.' 
+                text: '❌ Ces emojis ne peuvent pas être combinés ! Essayez-en d’autres.' 
             });
             return;
         }
@@ -62,7 +62,7 @@ async function emojimixCommand(sock, chatId, msg) {
         await new Promise((resolve, reject) => {
             exec(ffmpegCommand, (error) => {
                 if (error) {
-                    console.error('FFmpeg error:', error);
+                    console.error('Erreur FFmpeg :', error);
                     reject(error);
                 } else {
                     resolve();
@@ -72,7 +72,7 @@ async function emojimixCommand(sock, chatId, msg) {
 
         // Check if output file exists
         if (!fs.existsSync(outputFile)) {
-            throw new Error('Failed to create sticker file');
+            throw new Error('Échec de la création du fichier autocollant');
         }
 
         // Read the WebP file
@@ -88,15 +88,15 @@ async function emojimixCommand(sock, chatId, msg) {
             fs.unlinkSync(tempFile);
             fs.unlinkSync(outputFile);
         } catch (err) {
-            console.error('Error cleaning up temp files:', err);
+            console.error('Erreur lors du nettoyage des fichiers temporaires :', err);
         }
 
     } catch (error) {
-        console.error('Error in emojimix command:', error);
+        console.error('Erreur dans la commande emojimix :', error);
         await sock.sendMessage(chatId, { 
-            text: '❌ Failed to mix emojis! Make sure you\'re using valid emojis.\n\nExample: .emojimix 😎+🥰' 
+            text: '❌ Échec du mélange des emojis ! Assurez-vous d’utiliser des emojis valides.\n\nExemple : .emojimix 😎+🥰' 
         });
     }
 }
 
-module.exports = emojimixCommand; 
+module.exports = emojimixCommand;

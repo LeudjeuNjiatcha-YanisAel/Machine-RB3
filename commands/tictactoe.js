@@ -11,7 +11,7 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
             [room.game.playerX, room.game.playerO].includes(senderId)
         )) {
             await sock.sendMessage(chatId, { 
-                text: '❌ Vous êtes déjà dans une partie. Tapez *surrender* pour quitter.' 
+                text: '❌ Vous êtes déjà dans une partie. Tapez *quit* pour quitter.' 
             });
             return;
         }
@@ -31,31 +31,31 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
             const arr = room.game.render().map(v => ({
                 'X': '❎',
                 'O': '⭕',
-                '1': '1️⃣',
-                '2': '2️⃣',
-                '3': '3️⃣',
-                '4': '4️⃣',
-                '5': '5️⃣',
-                '6': '6️⃣',
-                '7': '7️⃣',
-                '8': '8️⃣',
-                '9': '9️⃣',
-                '10':'🔟',
-                '11':'1️⃣1️⃣',
-                '12':'1️⃣2️⃣',
-                '13':'1️⃣3️⃣',
-                '14':'1️⃣4️⃣',
-                '15':'1️⃣5️⃣',
-                '16':'1️⃣6️⃣',
-                '17':'1️⃣7️⃣',
-                '18':'1️⃣8️⃣',
-                '19':'1️⃣9️⃣',
-                '20':'2️⃣0️⃣',
-                '21':'2️⃣1️⃣',
-                '22':'2️⃣2️⃣',
-                '23':'2️⃣3️⃣',
-                '24':'2️⃣4️⃣',
-                '25':'2️⃣5️⃣'
+                '1':'①',
+                '2':'②',
+                '3':'③',
+                '4':'④',
+                '5':'⑤',
+                '6':'⑥',
+                '7':'⑦',
+                '8':'⑧',
+                '9':'⑨',
+                '10':'⑩',
+                '11':'⑪',
+                '12':'⑫',
+                '13':'⑬',
+                '14':'⑭',
+                '15':'⑮',
+                '16':'⑯',
+                '17':'⑰',
+                '18':'⑱',
+                '19':'⑲',
+                '20':'⑳',
+                '21':'㉑',
+                '22':'㉒',
+                '23':'㉓',
+                '24':'㉔',
+                '25':'㉕'
             }[v]));
 
             const str = `
@@ -74,7 +74,7 @@ ${arr.slice(20, 25).join('')}
 ▢ *Règles :*
 • Alignez 4 symboles verticalement, horizontalement ou en diagonale pour gagner
 • Tapez un numéro (1-25) pour placer votre symbole
-• Tapez *surrender* pour abandonner
+• Tapez *quit* pour abandonner
 `;
 
             // Envoyer le message une seule fois au groupe
@@ -96,7 +96,7 @@ ${arr.slice(20, 25).join('')}
             if (text) room.name = text;
 
             await sock.sendMessage(chatId, { 
-                text: `⏳ *En attente d’un adversaire*\nTapez *.ttt ${text || ''}* pour rejoindre !`
+                text: `⏳ *En attente d’un adversaire*\nTapez **accept ${text || ''}* pour rejoindre !`
             });
 
             games[room.id] = room;
@@ -121,19 +121,19 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
         if (!room) return;
 
-        const isSurrender = /^(surrender|give up)$/i.test(text);
+        const isquit = /^(quit|give up)$/i.test(text);
         
-        if (!isSurrender && !/^([1-9]|1[0-9]|2[0-5])$/.test(text)) return;
+        if (!isquit && !/^([1-9]|1[0-9]|2[0-5])$/.test(text)) return;
 
         // Autoriser l’abandon à tout moment
-        if (senderId !== room.game.currentTurn && !isSurrender) {
+        if (senderId !== room.game.currentTurn && !isquit) {
             await sock.sendMessage(chatId, { 
                 text: '❌ Ce n’est pas votre tour !' 
             });
             return;
         }
 
-        let ok = isSurrender ? true : room.game.turn(
+        let ok = isquit ? true : room.game.turn(
             senderId === room.game.playerO,
             parseInt(text) - 1
         );
@@ -178,7 +178,7 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
             '25':'2️⃣5️⃣'
         }[v]));
 
-        if (isSurrender) {
+        if (isquit) {
             // Définir le gagnant comme l’adversaire
             winner = senderId === room.game.playerX ? room.game.playerO : room.game.playerX;
             
@@ -215,7 +215,7 @@ ${arr.slice(20, 25).join('')}
 ▢ Joueur ❎ : @${room.game.playerX.split('@')[0]}
 ▢ Joueur ⭕ : @${room.game.playerO.split('@')[0]}
 
-${!winner && !isTie ? '• Tapez un numéro (1-9) pour jouer\n• Tapez *surrender* pour abandonner' : ''}
+${!winner && !isTie ? '• Tapez un numéro (1-9) pour jouer\n• Tapez *quit* pour abandonner' : ''}
 `;
 
         const mentions = [

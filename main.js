@@ -142,7 +142,7 @@ const { anticallCommand, readState: readAnticallState } = require('./commands/an
 const { pmblockerCommand, readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
-const onlineCommand = require('./commands/online');
+const {onlineCommand,trackActivity} = require('./commands/online');
 const soraCommand = require('./commands/sora');
 
 
@@ -247,7 +247,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
         }
 
         // First check if it's a game move
-        if (/^[1-9]$/.test(userMessage) || userMessage.toLowerCase() === 'surrender') {
+        if (/^[1-9]$/.test(userMessage) || userMessage.toLowerCase() === 'quit') {
             await handleTicTacToeMove(sock, chatId, senderId, userMessage);
             return;
         }
@@ -583,7 +583,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage === '*news':
                 await newsCommand(sock, chatId);
                 break;
-            case userMessage.startsWith('*ttt') || userMessage.startsWith('*tictactoe'):
+            case userMessage.startsWith('*accept') || userMessage.startsWith('*tictactoe'):
                 const tttText = userMessage.split(' ').slice(1).join(' ');
                 await tictactoeCommand(sock, chatId, senderId, tttText);
                 break;
@@ -893,9 +893,9 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 const antideleteMatch = userMessage.slice(11).trim();
                 await handleAntideleteCommand(sock, chatId, message, antideleteMatch);
                 break;
-            case userMessage === '*surrender':
-                // Handle surrender command for tictactoe game
-                await handleTicTacToeMove(sock, chatId, senderId, 'surrender');
+            case userMessage === '*quit':
+                // Handle quit command for tictactoe game
+                await handleTicTacToeMove(sock, chatId, senderId, 'quit');
                 break;
             case userMessage === '*cleartmp':
                 await clearTmpCommand(sock, chatId, message);
