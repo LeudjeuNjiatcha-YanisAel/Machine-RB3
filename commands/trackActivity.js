@@ -8,4 +8,4 @@ function trackActivity(message) {
     }
 }
 
-module.exports.trackActivity = {trackActivity,lastActivity};
+module.exports = trackActivity;
