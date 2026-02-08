@@ -144,6 +144,8 @@ const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
 const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
+const { capitalCommand, handleCapitalAnswer } = require('./commands/capital');
+
 
 
 // Global settings
@@ -251,6 +253,8 @@ async function handleMessages(sock, messageUpdate, printLog) {
             await handleTicTacToeMove(sock, chatId, senderId, userMessage);
             return;
         }
+        // CAPITAL game answer (text libre)
+        await handleCapitalAnswer(sock, chatId, senderId, rawText);
 
         // Basic message response in private chat
           if (!isGroup && (userMessage === 'hi' || userMessage === 'hello' || userMessage === 'bot' || userMessage === 'hlo' || userMessage === 'hey' || userMessage === 'bro')) {
@@ -587,6 +591,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 const tttText = userMessage.split(' ').slice(1).join(' ');
                 await tictactoeCommand(sock, chatId, senderId, tttText);
                 break;
+            case userMessage === '*capital':
+                await capitalCommand(sock, chatId, senderId);
+            break;
+
             case userMessage.startsWith('*move'):
                 const position = parseInt(userMessage.split(' ')[1]);
                 if (isNaN(position)) {
