@@ -45,6 +45,7 @@ _Tape une commande avec le préfixe (.)_
 *• *hangman*
 *• *guess <lettre>*
 *• *answer <réponse>*
+*• *capital*
 
 ══════════════════════
 🤖 *INTELLIGENCE ARTIFICIELLE*

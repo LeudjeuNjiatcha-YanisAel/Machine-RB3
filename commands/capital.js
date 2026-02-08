@@ -2,7 +2,11 @@ const CapitalGame = require('../lib/capital');
 
 const games = {};
 
+/**
+ * Lancer / rejoindre une partie CAPITAL
+ */
 async function capitalCommand(sock, chatId, senderId) {
+    // Déjà en partie ?
     if (Object.values(games).find(r =>
         r.game &&
         [r.game.playerA, r.game.playerB].includes(senderId)
@@ -26,7 +30,8 @@ async function capitalCommand(sock, chatId, senderId) {
             text: `🌍 *CAPITAL – PARTIE COMMENCÉE*
 
 Pays : *${room.game.country}*
-Nombre de lettres : *${room.game.length}*
+
+✍️ Écrivez le nom de la capitale
 
 🎯 Tour de : @${room.game.currentTurn.split('@')[0]}
 ⏱️ Temps : 10 secondes`,
@@ -52,6 +57,9 @@ Nombre de lettres : *${room.game.length}*
     }
 }
 
+/**
+ * Timer 10 secondes
+ */
 function startTimer(sock, room) {
     if (room.timer) clearTimeout(room.timer);
 
@@ -69,6 +77,9 @@ function startTimer(sock, room) {
     }, 10000);
 }
 
+/**
+ * Réponses des joueurs
+ */
 async function handleCapitalAnswer(sock, chatId, senderId, text) {
     const room = Object.values(games).find(r =>
         r.state === 'PLAYING' &&
@@ -78,22 +89,56 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
     if (!room) return;
     if (senderId !== room.game.currentTurn) return;
 
-    const win = room.game.checkAnswer(senderId, text);
+    const result = room.game.checkAnswer(senderId, text);
 
-    if (win) {
+    // Partie terminée
+    if (result.status === 'win') {
         clearTimeout(room.timer);
 
         await sock.sendMessage(chatId, {
-            text: `🎉 *VICTOIRE !*
+            text: `🏆 *PARTIE TERMINÉE !*
 
-@${senderId.split('@')[0]} a trouvé la bonne réponse 🏆
+@${senderId.split('@')[0]} a gagné 🎉
 
-🏙️ Capitale : *${room.game.capital}*
-🌍 Pays : *${room.game.country}*`,
+📊 Score final :
+${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
+${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
             mentions: [senderId]
         });
 
         delete games[room.id];
+        return;
+    }
+
+    // Bonne réponse (mais pas encore 3 points)
+    if (result.status === 'correct') {
+        await sock.sendMessage(chatId, {
+            text: `✅ Bonne réponse !
+
+📊 Score :
+${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
+${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}
+
+🌍 Nouveau pays : *${room.game.country}*
+
+🎯 Tour de : @${room.game.currentTurn.split('@')[0]}`,
+            mentions: [room.game.currentTurn]
+        });
+
+        startTimer(sock, room);
+        return;
+    }
+
+    // Mauvaise réponse
+    if (result.status === 'wrong') {
+        await sock.sendMessage(chatId, {
+            text: `❌ Mauvaise réponse !
+
+🎯 Tour de : @${room.game.currentTurn.split('@')[0]}`,
+            mentions: [room.game.currentTurn]
+        });
+
+        startTimer(sock, room);
     }
 }
 
