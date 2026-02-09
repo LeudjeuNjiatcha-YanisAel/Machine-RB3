@@ -8,6 +8,7 @@ const path = require('path')
 const axios = require('axios')
 const trackActivity = require('./commands/trackActivity');
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
+// const autoResponse = require('./autoResponse')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia,fetchJson,await,sleep, reSize } = require('./lib/myfunc')
@@ -145,7 +146,7 @@ async function startXeonBotInc() {
                     await handleStatus(XeonBotInc, chatUpdate);
                     return;
                 }
-
+                // await autoResponse(mek, XeonBotInc);
                 if (!XeonBotInc.public && !mek.key.fromMe && chatUpdate.type === 'notify') {
                     const isGroup = mek.key?.remoteJid?.endsWith('@g.us')
                     if (!isGroup) return // Block DMs in private mode, but allow group messages
