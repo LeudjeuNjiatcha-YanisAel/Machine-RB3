@@ -177,7 +177,7 @@ async function handleChatbotCommand(sock, chatId, message, match) {
 
     await showTyping(sock, chatId);
     return sock.sendMessage(chatId, { 
-        text: '*Commande invalide. Utilisez .chatbot pour voir l’utilisation*',
+        text: '*Commande invalide. Utilisez *chatbot pour voir l’utilisation*',
         quoted: message
     });
 }
@@ -187,52 +187,41 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
     if (!data.chatbot[chatId]) return;
 
     try {
-        // Get bot's ID - try multiple formats
-        const botId = sock.user.id;
-        const botNumber = botId.split(':')[0];
-        const botLid = sock.user.lid;
-        const botJids = [
-            botId,
-            `${botNumber}@s.whatsapp.net`,
-            `${botNumber}@whatsapp.net`,
-            `${botNumber}@lid`,
-            botLid,
-            `${botLid.split(':')[0]}@lid`
-        ];
+        const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
 
         let isBotMentioned = false;
         let isReplyToBot = false;
 
+        // ----- DÉTECTION TAG / RÉPONSE -----
         if (message.message?.extendedTextMessage) {
-            const mentionedJid = message.message.extendedTextMessage.contextInfo?.mentionedJid || [];
-            const quotedParticipant = message.message.extendedTextMessage.contextInfo?.participant;
-            
-            isBotMentioned = mentionedJid.some(jid => {
-                const jidNumber = jid.split('@')[0].split(':')[0];
-                return botJids.some(botJid => {
-                    const botJidNumber = botJid.split('@')[0].split(':')[0];
-                    return jidNumber === botJidNumber;
-                });
-            });
-            
-            if (quotedParticipant) {
-                const cleanQuoted = quotedParticipant.replace(/[:@].*$/, '');
-                isReplyToBot = botJids.some(botJid => {
-                    const cleanBot = botJid.replace(/[:@].*$/, '');
-                    return cleanBot === cleanQuoted;
-                });
+            const context = message.message.extendedTextMessage.contextInfo || {};
+            const mentionedJid = context.mentionedJid || [];
+            const quotedParticipant = context.participant;
+
+            // Tag du bot
+            isBotMentioned = mentionedJid.includes(botJid);
+
+            // Réponse à un message du bot
+            if (quotedParticipant && quotedParticipant === botJid) {
+                isReplyToBot = true;
             }
-        } else if (message.message?.conversation) {
-            isBotMentioned = userMessage.includes(`@${botNumber}`);
+        }
+
+        // Message privé → toujours autorisé
+        if (!chatId.endsWith('@g.us')) {
+            isBotMentioned = true;
         }
 
         if (!isBotMentioned && !isReplyToBot) return;
 
-        let cleanedMessage = userMessage;
-        if (isBotMentioned) {
-            cleanedMessage = cleanedMessage.replace(new RegExp(`@${botNumber}`, 'g'), '').trim();
-        }
+        // ----- NETTOYAGE DU MESSAGE -----
+        let cleanedMessage = userMessage
+            .replace(new RegExp(`@${botJid.split('@')[0]}`, 'g'), '')
+            .trim();
 
+        if (!cleanedMessage || cleanedMessage.length < 2) return;
+
+        // ----- MÉMOIRE UTILISATEUR -----
         if (!chatMemory.messages.has(senderId)) {
             chatMemory.messages.set(senderId, []);
             chatMemory.userInfo.set(senderId, {});
@@ -248,50 +237,34 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
 
         const messages = chatMemory.messages.get(senderId);
         messages.push(cleanedMessage);
-        if (messages.length > 20) {
-            messages.shift();
-        }
-        chatMemory.messages.set(senderId, messages);
+        if (messages.length > 20) messages.shift();
 
         await showTyping(sock, chatId);
 
         const response = await getAIResponse(cleanedMessage, {
-            messages: chatMemory.messages.get(senderId),
+            messages,
             userInfo: chatMemory.userInfo.get(senderId)
         });
 
         if (!response) {
-            await sock.sendMessage(chatId, { 
-                text: "Hmm, laisse-moi réfléchir... 🤔\nJ’ai un peu de mal à traiter ta demande pour le moment.",
+            return sock.sendMessage(chatId, {
+                text: "🤔 Je réfléchis encore… reformule un peu ta question.",
                 quoted: message
             });
-            return;
         }
-
-        await new Promise(resolve => setTimeout(resolve, getRandomDelay()));
 
         await sock.sendMessage(chatId, {
             text: response
-        }, {
-            quoted: message
-        });
+        }, { quoted: message });
 
     } catch (error) {
-        console.error('❌ Erreur dans la réponse du chatbot :', error.message);
-        
-        if (error.message && error.message.includes('No sessions')) {
-            console.error('Erreur de session dans le chatbot - réponse ignorée');
-            return;
-        }
-        
+        console.error('❌ Erreur chatbot :', error);
         try {
-            await sock.sendMessage(chatId, { 
-                text: "Oups ! 😅 J’ai buggué un peu. Tu peux réessayer ?",
+            await sock.sendMessage(chatId, {
+                text: "😅 Oups… petite erreur interne. Réessaie.",
                 quoted: message
             });
-        } catch (sendError) {
-            console.error('Échec de l’envoi du message d’erreur du chatbot :', sendError.message);
-        }
+        } catch {}
     }
 }
 

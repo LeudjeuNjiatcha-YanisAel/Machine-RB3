@@ -5,54 +5,80 @@ async function playCommand(sock, chatId, message) {
     try {
         const text = message.message?.conversation || message.message?.extendedTextMessage?.text;
         const searchQuery = text.split(' ').slice(1).join(' ').trim();
-        
+
         if (!searchQuery) {
-            return await sock.sendMessage(chatId, { 
-                text: "Quelle chanson voulez-vous télécharger ?"
+            return sock.sendMessage(chatId, {
+                text: "🎵 Utilisation : *play nom_de_la_chanson*"
             });
         }
 
-        // Search for the song
+        // 🔍 Recherche YouTube
         const { videos } = await yts(searchQuery);
-        if (!videos || videos.length === 0) {
-            return await sock.sendMessage(chatId, { 
-                text: "Aucune chanson trouvée !"
-            });
+        if (!videos.length) {
+            return sock.sendMessage(chatId, { text: "❌ Aucune musique trouvée." });
         }
 
-        // Send loading message
+        const video = videos[0];
+        const ytUrl = encodeURIComponent(video.url);
+
+        // 📢 Infos musique
         await sock.sendMessage(chatId, {
-            text: "_Veuillez patienter, votre téléchargement est en cours..._"
+            text: `
+🎧 *MUSIQUE TROUVÉE*
+
+• 📝 Titre : ${video.title}
+• ⏱️ Durée : ${video.timestamp}
+• 👤 Auteur : ${video.author.name}
+• 👁️ Vues : ${video.views.toLocaleString()}
+
+⏳ Téléchargement en cours...
+            `.trim(),
+            quoted: message
         });
 
-        // Get the first video result
-        const video = videos[0];
-        const urlYt = video.url;
+        // 🔁 APIs MP3 (fallback)
+        const apis = [
+            `https://api.giftedtech.my.id/api/download/yta?apikey=gifted&url=${ytUrl}`,
+            `https://api.ryzendesu.vip/api/downloader/youtube-mp3?url=${ytUrl}`,
+            `https://api.siputzx.my.id/api/d/ytmp3?url=${ytUrl}`
+        ];
 
-        // Fetch audio data from API
-        const response = await axios.get(`https://apis-keith.vercel.app/download/dlmp3?url=${urlYt}`);
-        const data = response.data;
+        let audioUrl = null;
 
-        if (!data || !data.status || !data.result || !data.result.downloadUrl) {
-            return await sock.sendMessage(chatId, { 
-                text: "Impossible de récupérer l’audio depuis l’API. Veuillez réessayer plus tard."
+        for (const api of apis) {
+            try {
+                const res = await axios.get(api, { timeout: 20000 });
+                const d = res.data;
+
+                audioUrl =
+                    d?.result?.download_url ||
+                    d?.result?.url ||
+                    d?.data?.download ||
+                    d?.download_url;
+
+                if (audioUrl) break;
+            } catch {
+                continue;
+            }
+        }
+
+        if (!audioUrl) {
+            return sock.sendMessage(chatId, {
+                text: "❌ Toutes les APIs de téléchargement sont indisponibles."
             });
         }
 
-        const audioUrl = data.result.downloadUrl;
-        const title = data.result.title;
-
-        // Send the audio
+        // 📤 Envoi audio
         await sock.sendMessage(chatId, {
             audio: { url: audioUrl },
             mimetype: "audio/mpeg",
-            fileName: `${title}.mp3`
+            fileName: `${video.title}.mp3`
         }, { quoted: message });
 
-    } catch (error) {
-        console.error('Erreur dans la comamnde song2 :', error);
-        await sock.sendMessage(chatId, { 
-            text: "Échec du téléchargement. Veuillez réessayer plus tard."
+    } catch (err) {
+        console.error('❌ playCommand error:', err.message);
+        await sock.sendMessage(chatId, {
+            text: "⚠️ Erreur lors du téléchargement. Réessaie plus tard."
         });
     }
 }

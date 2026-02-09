@@ -1,104 +1,104 @@
 const axios = require('axios');
 const fetch = require('node-fetch');
 
+
+
+async function callGeminiOfficial(prompt) {
+    const apiKey = process.env.GEMINI_API;
+    if (!apiKey) throw new Error('GEMINI_API_KEY manquante');
+
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const res = await axios.post(url, {
+        contents: [
+            {
+                parts: [{ text: prompt }]
+            }
+        ]
+    });
+
+    return res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+}
+
+
 async function aiCommand(sock, chatId, message) {
     try {
-        const text = message.message?.conversation || message.message?.extendedTextMessage?.text;
-        
-        if (!text) {
-            return await sock.sendMessage(chatId, { 
-                text: "Veuillez fournir une question après .gpt ou .gemini\n\nExemple : .gpt écris un code HTML basique"
-            }, {
-                quoted: message
-            });
-        }
+        const text =
+            message.message?.conversation ||
+            message.message?.extendedTextMessage?.text ||
+            message.message?.imageMessage?.caption ||
+            message.message?.videoMessage?.caption;
 
-        // Get the command and query
-        const parts = text.split(' ');
+        if (!text) return;
+
+        const parts = text.trim().split(' ');
         const command = parts[0].toLowerCase();
         const query = parts.slice(1).join(' ').trim();
 
         if (!query) {
-            return await sock.sendMessage(chatId, { 
-                text: "Veuillez fournir une question après .gpt ou .gemini"
-            }, {quoted:message});
+            return sock.sendMessage(chatId, {
+                text: '❌ Utilisation : *gpt ta question ou *gemini ta question'
+            }, { quoted: message });
         }
 
-        try {
-            // Show processing message
-            await sock.sendMessage(chatId, {
-                react: { text: '🤖', key: message.key }
-            });
-
-            if (command === '.gpt') {
-                // Call the GPT API
-                const response = await axios.get(`https://zellapi.autos/ai/chatbot?text=${encodeURIComponent(query)}`);
-                
-                if (response.data && response.data.status && response.data.result) {
-                    const answer = response.data.result;
-                    await sock.sendMessage(chatId, {
-                        text: answer
-                    }, {
-                        quoted: message
-                    });
-                    
-                } else {
-                    throw new Error('Réponse invalide de l’API');
-                }
-            } else if (command === '.gemini') {
-                const apis = [
-                    `https://vapis.my.id/api/gemini?q=${encodeURIComponent(query)}`,
-                    `https://api.siputzx.my.id/api/ai/gemini-pro?content=${encodeURIComponent(query)}`,
-                    `https://api.ryzendesu.vip/api/ai/gemini?text=${encodeURIComponent(query)}`,
-                    `https://zellapi.autos/ai/chatbot?text=${encodeURIComponent(query)}`,
-                    `https://api.giftedtech.my.id/api/ai/geminiai?apikey=gifted&q=${encodeURIComponent(query)}`,
-                    `https://api.giftedtech.my.id/api/ai/geminiaipro?apikey=gifted&q=${encodeURIComponent(query)}`
-                ];
-
-                for (const api of apis) {
-                    try {
-                        const response = await fetch(api);
-                        const data = await response.json();
-
-                        if (data.message || data.data || data.answer || data.result) {
-                            const answer = data.message || data.data || data.answer || data.result;
-                            await sock.sendMessage(chatId, {
-                                text: answer
-                            }, {
-                                quoted: message
-                            });
-                            
-                            return;
-                        }
-                    } catch (e) {
-                        continue;
-                    }
-                }
-                throw new Error('Toutes les API Gemini ont échoué');
-            }
-        } catch (error) {
-            console.error('API Error:', error);
-            await sock.sendMessage(chatId, {
-                text: "❌ Impossible d’obtenir une réponse. Veuillez réessayer plus tard.",
-                contextInfo: {
-                    mentionedJid: [message.key.participant || message.key.remoteJid],
-                    quotedMessage: message.message
-                }
-            }, {
-                quoted: message
-            });
-        }
-    } catch (error) {
-        console.error('AI Command Error:', error);
         await sock.sendMessage(chatId, {
-            text: "❌ Une erreur est survenue. Veuillez réessayer plus tard.",
-            contextInfo: {
-                mentionedJid: [message.key.participant || message.key.remoteJid],
-                quotedMessage: message.message
-            }
-        }, {
-            quoted: message
+            react: { text: '🤖', key: message.key }
         });
+
+        if (command === '*gpt') {
+            const apis = [
+                `https://zellapi.autos/ai/chatbot?text=${encodeURIComponent(query)}`,
+                `https://api.ryzendesu.vip/api/ai/chatgpt?text=${encodeURIComponent(query)}`
+            ];
+
+            for (const api of apis) {
+                try {
+                    const res = await fetch(api);
+                    const data = await res.json();
+                    const answer = data.result || data.answer || data.response;
+                    if (answer) {
+                        return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+                    }
+                } catch {}
+            }
+
+            throw new Error('GPT APIs failed');
+        }
+
+        if (command === '*gemini') {
+
+            try {
+                const answer = await callGeminiOfficial(query);
+                if (answer) {
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+                }
+            } catch (e) {
+                console.error('Gemini OFFICIEL failed:', e.message);
+            }
+
+            const apis = [
+                `https://vapis.my.id/api/gemini?q=${encodeURIComponent(query)}`,
+                `https://api.siputzx.my.id/api/ai/gemini-pro?content=${encodeURIComponent(query)}`
+            ];
+
+            for (const api of apis) {
+                try {
+                    const res = await fetch(api);
+                    const data = await res.json();
+                    const answer = data.message || data.data || data.answer || data.result || data.response;
+                    if (answer) {
+                        return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+                    }
+                } catch {}
+            }
+
+            throw new Error('Gemini APIs failed');
+        }
+
+    } catch (err) {
+        console.error('AI ERROR:', err.message);
+        await sock.sendMessage(chatId, {
+            text: '❌ Erreur IA, réessaie plus tard.'
+        }, { quoted: message });
     }
 }
 

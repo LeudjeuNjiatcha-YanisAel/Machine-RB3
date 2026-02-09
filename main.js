@@ -1,6 +1,7 @@
 // 🧹 Fix for ENOSPC / temp overflow in hosted panels
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
 // Redirect temp storage away from system /tmp
 const customTemp = path.join(process.cwd(), 'temp');
@@ -144,7 +145,8 @@ const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
 const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
-const { capitalCommand, handleCapitalAnswer } = require('./commands/capital');
+const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
+
 
 
 
@@ -253,9 +255,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
             await handleTicTacToeMove(sock, chatId, senderId, userMessage);
             return;
         }
-        // CAPITAL game answer (text libre)
-        await handleCapitalAnswer(sock, chatId, senderId, rawText);
-
         // Basic message response in private chat
           if (!isGroup && (userMessage === 'hi' || userMessage === 'hello' || userMessage === 'bot' || userMessage === 'hlo' || userMessage === 'hey' || userMessage === 'bro')) {
               await sock.sendMessage(chatId, {
@@ -293,6 +292,8 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
         // Then check for command prefix
         if (!userMessage.startsWith('*')) {
+            
+            await handleCapitalAnswer(sock, chatId, senderId, rawText); // Check for capital game answer with original casing
             // Show typing indicator if autotyping is enabled
             await handleAutotypingForMessage(sock, chatId, userMessage);
 
@@ -314,11 +315,11 @@ async function handleMessages(sock, messageUpdate, printLog) {
         }
 
         // List of admin commands
-        const adminCommands = ['.mute', '.unmute', '.ban', '.unban', '.promote', '.demote', '.kick', '.tagall', '.tagnotadmin', '.hidetag', '.antilink', '.antitag', '.setgdesc', '.setgname', '.setgpp'];
+        const adminCommands = ['*mute', '*unmute', '*ban', '*unban', '*promote', '*demote', '*kick', '*tagall', '*tagnotadmin', '*hidetag', '*antilink', '*antitag', '*setgdesc', '*setgname', '*setgpp'];
         const isAdminCommand = adminCommands.some(cmd => userMessage.startsWith(cmd));
 
         // List of owner commands
-        const ownerCommands = ['.mode', '.autostatus', '.antidelete', '.cleartmp', '.setpp', '.clearsession', '.areact', '.autoreact', '.autotyping', '.autoread', '.pmblocker'];
+        const ownerCommands = ['*mode', '*autostatus', '*antidelete', '*cleartmp', '*setpp', '*clearsession', '*areact', '*autoreact', '*autotyping', '*autoread', '*pmblocker'];
         const isOwnerCommand = ownerCommands.some(cmd => userMessage.startsWith(cmd));
 
         let isSenderAdmin = false;
@@ -595,6 +596,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await capitalCommand(sock, chatId, senderId);
             break;
 
+            case userMessage === '*exit':
+                await quitCapitalGame(sock, chatId, senderId);
+                break;
+                
             case userMessage.startsWith('*move'):
                 const position = parseInt(userMessage.split(' ')[1]);
                 if (isNaN(position)) {
@@ -1200,7 +1205,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             });
         }
 
-        if (userMessage.startsWith('*')) {
+        if (userMessage.startsWith('')) {
             // After command is processed successfully
             await reactToAllMessages(sock, message);
         }

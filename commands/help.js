@@ -37,6 +37,7 @@ _Tape une commande avec le préfixe (.)_
 *• *compliment*
 *• *insult*
 *• *translate <text> <lang>*
+*• *chatbot <on/off>*
 
 ══════════════════════
 🎮 *JEUX*

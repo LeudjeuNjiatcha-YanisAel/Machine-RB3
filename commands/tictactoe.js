@@ -79,7 +79,13 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
                 '46':'6️⃣',
                 '47':'7️⃣',
                 '48':'8️⃣',
-                '49':'9️⃣'   
+                '49':'9️⃣',
+                '50':'🔟','51':'1️⃣','52':'2️⃣','53':'3️⃣','54':'4️⃣','55':'5️⃣','56':'6️⃣','57':'7️⃣','58':'8️⃣','59':'9️⃣','60':'🔟',
+                '61':'1️⃣','62':'2️⃣','63':'3️⃣','64':'4️⃣','65':'5️⃣','66':'6️⃣','67':'7️⃣','68':'8️⃣','69':'9️⃣','70':'🔟',
+                '71':'1️⃣','72':'2️⃣','73':'3️⃣','74':'4️⃣','75':'5️⃣','76':'6️⃣','77':'7️⃣','78':'8️⃣','79':'9️⃣','80':'🔟',
+                '81':'1️⃣','82':'2️⃣','83':'3️⃣','84':'4️⃣','85':'5️⃣','86':'6️⃣','87':'7️⃣','88':'8️⃣','89':'9️⃣','90':'🔟',
+                '91':'1️⃣','92':'2️⃣','93':'3️⃣','94':'4️⃣','95':'5️⃣','96':'6️⃣','97':'7️⃣','98':'8️⃣','99':'9️⃣','100':'🔟'
+
             }[v]));
 
             const str = `
@@ -87,18 +93,22 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
 
 En attente du tour de @${room.game.currentTurn.split('@')[0]}...
 
-${arr.slice(0, 7).join('')}
-${arr.slice(7, 14).join('')}
-${arr.slice(14, 21).join('')}
-${arr.slice(21, 28).join('')}
-${arr.slice(28, 35).join('')}
-${arr.slice(35, 42).join('')}
-${arr.slice(42, 49).join('')}
+${arr.slice(0, 10).join('')}
+${arr.slice(10, 20).join('')}
+${arr.slice(20, 30).join('')}
+${arr.slice(30, 40).join('')}
+${arr.slice(40, 50).join('')}
+${arr.slice(50, 60).join('')}
+${arr.slice(60, 70).join('')}
+${arr.slice(70, 80).join('')}
+${arr.slice(80, 90).join('')}
+${arr.slice(90, 100).join('')}
 
 ▢ *ID de la salle :* ${room.id}
 ▢ *Règles :*
 • Alignez 4 symboles verticalement, horizontalement ou en diagonale pour gagner
-• Tapez un numéro (1-49) pour placer votre symbole
+• Tapez un numéro (1-100) pour placer votre symbole
+• Le premier chiffre de la 2 ligne correspond à la position 11, le premier de la 3ème ligne à 21, etc.
 • Tapez *quit* pour abandonner
 `;
 
@@ -137,6 +147,7 @@ ${arr.slice(42, 49).join('')}
 
 async function handleTicTacToeMove(sock, chatId, senderId, text) {
     try {
+        text = text.trim(); // ✅ IMPORTAN
         // Trouver la partie du joueur
         const room = Object.values(games).find(room => 
             room.id.startsWith('tictactoe') && 
@@ -148,7 +159,7 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
         const isquit = /^(quit|give up)$/i.test(text);
         
-        if (!isquit && !/^([1-9]|[1-3][0-9]|4[0-9])$/.test(text)) return;
+        if (!isquit && !/^(100|[1-9][0-9]?|[1-9])$/.test(text)) return;
 
         // Autoriser l’abandon à tout moment
         if (senderId !== room.game.currentTurn && !isquit) {
@@ -171,7 +182,7 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
         }
 
         let winner = room.game.winner;
-        let isTie = room.game.turns === 49;
+        let isTie = room.game.turns === 100;
 
         const arr = room.game.render().map(v => ({
             'X': '❎',
@@ -224,7 +235,58 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
             '46':'6️⃣',
             '47':'7️⃣',
             '48':'8️⃣',
-            '49':'9️⃣'
+            '49':'9️⃣',
+            '50':'🔟',
+            '51':'1️⃣',
+            '52':'2️⃣',
+            '53':'3️⃣',
+            '54':'4️⃣',
+            '55':'5️⃣',
+            '56':'6️⃣',
+            '57':'7️⃣',
+            '58':'8️⃣',
+            '59':'9️⃣',
+            '60':'🔟',
+            '61':'1️⃣',
+            '62':'2️⃣',
+            '63':'3️⃣',
+            '64':'4️⃣',
+            '65':'5️⃣',
+            '66':'6️⃣',
+            '67':'7️⃣',
+            '68':'8️⃣',
+            '69':'9️⃣',
+            '70':'🔟',
+            '71':'1️⃣',
+            '72':'2️⃣',
+            '73':'3️⃣',
+            '74':'4️⃣',
+            '75':'5️⃣',
+            '76':'6️⃣',
+            '77':'7️⃣',
+            '78':'8️⃣',
+            '79':'9️⃣',
+            '80':'🔟',
+            '81':'1️⃣',
+            '82':'2️⃣',
+            '83':'3️⃣',
+            '84':'4️⃣',
+            '85':'5️⃣',
+            '86':'6️⃣',
+            '87':'7️⃣',
+            '88':'8️⃣',
+            '89':'9️⃣',
+            '90':'🔟',
+            '91':'1️⃣',
+            '92':'2️⃣',
+            '93':'3️⃣',
+            '94':'4️⃣',
+            '95':'5️⃣',
+            '96':'6️⃣',
+            '97':'7️⃣',
+            '98':'8️⃣',
+            '99':'9️⃣',
+            '100':'🔟',
 
         }[v]));
 
@@ -255,20 +317,22 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
 ${gameStatus}
 
-${arr.slice(0, 7).join('')}
-${arr.slice(7, 14).join('')}
-${arr.slice(14, 21).join('')}
-${arr.slice(21, 28).join('')}
-${arr.slice(28, 35).join('')}
-${arr.slice(35, 42).join('')}
-${arr.slice(42, 49).join('')}
-
+${arr.slice(0, 10).join('')}
+${arr.slice(10, 20).join('')}
+${arr.slice(20, 30).join('')}
+${arr.slice(30, 40).join('')}
+${arr.slice(40, 50).join('')}
+${arr.slice(50, 60).join('')}
+${arr.slice(60, 70).join('')}
+${arr.slice(70, 80).join('')}
+${arr.slice(80, 90).join('')}
+${arr.slice(90, 100).join('')}
 
 
 ▢ Joueur ❎ : @${room.game.playerX.split('@')[0]}
 ▢ Joueur ⭕ : @${room.game.playerO.split('@')[0]}
 
-${!winner && !isTie ? '• Tapez un numéro (1-9) pour jouer\n• Tapez *quit* pour abandonner' : ''}
+${!winner && !isTie ? '• Tapez un numéro (1-100) pour jouer\n• Tapez *quit* pour abandonner' : ''}
 `;
 
         const mentions = [

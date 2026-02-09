@@ -3,42 +3,37 @@ const CapitalGame = require('../lib/capital');
 const games = {};
 
 /**
- * Lancer / rejoindre une partie CAPITAL
+ * Lancer ou rejoindre une partie CAPITAL
  */
 async function capitalCommand(sock, chatId, senderId) {
-    // Déjà en partie ?
+    // Vérifie si le joueur est déjà en partie
     if (Object.values(games).find(r =>
         r.game &&
         [r.game.playerA, r.game.playerB].includes(senderId)
     )) {
-        await sock.sendMessage(chatId, {
-            text: '❌ Vous êtes déjà dans une partie CAPITAL.'
-        });
-        return;
+        return sock.sendMessage(chatId, { text: '❌ Vous êtes déjà dans une partie CAPITAL.' });
     }
 
+    // Cherche une partie en attente
     let room = Object.values(games).find(r => r.state === 'WAITING');
 
     if (room) {
+        // Rejoint la partie
         room.playerB = senderId;
         room.game = new CapitalGame(room.playerA, senderId);
         room.state = 'PLAYING';
-
-        startTimer(sock, room);
+        room.roundsWithoutAnswer = 0;
 
         await sock.sendMessage(chatId, {
-            text: `🌍 *CAPITAL – PARTIE COMMENCÉE*
-
-Pays : *${room.game.country}*
-
-✍️ Écrivez le nom de la capitale
-
-🎯 Tour de : @${room.game.currentTurn.split('@')[0]}
-⏱️ Temps : 10 secondes`,
+            text: `🌍 *CAPITAL – PARTIE COMMENCÉE*\n\n🎯 Tour de : @${room.game.currentTurn.split('@')[0]}\n⏱️ Temps : 10 secondes,
+            • Tapez *exit* pour abandonner`,
             mentions: [room.game.currentTurn]
         });
 
+        startTimer(sock, room);
+
     } else {
+        // Crée une nouvelle partie
         room = {
             id: 'capital-' + Date.now(),
             chatId,
@@ -46,39 +41,58 @@ Pays : *${room.game.country}*
             playerB: null,
             game: null,
             state: 'WAITING',
-            timer: null
+            timer: null,
+            roundsWithoutAnswer: 0
         };
 
         games[room.id] = room;
 
-        await sock.sendMessage(chatId, {
-            text: '⏳ En attente d’un adversaire pour *CAPITAL*'
-        });
+        await sock.sendMessage(chatId, { text: '⏳ En attente d’un adversaire pour *CAPITAL*' });
     }
 }
 
 /**
- * Timer 10 secondes
+ * Masque la capitale pour le joueur
+ */
+function maskCapital(capital) {
+    return capital.split('').map((c, i) => (i === 0 ? c : '_')).join('');
+}
+
+/**
+ * Envoie la capitale masquée au joueur courant
+ */
+async function sendCapitalHint(sock, room) {
+    const masked = maskCapital(room.game.capital);
+    await sock.sendMessage(room.chatId, {
+        text: `💡 Devinez la capitale : ${masked}\n\n🎯 Tour de : @${room.game.currentTurn.split('@')[0]}\n⏱️ 10 secondes pour répondre !`,
+        mentions: [room.game.currentTurn]
+    });
+}
+
+/**
+ * Timer 10 secondes par tour
  */
 function startTimer(sock, room) {
     if (room.timer) clearTimeout(room.timer);
 
     room.timer = setTimeout(async () => {
+        room.roundsWithoutAnswer += 1;
         room.game.switchTurn();
 
-        await sock.sendMessage(room.chatId, {
-            text: `⏱️ Temps écoulé !
+        if (room.roundsWithoutAnswer >= 2) {
+            // Personne n'a trouvé → nouveau pays
+            room.game.pickNewCapital();
+            room.roundsWithoutAnswer = 0;
+        }
 
-🎯 Tour de : @${room.game.currentTurn.split('@')[0]}`,
-            mentions: [room.game.currentTurn]
-        });
+        await sendCapitalHint(sock, room);
 
         startTimer(sock, room);
     }, 10000);
 }
 
 /**
- * Réponses des joueurs
+ * Gérer la réponse d’un joueur
  */
 async function handleCapitalAnswer(sock, chatId, senderId, text) {
     const room = Object.values(games).find(r =>
@@ -86,23 +100,15 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
         [r.game.playerA, r.game.playerB].includes(senderId)
     );
 
-    if (!room) return;
-    if (senderId !== room.game.currentTurn) return;
+    if (!room || senderId !== room.game.currentTurn) return;
 
     const result = room.game.checkAnswer(senderId, text);
 
-    // Partie terminée
     if (result.status === 'win') {
         clearTimeout(room.timer);
 
         await sock.sendMessage(chatId, {
-            text: `🏆 *PARTIE TERMINÉE !*
-
-@${senderId.split('@')[0]} a gagné 🎉
-
-📊 Score final :
-${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
-${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
+            text: `🏆 *PARTIE TERMINÉE !*\n\n@${senderId.split('@')[0]} a gagné 🎉\n\n📊 Score final :\n${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}\n${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
             mentions: [senderId]
         });
 
@@ -110,39 +116,76 @@ ${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
         return;
     }
 
-    // Bonne réponse (mais pas encore 3 points)
     if (result.status === 'correct') {
+        room.roundsWithoutAnswer = 0;
+
         await sock.sendMessage(chatId, {
-            text: `✅ Bonne réponse !
-
-📊 Score :
-${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
-${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}
-
-🌍 Nouveau pays : *${room.game.country}*
-
-🎯 Tour de : @${room.game.currentTurn.split('@')[0]}`,
+            text: `✅ Bonne réponse !\n\nPays : *${result.country}*\n\n📊 Score :\n${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}\n${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
             mentions: [room.game.currentTurn]
         });
 
-        startTimer(sock, room);
+        // Nouveau pays
+        room.game.pickNewCapital();
+        await sendCapitalHint(sock, room);
         return;
     }
 
-    // Mauvaise réponse
     if (result.status === 'wrong') {
-        await sock.sendMessage(chatId, {
-            text: `❌ Mauvaise réponse !
+        room.roundsWithoutAnswer += 1;
+        room.game.switchTurn();
 
-🎯 Tour de : @${room.game.currentTurn.split('@')[0]}`,
-            mentions: [room.game.currentTurn]
-        });
+        if (room.roundsWithoutAnswer >= 2) {
+            room.game.pickNewCapital();
+            room.roundsWithoutAnswer = 0;
+        }
 
-        startTimer(sock, room);
+        await sendCapitalHint(sock, room);
     }
 }
 
+/**
+ * Arrêter une partie manuellement
+ */
+async function stopCapitalGame(sock, chatId) {
+    const room = Object.values(games).find(r => r.chatId === chatId && r.state === 'PLAYING');
+
+    if (!room) return sock.sendMessage(chatId, { text: '❌ Aucune partie en cours à arrêter.' });
+
+    clearTimeout(room.timer);
+    delete games[room.id];
+
+    await sock.sendMessage(chatId, { text: '🛑 La partie CAPITAL a été arrêtée.' });
+}
+
+/**
+ * Quitter une partie CAPITAL (comme tictactoe)
+ */
+async function quitCapitalGame(sock, chatId, senderId) {
+    const room = Object.values(games).find(r =>
+        r.state === 'PLAYING' &&
+        r.chatId === chatId &&
+        [r.game.playerA, r.game.playerB].includes(senderId)
+    );
+
+    if (!room) {
+        return sock.sendMessage(chatId, {
+            text: '❌ Vous n’êtes dans aucune partie CAPITAL.'
+        });
+    }
+
+    clearTimeout(room.timer);
+    delete games[room.id];
+
+    await sock.sendMessage(chatId, {
+        text: `🏳️ *PARTIE CAPITAL TERMINÉE*\n\n@${senderId.split('@')[0]} a quitté la partie.`,
+        mentions: [senderId]
+    });
+}
+
+
 module.exports = {
     capitalCommand,
-    handleCapitalAnswer
+    handleCapitalAnswer,
+    stopCapitalGame,
+    quitCapitalGame
 };
