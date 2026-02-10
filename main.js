@@ -146,6 +146,7 @@ const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
 const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
+require('dotenv').config();
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
 
 

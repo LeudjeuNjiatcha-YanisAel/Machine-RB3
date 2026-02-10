@@ -23,6 +23,7 @@
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",
     "@ffmpeg/ffmpeg": "^0.12.15",
+    "@google/genai": "^1.40.0",
     "@google/generative-ai": "^0.24.1",
     "@hapi/boom": "^10.0.1",
     "@types/node": "^18.0.6",

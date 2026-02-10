@@ -1,22 +1,21 @@
-const axios = require('axios');
+const { GoogleGenAI } = require('@google/genai');
+require('dotenv').config();
 const fetch = require('node-fetch');
-
-
 
 async function callGeminiOfficial(prompt) {
     const apiKey = process.env.GEMINI_API;
     if (!apiKey) throw new Error('GEMINI_API_KEY manquante');
+    if (!prompt || !prompt.trim()) throw new Error('Prompt vide');
 
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    const res = await axios.post(url, {
-        contents: [
-            {
-                parts: [{ text: prompt }]
-            }
-        ]
+    const ai = new GoogleGenAI({ apiKey });
+    const model = 'models/gemini-2.5-flash'; // ✅ chemin complet requis
+
+    const response = await ai.models.generateContent({
+        model,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
     });
 
-    return res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return response?.response?.text();
 }
 
 
@@ -27,7 +26,6 @@ async function aiCommand(sock, chatId, message) {
             message.message?.extendedTextMessage?.text ||
             message.message?.imageMessage?.caption ||
             message.message?.videoMessage?.caption;
-
         if (!text) return;
 
         const parts = text.trim().split(' ');
@@ -35,9 +33,11 @@ async function aiCommand(sock, chatId, message) {
         const query = parts.slice(1).join(' ').trim();
 
         if (!query) {
-            return sock.sendMessage(chatId, {
-                text: '❌ Utilisation : *gpt ta question ou *gemini ta question'
-            }, { quoted: message });
+            return sock.sendMessage(
+                chatId,
+                { text: '❌ Utilisation : *gpt question* ou *gemini question*' },
+                { quoted: message }
+            );
         }
 
         await sock.sendMessage(chatId, {
@@ -55,9 +55,7 @@ async function aiCommand(sock, chatId, message) {
                     const res = await fetch(api);
                     const data = await res.json();
                     const answer = data.result || data.answer || data.response;
-                    if (answer) {
-                        return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-                    }
+                    if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
                 } catch {}
             }
 
@@ -65,12 +63,9 @@ async function aiCommand(sock, chatId, message) {
         }
 
         if (command === '*gemini') {
-
             try {
                 const answer = await callGeminiOfficial(query);
-                if (answer) {
-                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-                }
+                if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
             } catch (e) {
                 console.error('Gemini OFFICIEL failed:', e.message);
             }
@@ -79,27 +74,11 @@ async function aiCommand(sock, chatId, message) {
                 `https://vapis.my.id/api/gemini?q=${encodeURIComponent(query)}`,
                 `https://api.siputzx.my.id/api/ai/gemini-pro?content=${encodeURIComponent(query)}`
             ];
-
-            for (const api of apis) {
-                try {
-                    const res = await fetch(api);
-                    const data = await res.json();
-                    const answer = data.message || data.data || data.answer || data.result || data.response;
-                    if (answer) {
-                        return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-                    }
-                } catch {}
-            }
-
-            throw new Error('Gemini APIs failed');
         }
-
     } catch (err) {
         console.error('AI ERROR:', err.message);
-        await sock.sendMessage(chatId, {
-            text: '❌ Erreur IA, réessaie plus tard.'
-        }, { quoted: message });
+        await sock.sendMessage(chatId, { text: '❌ Erreur IA, réessaie plus tard.' }, { quoted: message });
     }
 }
 
-module.exports = {aiCommand,callGeminiOfficial};
+module.exports = { aiCommand, callGeminiOfficial };
