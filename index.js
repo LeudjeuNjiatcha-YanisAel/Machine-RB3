@@ -46,6 +46,7 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 // C'est Pour Ouvrir Le Bot Sur Un Serveur Web 
 const express = require('express');
 const { reactToAllMessages } = require('./lib/reactions')
+const autoResponse  = require('./autoResponse');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -147,8 +148,8 @@ async function startXeonBotInc() {
                     await handleStatus(XeonBotInc, chatUpdate);
                     return;
                 }
-                
-                // await autoResponse(mek, XeonBotInc);
+                if (!mek?.message) return;
+                await autoResponse(mek, XeonBotInc);
                 if (!XeonBotInc.public && !mek.key.fromMe && chatUpdate.type === 'notify') {
                     const isGroup = mek.key?.remoteJid?.endsWith('@g.us')
                     if (!isGroup) return // Block DMs in private mode, but allow group messages

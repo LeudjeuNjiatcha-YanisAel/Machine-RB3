@@ -363,6 +363,31 @@ async function handleMessages(sock, messageUpdate, printLog) {
         // Command handlers - Execute commands immediately without waiting for typing indicator
         // We'll show typing indicator after command execution if needed
         let commandExecuted = false;
+        
+         // 🎮 Coup TicTacToe par réponse directe (1 à 100)
+        if (message.message?.extendedTextMessage?.contextInfo?.quotedMessage &&games && Object.values(games).some(r =>r.id.startsWith('tictactoe') &&
+        r.state === 'PLAYING' && [r.game.playerX, r.game.playerO].includes(senderId))) {
+            // Récupérer le texte que l'utilisateur a réellement envoyé
+        let replyText = '';
+    
+        if (message.message?.conversation) {
+            replyText = message.message.conversation;
+        } else if (message.message?.extendedTextMessage?.text) {
+            replyText = message.message.extendedTextMessage.text;
+        }
+        replyText = String(replyText).trim();
+
+        if (!replyText) return;
+            // Vérifier que c'est un nombre 1 à 100
+        const moveNumber = parseInt(replyText, 10);
+        if (isNaN(moveNumber) || moveNumber < 1 || moveNumber > 100) return;
+
+        // Appeler la fonction avec la chaîne du nombre
+        await handleTicTacToeMove(sock, chatId, senderId, moveNumber.toString());
+        return; // Stop le reste
+}
+
+
 
         switch (true) {
             case userMessage === '*simage': {
@@ -599,12 +624,16 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 break;
                 
             case userMessage.startsWith('*move'):
-                const position = parseInt(userMessage.split(' ')[1]);
-                if (isNaN(position)) {
-                    await sock.sendMessage(chatId, { text: 'Please provide a valid position number for Tic-Tac-Toe move.',  }, { quoted: message });
-                } else {
-                    await handleTicTacToeMove(sock, chatId, senderId, position.toString());
+               // on enlève seulement la commande, PAS le reste
+                const moveText = userMessage.replace(/^(\*move)\s*/i, '');
+                if (!moveText) {
+                    await sock.sendMessage(chatId, {
+                    text: '❌ Utilisation : *move <numéro>'
+                }, { quoted: message });
+                 break;
                 }
+                // ⚠️ on envoie le texte BRUT
+                await handleTicTacToeMove(sock, chatId, senderId, moveText);
                 break;
             
             case userMessage === '*chip':

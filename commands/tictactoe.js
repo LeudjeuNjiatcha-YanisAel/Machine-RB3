@@ -148,12 +148,11 @@ ${arr.slice(90, 100).join('')}
 
 async function handleTicTacToeMove(sock, chatId, senderId, text) {
     try {
-        text = text.trim(); // ✅ important
-        // Supprime tout caractère qui n’est pas un chiffre pour éviter les caractères invisibles
-        const move = Number(text);
+        const isquit = /^(quit|give up)$/i.test(text);
 
-        
-        // Trouver la partie du joueur
+        const cleaned = text.replace(/[^\d]/g, '');
+        const move = cleaned ? parseInt(cleaned, 10) : NaN;
+
         const room = Object.values(games).find(room => 
             room.id.startsWith('tictactoe') && 
             [room.game.playerX, room.game.playerO].includes(senderId) && 
@@ -162,26 +161,28 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
 
         if (!room) return;
 
-        const isquit = /^(quit|give up)$/i.test(text);
-        
-        if (!isquit && (isNaN(move) || move < 1 || move > 100)) return;
-
-        // Autoriser l’abandon à tout moment
-        if (senderId !== room.game.currentTurn && !isquit) {
-            await sock.sendMessage(chatId, { 
-                text: '❌ Ce n’est pas votre tour !' 
+        if (!isquit && (!Number.isInteger(move) || move < 1 || move > 100)) {
+            await sock.sendMessage(chatId, {
+                text: '❌ Choisis une position entre 1 et 100.'
             });
             return;
         }
 
-        let ok = isquit ? true : room.game.turn(
+        if (senderId !== room.game.currentTurn && !isquit) {
+            await sock.sendMessage(chatId, { 
+                text: '❌ Ce n’est pas ton tour !' 
+            });
+            return;
+        }
+
+        const ok = isquit ? true : room.game.turn(
             senderId === room.game.playerO,
             move - 1
         );
 
         if (!ok) {
-            await sock.sendMessage(chatId, { 
-                text: '❌ Coup invalide ! Cette position est déjà occupée.' 
+            await sock.sendMessage(chatId, {
+                text: '❌ Cette case est déjà occupée.'
             });
             return;
         }

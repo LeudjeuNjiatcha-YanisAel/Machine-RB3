@@ -88,7 +88,7 @@ function startTimer(sock, room) {
         await sendCapitalHint(sock, room);
 
         startTimer(sock, room);
-    }, 10000);
+    }, 25000);
 }
 
 /**
