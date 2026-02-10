@@ -1,5 +1,8 @@
+const { execFile } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 const yts = require('yt-search');
-const axios = require('axios');
 
 async function playCommand(sock, chatId, message) {
     try {
@@ -7,9 +10,7 @@ async function playCommand(sock, chatId, message) {
         const searchQuery = text.split(' ').slice(1).join(' ').trim();
 
         if (!searchQuery) {
-            return sock.sendMessage(chatId, {
-                text: "🎵 Utilisation : *play nom_de_la_chanson*"
-            });
+            return sock.sendMessage(chatId, { text: "🎵 Utilisation : *play nom_de_la_chanson*" });
         }
 
         // 🔍 Recherche YouTube
@@ -19,67 +20,52 @@ async function playCommand(sock, chatId, message) {
         }
 
         const video = videos[0];
-        const ytUrl = encodeURIComponent(video.url);
 
-        // 📢 Infos musique
+        // Message d’attente
         await sock.sendMessage(chatId, {
-            text: `
-🎧 *MUSIQUE TROUVÉE*
-
-• 📝 Titre : ${video.title}
-• ⏱️ Durée : ${video.timestamp}
-• 👤 Auteur : ${video.author.name}
-• 👁️ Vues : ${video.views.toLocaleString()}
-
-⏳ Téléchargement en cours...
-            `.trim(),
+            text: `⏳ Téléchargement en cours de *${video.title}*...`,
             quoted: message
         });
 
-        // 🔁 APIs MP3 (fallback)
-        const apis = [
-            `https://api.giftedtech.my.id/api/download/yta?apikey=gifted&url=${ytUrl}`,
-            `https://api.ryzendesu.vip/api/downloader/youtube-mp3?url=${ytUrl}`,
-            `https://api.siputzx.my.id/api/d/ytmp3?url=${ytUrl}`
-        ];
+        // Créer un dossier temporaire
+        const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'music-'));
+        const outputPath = path.join(tmpDir, '%(title).50s.%(ext)s');
 
-        let audioUrl = null;
-
-        for (const api of apis) {
-            try {
-                const res = await axios.get(api, { timeout: 20000 });
-                const d = res.data;
-
-                audioUrl =
-                    d?.result?.download_url ||
-                    d?.result?.url ||
-                    d?.data?.download ||
-                    d?.download_url;
-
-                if (audioUrl) break;
-            } catch {
-                continue;
-            }
-        }
-
-        if (!audioUrl) {
-            return sock.sendMessage(chatId, {
-                text: "❌ Toutes les APIs de téléchargement sont indisponibles."
+        // Appel yt-dlp pour extraire l’audio en mp3
+        await new Promise((resolve, reject) => {
+            execFile('yt-dlp', [
+                video.url,
+                '--extract-audio',
+                '--audio-format', 'mp3',
+                '--audio-quality', '192K',
+                '-o', outputPath
+            ], { timeout: 120000 }, (err, stdout, stderr) => {
+                if (err) return reject(err);
+                resolve(stdout);
             });
-        }
+        });
 
-        // 📤 Envoi audio
+        // Trouver le fichier mp3 téléchargé
+        const files = fs.readdirSync(tmpDir).filter(f => f.endsWith('.mp3'));
+        if (!files.length) throw new Error("Fichier mp3 non trouvé");
+
+        const mp3Path = path.join(tmpDir, files[0]);
+
+        // Envoyer le mp3
         await sock.sendMessage(chatId, {
-            audio: { url: audioUrl },
-            mimetype: "audio/mpeg",
+            audio: { url: mp3Path },
+            mimetype: 'audio/mpeg',
             fileName: `${video.title}.mp3`
         }, { quoted: message });
 
+        // Nettoyer le dossier temporaire
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+
     } catch (err) {
-        console.error('❌ playCommand error:', err.message);
+        console.error('❌ playCommand error:', err);
         await sock.sendMessage(chatId, {
-            text: "⚠️ Erreur lors du téléchargement. Réessaie plus tard."
-        });
+            text: "⚠️ Erreur lors du téléchargement ou de la conversion. Réessaie plus tard."
+        }, { quoted: message });
     }
 }
 

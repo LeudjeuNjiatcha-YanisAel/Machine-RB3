@@ -72,6 +72,7 @@ const weatherCommand = require('./commands/weather');
 const newsCommand = require('./commands/news');
 const kickCommand = require('./commands/kick');
 const simageCommand = require('./commands/simage');
+const { infoCommand } = require('./commands/info');
 const attpCommand = require('./commands/attp');
 const { startHangman, guessLetter } = require('./commands/hangman');
 const { startTrivia, answerTrivia } = require('./commands/trivia');
@@ -148,8 +149,6 @@ const soraCommand = require('./commands/sora');
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
 
 
-
-
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
@@ -159,6 +158,7 @@ global.ytch = "Verison 20";
 // Add this near the top of main.js with other global configurations
 
 async function handleMessages(sock, messageUpdate, printLog) {
+    let chatId = null;
     try {
         const { messages, type } = messageUpdate;
         if (type !== 'notify') return;
@@ -179,8 +179,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             await handleMessageRevocation(sock, message);
             return;
         }
-
-        const chatId = message.key.remoteJid;
+        let chatId = message?.key?.remoteJid;
         const senderId = message.key.participant || message.key.remoteJid;
         const isGroup = chatId.endsWith('@g.us');
         const senderIsSudo = await isSudo(senderId);
@@ -189,7 +188,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
         // Handle button responses
         if (message.message?.buttonsResponseMessage) {
             const buttonId = message.message.buttonsResponseMessage.selectedButtonId;
-            const chatId = message.key.remoteJid;
             
             if (buttonId === 'channel') {
                 await sock.sendMessage(chatId, { 
@@ -237,7 +235,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             console.error('Error checking access mode:', error);
             // default isPublic=true on error
         }
-        const isOwnerOrSudoCheck = message.key.fromMe || senderIsOwnerOrSudo;
+        const isOwnerOrSudoCheck = message.key.fromMe || senderIsOwnerOrSudo === true;
         // Check if user is banned (skip ban check for unban command)
         if (isBanned(senderId) && !userMessage.startsWith('*unban')) {
             // Only respond occasionally to avoid spam
@@ -447,7 +445,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*mode'):
                 // Check if sender is the owner
                 if (!message.key.fromMe && !senderIsOwnerOrSudo) {
-                    await sock.sendMessage(chatId, { text: 'Only bot owner can use this command!',  }, { quoted: message });
+                    await sock.sendMessage(chatId, { text: 'Seulement le proprietaire peut utiliser cette commande!',  }, { quoted: message });
                     return;
                 }
                 // Read current data first
@@ -465,7 +463,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 if (!action) {
                     const currentMode = data.isPublic ? 'public' : 'private';
                     await sock.sendMessage(chatId, {
-                        text: `Current bot mode: *${currentMode}*\n\nUsage: .mode public/private\n\nExample:\n.mode public - Allow everyone to use bot\n.mode private - Restrict to owner only`,
+                        text: `Current bot mode: *${currentMode}*\n\nUsage: *mode public/private\n\nExample:\n*mode public - Tout le monde peut utiliser le bot\n*mode private - Restrait seulement au proprietaire`,
                         
                     }, { quoted: message });
                     return;
@@ -473,7 +471,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
                 if (action !== 'public' && action !== 'private') {
                     await sock.sendMessage(chatId, {
-                        text: 'Usage: .mode public/private\n\nExample:\n.mode public - Allow everyone to use bot\n.mode private - Restrict to owner only',
+                        text: 'Usage: *mode public/private\n\nExample:\n*mode public - Allow everyone to use bot\n*mode private - Restrict to owner only',
                         
                     }, { quoted: message });
                     return;
@@ -486,7 +484,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                     // Save updated data
                     fs.writeFileSync('./data/messageCount.json', JSON.stringify(data, null, 2));
 
-                    await sock.sendMessage(chatId, { text: `Bot is now in *${action}* mode`,  });
+                    await sock.sendMessage(chatId, { text: `Bot est maintenant en *${action}* mode`,  });
                 } catch (error) {
                     console.error('Error updating access mode:', error);
                     await sock.sendMessage(chatId, { text: 'Failed to update bot access mode',  });
@@ -605,7 +603,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 if (isNaN(position)) {
                     await sock.sendMessage(chatId, { text: 'Please provide a valid position number for Tic-Tac-Toe move.',  }, { quoted: message });
                 } else {
-                    tictactoeMove(sock, chatId, senderId, position);
+                    await handleTicTacToeMove(sock, chatId, senderId, position.toString());
                 }
                 break;
             
@@ -766,14 +764,14 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 break;
             case userMessage.startsWith('*chatbot'):
                 if (!isGroup) {
-                    await sock.sendMessage(chatId, { text: 'This command can only be used in groups.',  }, { quoted: message });
+                    await sock.sendMessage(chatId, { text: 'Commande dispo slt pour le proprietaire.',  }, { quoted: message });
                     return;
                 }
 
                 // Check if sender is admin or bot owner
                 const chatbotAdminStatus = await isAdmin(sock, chatId, senderId);
                 if (!chatbotAdminStatus.isSenderAdmin && !message.key.fromMe) {
-                    await sock.sendMessage(chatId, { text: '*Only admins or bot owner can use this command*',  }, { quoted: message });
+                    await sock.sendMessage(chatId, { text: '*Seul administrateurs peut utiliser cette commande*',  }, { quoted: message });
                     return;
                 }
 
@@ -857,6 +855,14 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*snow'):
                 await textmakerCommand(sock, chatId, message, userMessage, 'snow');
                 break;
+            
+            case userMessage.startsWith('*getid'):
+                await sock.sendMessage(chatId, { text: `📌 Group ID: ${chatId}` });
+                break;
+            case userMessage.startsWith('*osint'):
+                await infoCommand(sock, chatId, message);
+                break;
+
             case userMessage.startsWith('*impressive'):
                 await textmakerCommand(sock, chatId, message, userMessage, 'impressive');
                 break;
@@ -1205,7 +1211,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             });
         }
 
-        if (userMessage.startsWith('')) {
+        if (!userMessage.startsWith('*')) {
             // After command is processed successfully
             await reactToAllMessages(sock, message);
         }

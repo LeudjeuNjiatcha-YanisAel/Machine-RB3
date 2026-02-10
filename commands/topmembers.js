@@ -5,11 +5,18 @@ const dataFilePath = path.join(__dirname, '..', 'data', 'messageCount.json');
 
 function loadMessageCounts() {
     if (fs.existsSync(dataFilePath)) {
-        const data = fs.readFileSync(dataFilePath);
-        return JSON.parse(data);
+        try {
+            const data = fs.readFileSync(dataFilePath, 'utf8');
+            const parsed = JSON.parse(data);
+            return typeof parsed === 'object' && parsed !== null ? parsed : {};
+        } catch (err) {
+            console.error('Erreur lecture messageCount.json:', err);
+            return {};
+        }
     }
     return {};
 }
+
 
 function saveMessageCounts(messageCounts) {
     fs.writeFileSync(dataFilePath, JSON.stringify(messageCounts, null, 2));
@@ -33,7 +40,7 @@ function incrementMessageCount(groupId, userId) {
 
 function topMembers(sock, chatId, isGroup) {
     if (!isGroup) {
-        sock.sendMessage(chatId, { text: 'This command is only available in group chats.' });
+        sock.sendMessage(chatId, { text: 'Cette Commande est seulement dispo pour les groups.' });
         return;
     }
 
@@ -45,11 +52,11 @@ function topMembers(sock, chatId, isGroup) {
         .slice(0, 5); // Get top 5 members
 
     if (sortedMembers.length === 0) {
-        sock.sendMessage(chatId, { text: 'No message activity recorded yet.' });
+        sock.sendMessage(chatId, { text: 'Aucune Activite Enregistrer.' });
         return;
     }
 
-    let message = '🏆 Top Members Based on Message Count:\n\n';
+    let message = '🏆 Top Members Basee sur les messages Compter:\n\n';
     sortedMembers.forEach(([userId, count], index) => {
         message += `${index + 1}. @${userId.split('@')[0]} - ${count} messages\n`;
     });

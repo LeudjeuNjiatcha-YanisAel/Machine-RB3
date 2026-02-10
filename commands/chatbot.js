@@ -1,6 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
+require('dotenv').config();
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const genAI = new GoogleGenerativeAI({
+    apiKey: process.env.GOOGLE_API
+});
 
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
@@ -13,21 +19,20 @@ const chatMemory = {
 // Load user group data
 function loadUserGroupData() {
     try {
-        return JSON.parse(fs.readFileSync(USER_GROUP_DATA));
+        const data = JSON.parse(fs.readFileSync(USER_GROUP_DATA));
+
+        // 🔒 Sécurisation ABSOLUE
+        if (!data.chatbot || typeof data.chatbot !== 'object') {
+            data.chatbot = {};
+        }
+
+        return data;
     } catch (error) {
         console.error('❌ Erreur lors du chargement des données du groupe utilisateur :', error.message);
-        return { groups: [], chatbot: {} };
+        return { chatbot: {} };
     }
 }
 
-// Save user group data
-function saveUserGroupData(data) {
-    try {
-        fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
-    } catch (error) {
-        console.error('❌ Erreur lors de l’enregistrement des données du groupe utilisateur :', error.message);
-    }
-}
 
 // Add random delay between 2-5 seconds
 function getRandomDelay() {
@@ -71,116 +76,198 @@ async function handleChatbotCommand(sock, chatId, message, match) {
     if (!match) {
         await showTyping(sock, chatId);
         return sock.sendMessage(chatId, {
-            text: `*CONFIGURATION DU CHATBOT*\n\n*.chatbot on*\nActiver le chatbot\n\n*.chatbot off*\nDésactiver le chatbot dans ce groupe`,
+            text: `*CONFIGURATION DU CHATBOT*\n\n*chatbot on*\nActiver le chatbot\n\n*chatbot off*\nDésactiver le chatbot dans ce groupe`,
             quoted: message
         });
     }
 
+    const action = match.toLowerCase().trim();
     const data = loadUserGroupData();
-    
-    // Get bot's number
-    const botNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-    
-    // Check if sender is bot owner
-    const senderId = message.key.participant || message.participant || message.pushName || message.key.remoteJid;
-    const isOwner = senderId === botNumber;
 
-    // If it's the bot owner, allow access immediately
+    const senderId = message.key.participant || message.key.remoteJid;
+    const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isOwner = senderId === botJid;
+
+    // ===== OWNER =====
     if (isOwner) {
-        if (match === 'on') {
+        if (action === 'on') {
             await showTyping(sock, chatId);
             if (data.chatbot[chatId]) {
-                return sock.sendMessage(chatId, { 
+                return sock.sendMessage(chatId, {
                     text: '*Le chatbot est déjà activé pour ce groupe*',
                     quoted: message
                 });
             }
+
             data.chatbot[chatId] = true;
-            saveUserGroupData(data);
-            console.log(`✅ Chatbot activé pour le groupe ${chatId}`);
-            return sock.sendMessage(chatId, { 
+            fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
+
+            return sock.sendMessage(chatId, {
                 text: '*Le chatbot a été activé pour ce groupe*',
                 quoted: message
             });
         }
 
-        if (match === 'off') {
+        if (action === 'off') {
             await showTyping(sock, chatId);
             if (!data.chatbot[chatId]) {
-                return sock.sendMessage(chatId, { 
+                return sock.sendMessage(chatId, {
                     text: '*Le chatbot est déjà désactivé pour ce groupe*',
                     quoted: message
                 });
             }
+
             delete data.chatbot[chatId];
-            saveUserGroupData(data);
-            console.log(`✅ Chatbot désactivé pour le groupe ${chatId}`);
-            return sock.sendMessage(chatId, { 
+            fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
+
+            return sock.sendMessage(chatId, {
                 text: '*Le chatbot a été désactivé pour ce groupe*',
                 quoted: message
             });
         }
     }
 
-    // For non-owners, check admin status
+    // ===== ADMINS =====
     let isAdmin = false;
     if (chatId.endsWith('@g.us')) {
         try {
-            const groupMetadata = await sock.groupMetadata(chatId);
-            isAdmin = groupMetadata.participants.some(p => p.id === senderId && (p.admin === 'admin' || p.admin === 'superadmin'));
-        } catch (e) {
-            console.warn('⚠️ Impossible de récupérer les métadonnées du groupe. Le bot n’est peut-être pas admin.');
+            const meta = await sock.groupMetadata(chatId);
+            isAdmin = meta.participants.some(
+                p => p.id === senderId && (p.admin === 'admin' || p.admin === 'superadmin')
+            );
+        } catch {
+            isAdmin = false;
         }
     }
 
     if (!isAdmin && !isOwner) {
-        await showTyping(sock, chatId);
         return sock.sendMessage(chatId, {
-            text: '❌ Seuls les administrateurs du groupe ou le propriétaire du bot peuvent utiliser cette commande.',
+            text: '❌ Seuls les admins ou le propriétaire du bot peuvent utiliser cette commande.',
             quoted: message
         });
     }
 
-    if (match === 'on') {
-        await showTyping(sock, chatId);
-        if (data.chatbot[chatId]) {
-            return sock.sendMessage(chatId, { 
-                text: '*Le chatbot est déjà activé pour ce groupe*',
-                quoted: message
-            });
-        }
+    // ===== ACTION =====
+    if (action === 'on') {
         data.chatbot[chatId] = true;
-        saveUserGroupData(data);
-        console.log(`✅ Chatbot activé pour le groupe ${chatId}`);
-        return sock.sendMessage(chatId, { 
+        fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
+
+        return sock.sendMessage(chatId, {
             text: '*Le chatbot a été activé pour ce groupe*',
             quoted: message
         });
     }
 
-    if (match === 'off') {
-        await showTyping(sock, chatId);
-        if (!data.chatbot[chatId]) {
-            return sock.sendMessage(chatId, { 
-                text: '*Le chatbot est déjà désactivé pour ce groupe*',
-                quoted: message
-            });
-        }
+    if (action === 'off') {
         delete data.chatbot[chatId];
-        saveUserGroupData(data);
-        console.log(`✅ Chatbot désactivé pour le groupe ${chatId}`);
-        return sock.sendMessage(chatId, { 
+        fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
+
+        return sock.sendMessage(chatId, {
             text: '*Le chatbot a été désactivé pour ce groupe*',
             quoted: message
         });
     }
 
-    await showTyping(sock, chatId);
-    return sock.sendMessage(chatId, { 
-        text: '*Commande invalide. Utilisez *chatbot pour voir l’utilisation*',
+    return sock.sendMessage(chatId, {
+        text: '*Commande invalide. Utilisez `*chatbot` pour voir l’aide*',
         quoted: message
     });
 }
+
+
+async function getAIResponse(text, context = {}) {
+    const lower = text.toLowerCase();
+
+    // ===== RÉPONSES RAPIDES (locales, instantanées) =====
+    // Réponses pour "bonjour"
+    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('bjr') || lower.includes('yo')) {
+        const reponsesBonjour = [
+            "Salut 👋 comment tu vas ?",
+            "Yes ! Quoi de neuf ?",
+            "Hey 😄 content de te voir !",
+            "Salut 😎 comment ça va ?"
+        ];
+        return reponsesBonjour[Math.floor(Math.random() * reponsesBonjour.length)];
+    }
+
+    // Réponses pour "ça va"
+    if (lower.includes('ça va') || lower.includes('ca va')) {
+        const reponsesCaVa = [
+            "Oui ça va très bien 😄 et toi ?",
+            "Ça roule ! Et toi ?",
+            "Super 😎, et toi comment ça va ?"
+        ];
+        return reponsesCaVa[Math.floor(Math.random() * reponsesCaVa.length)];
+    }
+
+    // Réponses pour "bien"
+    if (lower === 'bien' || lower.includes('ça va bien')) {
+        const reponsesBien = [
+            "Parfait alors 😊",
+            "Super 😄",
+            "Content de l'entendre !"
+        ];
+        return reponsesBien[Math.floor(Math.random() * reponsesBien.length)];
+    }
+
+    // Réponses pour "merci"
+    if (lower.includes('merci')) {
+        const reponsesMerci = [
+            "Avec plaisir 😎",
+            "De rien !",
+            "Je t'en prie 😉"
+        ];
+        return reponsesMerci[Math.floor(Math.random() * reponsesMerci.length)];
+    }
+
+    // ===== GEMINI (fallback intelligent) =====
+    try {
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash"
+        });
+
+        const history = (context.messages || [])
+            .slice(-5)
+            .map(m => `- ${m}`)
+            .join('\n');
+
+        const userInfo = context.userInfo || {};
+        const userProfile = `
+Nom: ${userInfo.name || "inconnu"}
+Âge: ${userInfo.age || "inconnu"}
+Localisation: ${userInfo.location || "inconnue"}
+`;
+
+        const prompt = `
+Tu es un chatbot WhatsApp humain, amical et naturel.
+Tu parles simplement, jamais comme une IA.
+Tu adaptes ton ton : cool, respectueux, parfois drôle.
+Réponses courtes et claires (WhatsApp).
+
+Profil utilisateur :
+${userProfile}
+
+Historique récent :
+${history}
+
+Message actuel :
+"${text}"
+
+Réponds de manière conversationnelle.
+`;
+
+        const result = await model.generateContent(prompt);
+        const response = result.response.text();
+
+        return response?.trim() || "🤖 Hmm… j’hésite un peu 😅";
+
+    } catch (error) {
+        console.error("❌ Erreur Gemini :", error);
+        return "😅 J’ai eu un petit bug… réessaie encore.";
+    }
+}
+
+
 
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
     const data = loadUserGroupData();
@@ -212,7 +299,16 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
             isBotMentioned = true;
         }
 
-        if (!isBotMentioned && !isReplyToBot) return;
+        // Message privé → toujours autorisé
+        if (!chatId.endsWith('@g.us')) {
+            isBotMentioned = true;
+        }
+
+        // En groupe : autoriser les messages normaux des membres
+        if (chatId.endsWith('@g.us')) {
+            // Ignorer seulement les messages du bot lui-même
+        if (senderId === botJid) return;
+        }
 
         // ----- NETTOYAGE DU MESSAGE -----
         let cleanedMessage = userMessage

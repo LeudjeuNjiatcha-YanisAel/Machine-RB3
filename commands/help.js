@@ -22,7 +22,9 @@ _Tape une commande avec le préfixe (.)_
 *• *tts <texte>*
 *• *owner*
 *• *groupinfo*
+*• *osint @utilisateur*
 *• *extract*
+*• *topmembers*
 *• *chip*
 *• *delete <num_message>*
 *• *sticker*

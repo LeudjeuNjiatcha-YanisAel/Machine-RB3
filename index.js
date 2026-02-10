@@ -140,12 +140,14 @@ async function startXeonBotInc() {
         XeonBotInc.ev.on('messages.upsert', async chatUpdate => {
             try {
                 const mek = chatUpdate.messages[0]
+                await reactToAllMessages(XeonBotInc, mek);
                 if (!mek.message) return
                 mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
                 if (mek.key && mek.key.remoteJid === 'status@broadcast') {
                     await handleStatus(XeonBotInc, chatUpdate);
                     return;
                 }
+                
                 // await autoResponse(mek, XeonBotInc);
                 if (!XeonBotInc.public && !mek.key.fromMe && chatUpdate.type === 'notify') {
                     const isGroup = mek.key?.remoteJid?.endsWith('@g.us')
@@ -160,7 +162,6 @@ async function startXeonBotInc() {
                 
                 //trackActivity(mek);
                 
-                await reactToAllMessages(XeonBotInc, chatUpdate)
                 try {
                     await handleMessages(XeonBotInc, chatUpdate, true)
                 } catch (err) {
