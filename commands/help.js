@@ -11,7 +11,7 @@ async function helpCommand(sock, chatId, message) {
 ╰━━━━━━━━━━━━━━━━━━━━━━╯
 
 🌟 *MENU PRINCIPAL* 🌟
-_Tape une commande avec le préfixe (.)_
+_Tape une commande avec le préfixe (*)_
 
 ══════════════════════
 🌐 *COMMANDES GÉNÉRALES*
