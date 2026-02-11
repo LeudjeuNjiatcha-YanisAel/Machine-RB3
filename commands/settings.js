@@ -79,7 +79,6 @@ async function settingsCommand(sock, chatId, message) {
             }
         } else {
             lines.push('');
-            lines.push('Note: Per-group settings will be shown when used inside a group.');
         }
 
         await sock.sendMessage(chatId, { text: lines.join('\n') }, { quoted: message });

@@ -1,5 +1,6 @@
 const insults = [
     "C'est une honte pour ta famille!",
+    "On aurai due boire la biere avec l'argent de ta pension",
     "Tu as le QI d'une huître!",
     "Tu es fiere de ta nullité?",
     "Va la bas dechet!",
@@ -14,6 +15,7 @@ const insults = [
     "Regarde comment tu fais les trucs de yaourt-nature!",
     "Je vais te giffler!",
     "Kungnaffe!",
+    "Tu es fou merde ",
     "Salopard!",
     "Ton modia petit frere!",
     "T'es qu'une merde!",

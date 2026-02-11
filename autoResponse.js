@@ -39,13 +39,13 @@ async function autoResponse(msg, sock) {
         if (/(bonjour|salut|bjr|yo|asser|on dit quoi)/i.test(text)) {
             reply = "Salut 👋 comment tu vas ?";
         }
-        else if (/ça va|cv/i.test(text)) {
+        else if (/ça va|cv|yes bg/i.test(text)) {
             reply = "Oui ça va très bien 😄 et toi ?";
         }
         else if (/bien|cool|nickel/i.test(text)) {
             reply = "Parfait alors 😎";
         }
-        else if (/merci|thanks/i.test(text)) {
+        else if (/merci|good|thanks/i.test(text)) {
             reply = "Avec plaisir 🤖";
         }
         else if (/au revoir|bye|cya/i.test(text)) {
@@ -53,9 +53,6 @@ async function autoResponse(msg, sock) {
         }
         else if (/comment tu t'appelles|ton nom/i.test(text)) {
             reply = "Je suis un bot 🤖 créé par mon propriétaire.";
-        }
-        else if (/qui est ton créateur|qui t'a créé/i.test(text)) {
-            reply = "Mon créateur est un développeur passionné qui m'a programmé pour répondre à vos messages !";
         }
         else if (/aide|help/i.test(text)) {
             reply = "Je suis un bot de réponse automatique 🤖. Je peux répondre à des salutations, des questions simples, et plus encore ! Essayez de me dire bonjour ou de me poser une question.";

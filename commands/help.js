@@ -16,7 +16,7 @@ _Tape une commande avec le préfixe (*)_
 ══════════════════════
 🌐 *COMMANDES GÉNÉRALES*
 ══════════════════════
-*• *help / .menu*
+*• *help / *menu*
 *• *ping*
 *• *alive*
 *• *tts <texte>*
@@ -33,7 +33,9 @@ _Tape une commande avec le préfixe (*)_
 *• *emojimix*
 *• *sudo*
 *• *setpp*
+*• *ss*
 *• *mute*
+*• *github*
 *• *unmute*
 *• *online*
 *• *compliment*
@@ -55,6 +57,7 @@ _Tape une commande avec le préfixe (*)_
 ══════════════════════
 *• *gpt <question>*
 *• *gemini <question>*
+
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
 ══════════════════════
