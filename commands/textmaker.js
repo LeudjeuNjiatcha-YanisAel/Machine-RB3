@@ -1,41 +1,31 @@
 const axios = require('axios');
 const mumaker = require('mumaker');
 
-// Base channel info template
-const channelInfo = {
-    forwardingScore: 1,
-    isForwarded: true,
-    forwardedNewsletterMessageInfo: {
-        newsletterJid: '120363161513685998@newsletter',
-        newsletterName: 'Machine MD',
-        serverMessageId: -1
-    }
-};
 
 // Reusable message templates
 const messageTemplates = {
     error: (message) => ({
-        text: message,
-        contextInfo: channelInfo
+        text: message
+        
     }),
     success: (text, imageUrl) => ({
         image: { url: imageUrl },
-        caption: "GENERER Par Machine-BOT",
-        contextInfo: channelInfo
+        caption: "Generer Par Machine-BOT"
+        
     })
 };
 
 async function textmakerCommand(sock, chatId, message, q, type) {
     try {
         if (!q) {
-            return await sock.sendMessage(chatId, messageTemplates.error("Please provide text to generate\nExample: .metallic Nick"));
+            return await sock.sendMessage(chatId, messageTemplates.error("Svp donner a l'entrer du texte a generer\nExample: .metallic Nick"));
         }
 
         // Extract text
         const text = q.split(' ').slice(1).join(' ');
 
         if (!text) {
-            return await sock.sendMessage(chatId, messageTemplates.error("Please provide text to generate\nExample: .metallic Nick"));
+            return await sock.sendMessage(chatId, messageTemplates.error("Svp donner a l'entrer du texte a generer\nExample: .metallic Nick"));
         }
 
         try {
