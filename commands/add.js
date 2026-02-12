@@ -47,7 +47,7 @@ module.exports = {
                     return cleaned + '@s.whatsapp.net';
                 });
             } else {
-                return await replyWithTag(sock, remoteJid, msg, "❌ Utilisation:\n• `!add @mention` (mentionner)\n• `!add 237123456789` (numéro)\n• `!add 237123456789 237987654321` (plusieurs)");
+                return await replyWithTag(sock, remoteJid, msg, "❌ Utilisation:\n• `*add @mention` (mentionner)\n• `*add 237123456789` (numéro)\n• `*add 237123456789 237987654321` (plusieurs)");
             }
 
             if (numbersToAdd.length === 0) {

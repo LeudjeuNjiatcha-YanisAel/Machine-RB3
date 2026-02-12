@@ -356,7 +356,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
         // Check owner status for owner commands
         if (isOwnerCommand) {
             if (!message.key.fromMe && !senderIsOwnerOrSudo) {
-                await sock.sendMessage(chatId, { text: '❌ This command is only available for the owner or sudo!' }, { quoted: message });
+                await sock.sendMessage(chatId, { text: '❌ Cette Commande est seulement disponible pour le proprietaire or sudo!' }, { quoted: message });
                 return;
             }
         }
@@ -948,6 +948,8 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 break;
             case userMessage === '*cleartmp':
                 await clearTmpCommand(sock, chatId, message);
+                break;
+            case userMessage === '*adduser':
                 break;
             case userMessage === '*setpp':
                 await setProfilePicture(sock, chatId, message);
