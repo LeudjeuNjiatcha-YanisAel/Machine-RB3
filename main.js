@@ -148,6 +148,9 @@ const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
 require('dotenv').config();
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
+const addCommand = require('./commands/add.js');
+const removeCommand = require('./commands/remove.js');
+const transfertCommand = require('./commands/transcript.js');
 
 
 // Global settings
@@ -950,6 +953,13 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await clearTmpCommand(sock, chatId, message);
                 break;
             case userMessage === '*adduser':
+                await addCommand(sock, chatId, message);
+                break;
+            case userMessage === '*removeuser':
+                await removeCommand(sock, chatId, message);
+                break;
+            case userMessage === '*transcribe':
+                await transfertCommand(sock, chatId, message);
                 break;
             case userMessage === '*setpp':
                 await setProfilePicture(sock, chatId, message);

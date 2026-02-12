@@ -5,6 +5,7 @@ const fs = require('fs')
 const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
+const fs = require('fs-extra');
 const axios = require('axios')
 const trackActivity = require('./commands/trackActivity');
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
@@ -47,6 +48,20 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 const express = require('express');
 const { reactToAllMessages } = require('./lib/reactions')
 const autoResponse  = require('./autoResponse');
+
+const AUTH_FOLDER = path.join(__dirname, './session');
+const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
+
+// 🔥 RESTAURATION DE SESSION DEPUIS RENDER
+if (process.env.SESSION_DATA && !fs.existsSync(CREDS_PATH)) {
+    try {
+        const sessionBuffer = Buffer.from(process.env.SESSION_DATA, 'base64');
+        fs.writeFileSync(CREDS_PATH, sessionBuffer);
+        console.log('✅ Session restaurée depuis ENV (Render)');
+    } catch (err) {
+        console.error('❌ Erreur restauration session:', err);
+    }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;

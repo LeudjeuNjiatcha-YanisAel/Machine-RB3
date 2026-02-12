@@ -13,11 +13,7 @@ try {
 } catch (e) {
     console.error('[Transcript Init Error]:', e.message);
 }
-
-module.exports = {
-    name: 'transcript',
-    description: 'Transcrit une note vocale en texte via Groq Whisper.',
-    run: async ({ sock, msg, replyWithTag }) => {
+async function transfertCommand ({ sock, msg, replyWithTag }) {
         if (!groq) return replyWithTag(sock, msg.key.remoteJid, msg, "❌ Erreur: Groq Whisper n'est pas configuré (Clé API manquante).");
 
         try {
@@ -83,6 +79,11 @@ module.exports = {
         } catch (err) {
             console.error('[Transcript Error]:', err.message);
             await replyWithTag(sock, msg.key.remoteJid, msg, `❌ Échec: ${err.message}`);
-        }
     }
+};
+
+module.exports = {
+    name: 'transcript',
+    description: 'Transcrit une note vocale en texte (utilise Groq Whisper)',
+    run: transfertCommand
 };
