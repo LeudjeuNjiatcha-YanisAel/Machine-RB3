@@ -95,8 +95,4 @@ async function removeCommand({ sock, msg, args, replyWithTag }) {
     }
 }
 
-module.exports = {
-    name: 'remove',
-    description: 'Supprime un membre du groupe (admin uniquement)',
-    run: removeCommand
-};
+module.exports = removeCommand;

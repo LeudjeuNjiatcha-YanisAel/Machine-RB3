@@ -5,7 +5,6 @@ const fs = require('fs')
 const chalk = require('chalk')
 const FileType = require('file-type')
 const path = require('path')
-const fs = require('fs-extra');
 const axios = require('axios')
 const trackActivity = require('./commands/trackActivity');
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
