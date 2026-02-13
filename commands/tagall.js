@@ -11,7 +11,7 @@ async function tagAllCommand(sock, chatId, senderId, message) {
         }
 
         if (!isSenderAdmin) {
-            await sock.sendMessage(chatId, { text: 'Seuls les administrateurs du groupe peuvent utiliser la commande .tagall.' }, { quoted: message });
+            await sock.sendMessage(chatId, { text: 'Seuls les administrateurs du groupe peuvent utiliser la commande *tagall.' }, { quoted: message });
             return;
         }
 

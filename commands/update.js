@@ -195,7 +195,7 @@ async function updateCommand(sock, chatId, message, zipOverride) {
     const isOwner = await isOwnerOrSudo(senderId, sock, chatId);
     
     if (!message.key.fromMe && !isOwner) {
-        await sock.sendMessage(chatId, { text: 'Only bot owner or sudo can use .update' }, { quoted: message });
+        await sock.sendMessage(chatId, { text: 'Seul le proprietaire peut utiliser cette commande *update' }, { quoted: message });
         return;
     }
     try {
@@ -217,7 +217,7 @@ async function updateCommand(sock, chatId, message, zipOverride) {
             const v = require('../settings').version || '';
             await sock.sendMessage(chatId, { text: `✅ Update done. Restarting…` }, { quoted: message });
         } catch {
-            await sock.sendMessage(chatId, { text: '✅ Restared Successfully\n Type .ping to check latest version.' }, { quoted: message });
+            await sock.sendMessage(chatId, { text: '✅ Restared Successfully\n Type *ping to check latest version.' }, { quoted: message });
         }
         await restartProcess(sock, chatId, message);
     } catch (err) {

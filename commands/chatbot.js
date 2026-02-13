@@ -180,7 +180,7 @@ async function getAIResponse(text, context = {}) {
 
     // ===== RÉPONSES RAPIDES (locales, instantanées) =====
     // Réponses pour "bonjour"
-    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('bjr') || lower.includes('yo')) {
+    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('bjr') || lower.includes('yo')|| lower.includes('asser')) {
         const reponsesBonjour = [
             "Salut 👋 comment tu vas ?",
             "Yes ! Quoi de neuf ?",

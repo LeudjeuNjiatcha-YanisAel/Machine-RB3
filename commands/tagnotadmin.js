@@ -10,7 +10,7 @@ async function tagNotAdminCommand(sock, chatId, senderId, message) {
         }
 
         if (!isSenderAdmin) {
-            await sock.sendMessage(chatId, { text: 'Seuls les administrateurs peuvent utiliser la commande .tagnotadmin.' }, { quoted: message });
+            await sock.sendMessage(chatId, { text: 'Seuls les administrateurs peuvent utiliser la commande *tagnotadmin.' }, { quoted: message });
             return;
         }
 
