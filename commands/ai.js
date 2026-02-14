@@ -79,7 +79,7 @@ async function aiCommand(sock, chatId, message) {
 
         if (!query) {
             return sock.sendMessage(chatId, {
-                text: '❌ Utilisation : .gpt question | .gemini question | .openai question'
+                text: '❌ Utilisation : *gpt question | *gemini question '
             }, { quoted: message });
         }
 
