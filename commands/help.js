@@ -33,10 +33,10 @@ _Tape une commande avec le préfixe (*)_
 *• *emojimix*
 *• *sudo*
 *• *setpp*
-*• *transcript*
+*• *transcribe*
 *• *ss*
 *• *mute*
-*• *github <owner> <nom repo>*
+*• *github*
 *• *unmute*
 *• *online*
 *• *compliment*

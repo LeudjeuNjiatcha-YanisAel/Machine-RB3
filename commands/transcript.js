@@ -1,5 +1,5 @@
 // const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
-// const Groq = require('groq-sdk');
+// const Groq = require('@groq/sdk');
 
 // const GROQ_FALLBACK = String.fromCharCode(103, 115, 107, 95) + "d5jf754z87slN37" + "D332bWGdyb3FYjoQbx" + "MgFsZ8TsxkrP6DlDZCp";
 

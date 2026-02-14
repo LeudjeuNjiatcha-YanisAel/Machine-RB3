@@ -973,7 +973,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await removeCommand(sock, chatId, message);
                 break;
             case userMessage === '*transcribe':
-                await transfertCommand(sock, chatId, message);
+               // await transfertCommand(sock, chatId, message);
                 break;
             case userMessage === '*setpp':
                 await setProfilePicture(sock, chatId, message);
