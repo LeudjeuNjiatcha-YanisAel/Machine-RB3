@@ -191,7 +191,7 @@ async function getAIResponse(text, context = {}) {
     }
 
     // Réponses pour "ça va"
-    if (lower.includes('ça va') || lower.includes('ca va')) {
+    if (lower.includes('ça va') || lower.includes('ca va') || lower.includes('comment tu vas') || lower.includes('comment ça va')) {
         const reponsesCaVa = [
             "Oui ça va très bien 😄 et toi ?",
             "Ça roule ! Et toi ?",
@@ -201,7 +201,7 @@ async function getAIResponse(text, context = {}) {
     }
 
     // Réponses pour "bien"
-    if (lower === 'bien' || lower.includes('ça va bien')) {
+    if (lower === 'bien' || lower.includes('ça va bien')|| lower.includes('ca va bien') || lower.includes('je vais bien')|| lower.includes('je vais bien')) {
         const reponsesBien = [
             "Parfait alors 😊",
             "Super 😄",
@@ -211,7 +211,7 @@ async function getAIResponse(text, context = {}) {
     }
 
     // Réponses pour "merci"
-    if (lower.includes('merci')) {
+    if (lower.includes('merci')|| lower.includes('thank') || lower.includes('merci beaucoup')) {
         const reponsesMerci = [
             "Avec plaisir 😎",
             "De rien !",
@@ -221,53 +221,62 @@ async function getAIResponse(text, context = {}) {
     }
 
     // ===== GEMINI (fallback intelligent) =====
-    try {
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash"
-        });
+try {
+    const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash"
+    });
 
-        const history = (context.messages || [])
-            .slice(-5)
-            .map(m => `- ${m}`)
-            .join('\n');
+    const history = (context.messages || [])
+        .slice(-5)
+        .map(m => `- ${m}`)
+        .join('\n');
 
-        const userInfo = context.userInfo || {};
-        const userProfile = `
-Nom: ${userInfo.name || "inconnu"}
-Âge: ${userInfo.age || "inconnu"}
-Localisation: ${userInfo.location || "inconnue"}
-`;
+    const userInfo = context.userInfo || {};
+    const userProfile = `
+        Nom: ${userInfo.name || "inconnu"}
+        Âge: ${userInfo.age || "inconnu"}
+        Localisation: ${userInfo.location || "inconnue"}
+        `;
 
-        const prompt = `
-Tu es un chatbot WhatsApp humain, amical et naturel.
-Tu parles simplement, jamais comme une IA.
-Tu adaptes ton ton : cool, respectueux, parfois drôle.
-Réponses courtes et claires (WhatsApp).
+            const prompt = `
+        Tu es un chatbot WhatsApp humain, amical et naturel.
+        Tu parles simplement, jamais comme une IA.
+        Tu adaptes ton ton : cool, respectueux, parfois drôle.
+        Réponses courtes et claires (WhatsApp).
 
-Profil utilisateur :
-${userProfile}
+        Profil utilisateur :
+        ${userProfile}
 
-Historique récent :
-${history}
+        Historique récent :
+        ${history}
 
-Message actuel :
-"${text}"
+        Message actuel :
+        "${text}"
 
-Réponds de manière conversationnelle.
-`;
+        Réponds de manière conversationnelle.
+        `;
 
-        const result = await model.generateContent(prompt);
-        const response = result.response.text();
+            const result = await model.generateContent(prompt);
 
-        return response?.trim() || "🤖 Hmm… j’hésite un peu 😅";
+            // ✅ récupération ULTRA SAFE du texte
+            let responseText = null;
 
-    } catch (error) {
-        console.error("❌ Erreur Gemini :", error);
-        return "😅 J’ai eu un petit bug… réessaie encore.";
+            if (result?.response?.text) {
+                responseText = result.response.text();
+            } else if (
+                result?.response?.candidates?.[0]?.content?.parts?.[0]?.text
+            ) {
+                responseText =
+                    result.response.candidates[0].content.parts[0].text;
+            }
+
+            return responseText?.trim() || "🤖 Hmm… j’hésite un peu 😅";
+
+        } catch (error) {
+            console.error("❌ Erreur Gemini :", error.response?.data || error.message);
+            return "😅 J’ai eu un petit bug… réessaie encore.";
+        }
     }
-}
-
-
 
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
     const data = loadUserGroupData();

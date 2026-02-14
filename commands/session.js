@@ -46,9 +46,4 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
     }
 }
 
-module.exports = {
-    name: 'session',
-    description: 'Affiche la session ID pour Render',
-    adminOnly: true,
-    run: runSessionCommand
-};
+module.exports = runSessionCommand;

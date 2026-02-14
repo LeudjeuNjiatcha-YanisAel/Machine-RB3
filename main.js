@@ -148,9 +148,12 @@ const onlineCommand = require('./commands/online');
 const soraCommand = require('./commands/sora');
 require('dotenv').config();
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
+const { games } = require('./commands/capital');
 const addCommand = require('./commands/add.js');
 const removeCommand = require('./commands/remove.js');
 const transfertCommand = require('./commands/transcript.js');
+const runSessionCommand = require('./commands/session.js');
+const autoResponse = require('./autoResponse');
 
 
 // Global settings
@@ -176,6 +179,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
         // Store message for antidelete feature
         if (message.message) {
             storeMessage(sock, message);
+            autoResponse(message, sock); // Call autoResponse for every message, including non-commands
         }
 
         // Handle message revocation
@@ -470,6 +474,9 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
             case userMessage === '*settings':
                 await settingsCommand(sock, chatId, message);
+                break;
+            case userMessage === '*session':
+                await runSessionCommand(sock, chatId, message);
                 break;
             case userMessage.startsWith('*mode'):
                 // Check if sender is the owner

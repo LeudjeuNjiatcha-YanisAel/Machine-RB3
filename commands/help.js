@@ -36,7 +36,7 @@ _Tape une commande avec le préfixe (*)_
 *• *transcript*
 *• *ss*
 *• *mute*
-*• *github*
+*• *github <owner> <nom repo>*
 *• *unmute*
 *• *online*
 *• *compliment*

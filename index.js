@@ -8,7 +8,6 @@ const path = require('path')
 const axios = require('axios')
 const trackActivity = require('./commands/trackActivity');
 const { handleMessages, handleGroupParticipantUpdate, handleStatus } = require('./main');
-// const autoResponse = require('./autoResponse')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia,fetchJson,await,sleep, reSize } = require('./lib/myfunc')
@@ -45,8 +44,9 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 
 // C'est Pour Ouvrir Le Bot Sur Un Serveur Web 
 const express = require('express');
-const { reactToAllMessages } = require('./lib/reactions')
-const autoResponse  = require('./autoResponse');
+const { reactToAllMessages } = require('./lib/reactions');
+const autoResponse = require('./autoResponse');
+
 
 const AUTH_FOLDER = path.join(__dirname, './session');
 const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
@@ -163,7 +163,6 @@ async function startXeonBotInc() {
                     return;
                 }
                 if (!mek?.message) return;
-                await autoResponse(mek, XeonBotInc);
                 if (!XeonBotInc.public && !mek.key.fromMe && chatUpdate.type === 'notify') {
                     const isGroup = mek.key?.remoteJid?.endsWith('@g.us')
                     if (!isGroup) return // Block DMs in private mode, but allow group messages

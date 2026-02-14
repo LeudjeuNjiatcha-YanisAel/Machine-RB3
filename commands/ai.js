@@ -4,39 +4,63 @@ const axios = require('axios');
 require('dotenv').config();
 
 // === OpenAI ===
-async function callOpenAI(prompt) {
+async function callOpenAI(prompt, retries = 3) {
     const apiKey = process.env.OPENAI_API;
-    if (!apiKey) throw new Error('OPENAI_API_KEY manquante');
+
+    if (!apiKey) throw new Error('OPENAI_API manquante');
     if (!prompt || !prompt.trim()) throw new Error('Prompt vide');
 
-    const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.7
-        },
-        { headers: { Authorization: `Bearer ${apiKey}` } }
-    );
+    try {
+        const response = await axios.post(
+            "https://api.openai.com/v1/responses",
+            {
+                model: "gpt-4o-mini",
+                input: prompt
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
-    return response.data.choices?.[0]?.message?.content || null;
+        return response.data.output?.[0]?.content?.[0]?.text || null;
+
+    } catch (error) {
+
+        if (error.response?.status === 429 && retries > 0) {
+            console.log("⏳ Rate limit, retry...");
+            await new Promise(res => setTimeout(res, 2000));
+            return callOpenAI(prompt, retries - 1);
+        }
+
+        throw error;
+    }
 }
 
 // === Gemini OFFICIEL ===
 async function callGeminiOfficial(prompt) {
-    const apiKey = process.env.GEMINI_API;
-    if (!apiKey) throw new Error('GEMINI_API_KEY manquante');
-    if (!prompt || !prompt.trim()) throw new Error('Prompt vide');
+    try {
+        const apiKey = process.env.GEMINI_API;
+        if (!apiKey) throw new Error('GEMINI_API_KEY manquante');
 
-    const ai = new GoogleGenAI({ apiKey });
-    const model = 'models/gemini-2.5-flash'; // ✅ chemin complet requis
+        const ai = new GoogleGenAI({ apiKey });
 
-    const response = await ai.models.generateContent({
-        model,
-        contents: [{ role: 'user', parts: [{ text: prompt }] }]
-    });
+        const result = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt
+        });
 
-    return response?.response?.text();
+        if (!result || !result.text)
+            throw new Error("Réponse Gemini vide");
+
+        return result.text;
+
+    } catch (err) {
+        console.error("Gemini error:", err.response?.data || err.message);
+        throw err;
+    }
 }
 
 // === Command handler ===
@@ -62,7 +86,7 @@ async function aiCommand(sock, chatId, message) {
         await sock.sendMessage(chatId, { react: { text: '🤖', key: message.key } });
 
         // === GPT via OpenAI + APIs tierces ===
-        if (command === '.gpt') {
+        if (command === '*gpt') {
             // 1️⃣ OpenAI
             try {
                 const answer = await callOpenAI(query);
@@ -90,7 +114,7 @@ async function aiCommand(sock, chatId, message) {
         }
 
         // === Gemini ===
-        else if (command === '.gemini') {
+        else if (command === '*gemini') {
             // 1️⃣ Gemini officiel
             try {
                 const answer = await callGeminiOfficial(query);

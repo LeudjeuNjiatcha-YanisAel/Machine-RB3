@@ -50,7 +50,7 @@ async function viewPhotoCommand(sock, chatId, message) {
         }
 
         // 📸 Récupération de la photo de profil (pleine résolution)
-        const ppUrl = await sock.profilePictureUrl(targetJid, 'image');
+        const ppUrl = await sock.profilePictureUrl(targetJid, 'image').catch(() => null);
 
         if (!ppUrl) {
             await sock.sendMessage(

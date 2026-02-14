@@ -2,36 +2,63 @@ const CapitalGame = require('../lib/capital');
 
 const games = {};
 
-/**
- * Lancer ou rejoindre une partie CAPITAL
- */
+/* =====================================================
+   UTILITAIRE DE GESTION DES TOURS
+===================================================== */
+function advanceTurn(room) {
+    const previousPlayer = room.game.currentTurn;
+
+    // changer joueur
+    room.game.switchTurn();
+
+    const currentPlayer = room.game.currentTurn;
+
+    let tourFinished = false;
+
+    // si on revient au joueur qui a commencé le tour
+    if (currentPlayer === room.turnStarter) {
+        room.turnNumber++;
+        tourFinished = true;
+    }
+
+    return { previousPlayer, currentPlayer, tourFinished };
+}
+
+/* =====================================================
+   LANCER / REJOINDRE PARTIE
+===================================================== */
 async function capitalCommand(sock, chatId, senderId) {
     try {
-        // Vérifie si le joueur est déjà dans une partie
         const existingRoom = Object.values(games).find(r =>
             r.game &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );
-        
+
         if (existingRoom) {
-            return sock.sendMessage(chatId, { 
-                text: '❌ *Vous êtes déjà dans une partie CAPITAL.*\nTapez `exit` pour quitter.' 
+            return sock.sendMessage(chatId, {
+                text: '❌ *Vous êtes déjà dans une partie CAPITAL.*'
             });
         }
 
-        // Cherche une partie en attente
         let room = Object.values(games).find(r => r.state === 'WAITING');
 
         if (room) {
-            // Rejoint la partie
             room.playerB = senderId;
             room.game = new CapitalGame(room.playerA, senderId);
             room.state = 'PLAYING';
             room.roundsWithoutAnswer = 0;
-            room.chatId = chatId; // Mettre à jour le chatId
+
+            // ✅ gestion tours
+            room.turnNumber = 1;
+            room.turnStarter = room.game.currentTurn;
 
             await sock.sendMessage(chatId, {
-                text: `🌍 *CAPITAL – PARTIE COMMENCÉE* 🌍\n\n🎯 Tour de : @${room.game.currentTurn.split('@')[0]}\n⏱️ Temps par tour : 25 secondes\n📌 Score à atteindre : *7 points*\n\n• Tapez \`exit\` pour abandonner`,
+                text:
+`🌍 *CAPITAL – PARTIE COMMENCÉE*
+
+🎯 Tour 1
+Joueur : @${room.game.currentTurn.split('@')[0]}
+⏱️ 25 secondes`,
                 mentions: [room.game.currentTurn]
             });
 
@@ -39,7 +66,6 @@ async function capitalCommand(sock, chatId, senderId) {
             startTimer(sock, room);
 
         } else {
-            // Crée une nouvelle partie
             room = {
                 id: 'capital-' + Date.now(),
                 chatId,
@@ -49,52 +75,47 @@ async function capitalCommand(sock, chatId, senderId) {
                 state: 'WAITING',
                 timer: null,
                 roundsWithoutAnswer: 0,
+                turnNumber: 1,
+                turnStarter: null,
                 lastActivity: Date.now()
             };
 
             games[room.id] = room;
 
-            await sock.sendMessage(chatId, { 
-                text: `⏳ *En attente d'un adversaire pour CAPITAL...*\n\n👤 Créateur : @${senderId.split('@')[0]}\n\nUn joueur peut rejoindre avec la commande :\n\`capital\``,
+            await sock.sendMessage(chatId, {
+                text:
+`⏳ En attente d'un adversaire...
+👤 Créateur : @${senderId.split('@')[0]}
+Tapez *capital* pour rejoindre`,
                 mentions: [senderId]
             });
         }
-    } catch (error) {
-        console.error('Erreur capitalCommand:', error);
-        await sock.sendMessage(chatId, { 
-            text: '❌ Une erreur est survenue lors de la création de la partie.' 
-        });
+    } catch (e) {
+        console.error(e);
     }
 }
 
-/**
- * Masque la capitale pour le joueur
- */
+/* =====================================================
+   MASQUER CAPITALE
+===================================================== */
 function maskCapital(capital) {
-    if (!capital || capital.length === 0) return '';
-    
-    const firstLetter = capital.charAt(0).toUpperCase();
+    const first = capital.charAt(0).toUpperCase();
     const masked = '_ '.repeat(capital.length - 1).trim();
-    return `${firstLetter} ${masked}`;
+    return `${first} ${masked}`;
 }
 
-/**
- * Envoie la capitale masquée au joueur courant
- */
+/* =====================================================
+   ENVOI QUESTION
+===================================================== */
 async function sendCapitalHint(sock, room) {
-    try {
-        if (!room || !room.game || !room.game.capital || !room.game.country) {
-            console.error('Données manquantes pour sendCapitalHint');
-            return;
-        }
 
-        const masked = maskCapital(room.game.capital.toLowerCase());
-        const country = room.game.country;
+    const masked = maskCapital(room.game.capital.toLowerCase());
+    const country = room.game.country;
 
-        const message = `
-╔═══════════════════════════════╗
+    const message =
+`╔════════════════════════╗
 ║     💡 *DEVINEZ LA CAPITALE !*     ║
-╠═══════════════════════════════╣
+╠═════════════════════════╣
 ║ 🌐 *Pays :* ${country}
 ║ 🏙️ *Capitale :* ${masked}
 ║
@@ -105,70 +126,54 @@ async function sendCapitalHint(sock, room) {
 ║ • @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA] || 0}
 ║ • @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB] || 0}
 ║
-║ 🎯 *Objectif :* 7 points
-╚═══════════════════════════════╝
-        `;
+║ 🎯 *Objectif :* 10 points
+╚════════ ════════════════╝`;
 
-        await sock.sendMessage(room.chatId, {
-            text: message,
-            mentions: [room.game.currentTurn, room.game.playerA, room.game.playerB]
-        });
+    await sock.sendMessage(room.chatId, {
+        text: message,
+        mentions: [
+            room.game.currentTurn,
+            room.game.playerA,
+            room.game.playerB
+        ]
+    });
 
-        room.lastActivity = Date.now();
-    } catch (error) {
-        console.error('Erreur sendCapitalHint:', error);
-    }
+    room.lastActivity = Date.now();
 }
 
-/**
- * Timer 25 secondes par tour
- */
+/* =====================================================
+   TIMER
+===================================================== */
 function startTimer(sock, room) {
-    if (!room) return;
-    
-    // Nettoyer l'ancien timer
-    if (room.timer) {
-        clearTimeout(room.timer);
-    }
+    if (room.timer) clearTimeout(room.timer);
 
     room.timer = setTimeout(async () => {
-        try {
-            if (!games[room.id]) return; // La partie a été supprimée
-            
-            room.roundsWithoutAnswer += 1;
-            const previousPlayer = room.game.currentTurn;
-            room.game.switchTurn();
 
-            // Message d'annonce du temps écoulé
-            await sock.sendMessage(room.chatId, {
-                text: `⏰ *TEMPS ÉCOULÉ !*\n\nLe tour de @${previousPlayer.split('@')[0]} est terminé.\n\n🎯 C'est maintenant au tour de : @${room.game.currentTurn.split('@')[0]}`,
-                mentions: [previousPlayer, room.game.currentTurn]
-            });
+        const { previousPlayer, currentPlayer, tourFinished } =
+            advanceTurn(room);
 
-            if (room.roundsWithoutAnswer >= 2) {
-                // Deux tours sans réponse → nouveau pays
-                room.game.pickNewCapital();
-                room.roundsWithoutAnswer = 0;
-                
-                await sock.sendMessage(room.chatId, {
-                    text: '🔀 *Nouveau pays sélectionné !*\n\nPersonne n\'a trouvé la capitale précédente.'
-                });
-            }
+        await sock.sendMessage(room.chatId, {
+            text:
+`⏰ Temps écoulé !
 
-            await sendCapitalHint(sock, room);
-            
-            // Redémarrer le timer pour le nouveau tour
-            startTimer(sock, room);
-            
-        } catch (error) {
-            console.error('Erreur dans le timer:', error);
-        }
-    }, 25000); // 25 secondes
+${tourFinished
+? `✅ Tour ${room.turnNumber - 1} terminé`
+: `➡️ Le tour continue`
 }
 
-/**
- * Gérer la réponse d'un joueur
- */
+🎯 Joueur suivant : @${currentPlayer.split('@')[0]}`,
+            mentions: [previousPlayer, currentPlayer]
+        });
+
+        await sendCapitalHint(sock, room);
+        startTimer(sock, room);
+
+    }, 25000);
+}
+
+/* =====================================================
+   REPONSE JOUEUR
+===================================================== */
 async function handleCapitalAnswer(sock, chatId, senderId, text) {
     try {
         const room = Object.values(games).find(r =>
@@ -179,91 +184,98 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
 
         if (!room) return;
 
-        // Vérifier si c'est le tour du joueur
         if (senderId !== room.game.currentTurn) {
-            await sock.sendMessage(chatId, {
-                text: `⏳ *Ce n'est pas votre tour !*\n\n🎯 C'est actuellement le tour de : @${room.game.currentTurn.split('@')[0]}`,
+            return sock.sendMessage(chatId, {
+                text:
+`⏳ *Ce n'est pas ton tour !*
+
+🎯 Tour actuel : @${room.game.currentTurn.split('@')[0]}`,
                 mentions: [room.game.currentTurn]
             });
-            return;
         }
 
-        // Gestion de la commande exit/quit
-        if (text.toLowerCase() === 'exit' || text.toLowerCase() === 'quit') {
-            await quitCapitalGame(sock, chatId, senderId);
-            return;
-        }
-
-        const result = room.game.checkAnswer(senderId, text);
-
-        // Arrêter le timer actuel
         clearTimeout(room.timer);
 
-        if (result.status === 'win') {
-            await sock.sendMessage(chatId, {
-                text: `
-🏆 *PARTIE TERMINÉE - VICTOIRE !* 🏆
-🎉 *@${senderId.split('@')[0]}* a atteint 7 points !
+        const currentCapital = room.game.capital;
+        const result = room.game.checkAnswer(senderId, text);
+
+        /* ================== BONNE REPONSE ================== */
+        if (result.status === 'correct') {
+
+            room.roundsWithoutAnswer = 0;
+
+            // 🔥 Vérification MANUELLE victoire à 7 points
+            if (room.game.scores[senderId] >= 10) {
+
+                await sock.sendMessage(chatId, {
+                    text:
+`🏆 *VICTOIRE !*
+
+🎉 @${senderId.split('@')[0]} atteint *7 points* !
 
 📊 *SCORE FINAL :*
 • @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
 • @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}
 
-🎮 Tapez \`capital\` pour rejouer !
-                `,
-                mentions: [senderId, room.game.playerA, room.game.playerB]
-            });
+Tapez *capital* pour rejouer !`,
+                    mentions: [senderId, room.game.playerA, room.game.playerB]
+                });
 
-            delete games[room.id];
-            return;
-        }
-
-        if (result.status === 'correct') {
-            room.roundsWithoutAnswer = 0;
+                delete games[room.id];
+                return;
+            }
 
             await sock.sendMessage(chatId, {
-                text: `
-✅ *BONNE RÉPONSE !* ✅
-🎉 *@${senderId.split('@')[0]}* +1 point
+                text:
+`✅ *Bonne réponse !*
 
-🌐 *Pays :* ${result.country}
-🏙️ *Capitale :* ${room.game.capital}
+🏙️ Capitale : *${currentCapital}*
+🎉 +1 point pour @${senderId.split('@')[0]}
 
-📊 *SCORE ACTUEL :*
+📊 Scores :
 • @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
-• @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}
-                `,
+• @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
                 mentions: [senderId, room.game.playerA, room.game.playerB]
             });
 
-            // Nouveau pays
             room.game.pickNewCapital();
-            
-            // Attendre 2 secondes avant d'envoyer le nouveau défi
+
             setTimeout(async () => {
                 await sendCapitalHint(sock, room);
                 startTimer(sock, room);
             }, 2000);
-            
+
             return;
         }
 
+        /* ================== MAUVAISE REPONSE ================== */
         if (result.status === 'wrong') {
-            room.roundsWithoutAnswer += 1;
+
+            room.roundsWithoutAnswer++;
+
             const previousPlayer = room.game.currentTurn;
+
+            // 🔥 Passage de tour FORCÉ
             room.game.switchTurn();
 
+            const nextPlayer = room.game.currentTurn;
+
             await sock.sendMessage(chatId, {
-                text: `❌ *Mauvaise réponse !*\n\nLa capitale était : *${room.game.capital}*\n\n⏳ Le tour passe à : @${room.game.currentTurn.split('@')[0]}`,
-                mentions: [previousPlayer, room.game.currentTurn]
+                text:
+`❌ *Mauvaise réponse !*
+
+🏙️ La capitale était : *${currentCapital}*
+
+➡️ Tour suivant : @${nextPlayer.split('@')[0]}`,
+                mentions: [previousPlayer, nextPlayer]
             });
 
             if (room.roundsWithoutAnswer >= 2) {
                 room.game.pickNewCapital();
                 room.roundsWithoutAnswer = 0;
-                
+
                 await sock.sendMessage(chatId, {
-                    text: '🔀 *Nouveau pays sélectionné !*'
+                    text: `🔀 *Nouveau pays sélectionné !*`
                 });
             }
 
@@ -276,9 +288,6 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
     }
 }
 
-/**
- * Arrêter une partie manuellement (admin)
- */
 async function stopCapitalGame(sock, chatId, senderId) {
     try {
         const room = Object.values(games).find(r => 
@@ -350,10 +359,15 @@ function cleanupInactiveGames() {
 // Nettoyage automatique toutes les 10 minutes
 setInterval(cleanupInactiveGames, 10 * 60 * 1000);
 
+
+
+/* =====================================================
+   EXPORT
+===================================================== */
 module.exports = {
     capitalCommand,
     handleCapitalAnswer,
     stopCapitalGame,
     quitCapitalGame,
-    cleanupInactiveGames
+    games
 };
