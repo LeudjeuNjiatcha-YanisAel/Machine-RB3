@@ -8,20 +8,15 @@ const games = {};
 function advanceTurn(room) {
     const previousPlayer = room.game.currentTurn;
 
-    // changer joueur
-    room.game.switchTurn();
-
-    const currentPlayer = room.game.currentTurn;
+    room.game.switchTurn(); // passe au joueur suivant
 
     let tourFinished = false;
-
-    // si on revient au joueur qui a commencé le tour
-    if (currentPlayer === room.turnStarter) {
+    if (room.game.currentTurn === room.turnStarter) {
         room.turnNumber++;
         tourFinished = true;
     }
 
-    return { previousPlayer, currentPlayer, tourFinished };
+    return { previousPlayer, currentPlayer: room.game.currentTurn, tourFinished };
 }
 
 /* =====================================================
@@ -48,7 +43,6 @@ async function capitalCommand(sock, chatId, senderId) {
             room.state = 'PLAYING';
             room.roundsWithoutAnswer = 0;
 
-            // ✅ gestion tours
             room.turnNumber = 1;
             room.turnStarter = room.game.currentTurn;
 
@@ -108,14 +102,13 @@ function maskCapital(capital) {
    ENVOI QUESTION
 ===================================================== */
 async function sendCapitalHint(sock, room) {
-
     const masked = maskCapital(room.game.capital.toLowerCase());
     const country = room.game.country;
 
     const message =
 `╔════════════════════════╗
-║     💡 *DEVINEZ LA CAPITALE !*     ║
-╠═════════════════════════╣
+║     💡 *DEVINEZ LA CAPITALE !*    ║
+╠═════════════════════╣
 ║ 🌐 *Pays :* ${country}
 ║ 🏙️ *Capitale :* ${masked}
 ║
@@ -127,7 +120,7 @@ async function sendCapitalHint(sock, room) {
 ║ • @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB] || 0}
 ║
 ║ 🎯 *Objectif :* 10 points
-╚════════ ════════════════╝`;
+╚═══════════════╝`;
 
     await sock.sendMessage(room.chatId, {
         text: message,
@@ -148,9 +141,7 @@ function startTimer(sock, room) {
     if (room.timer) clearTimeout(room.timer);
 
     room.timer = setTimeout(async () => {
-
-        const { previousPlayer, currentPlayer, tourFinished } =
-            advanceTurn(room);
+        const { previousPlayer, currentPlayer, tourFinished } = advanceTurn(room);
 
         await sock.sendMessage(room.chatId, {
             text:
@@ -167,7 +158,6 @@ ${tourFinished
 
         await sendCapitalHint(sock, room);
         startTimer(sock, room);
-
     }, 25000);
 }
 
@@ -181,123 +171,85 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
             r.chatId === chatId &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );
-
         if (!room) return;
 
         if (senderId !== room.game.currentTurn) {
             return sock.sendMessage(chatId, {
-                text:
-`⏳ *Ce n'est pas ton tour !*
-
-🎯 Tour actuel : @${room.game.currentTurn.split('@')[0]}`,
+                text: `⏳ *Ce n'est pas ton tour !*\n🎯 Tour actuel : @${room.game.currentTurn.split('@')[0]}`,
                 mentions: [room.game.currentTurn]
             });
         }
 
         clearTimeout(room.timer);
 
-        const currentCapital = room.game.capital;
         const result = room.game.checkAnswer(senderId, text);
 
-        /* ================== BONNE REPONSE ================== */
+        // ✅ Si bonne réponse, ajouter le score
         if (result.status === 'correct') {
+            if (!room.game.scores[senderId]) room.game.scores[senderId] = 0;
+            room.game.scores[senderId]++;
+        }
 
-            room.roundsWithoutAnswer = 0;
+        // 🔹 Changer de pays dans tous les cas (bonne ou mauvaise réponse)
+        room.game.pickNewCapital();
 
-            // 🔥 Vérification MANUELLE victoire à 7 points
-            if (room.game.scores[senderId] >= 10) {
+        await sock.sendMessage(chatId, {
+            text: result.status === 'correct'
+                ? `✅ *Bonne réponse !* 🎉 +1 point pour @${senderId.split('@')[0]}`
+                : `❌ *Mauvaise réponse !* 😢`,
+            mentions: [senderId]
+        });
 
-                await sock.sendMessage(chatId, {
-                    text:
-`🏆 *VICTOIRE !*
+        await sock.sendMessage(chatId, {
+            text: `🔀 Nouveau pays : ${room.game.country}\n🏙️ Devinez la capitale !`
+        });
 
-🎉 @${senderId.split('@')[0]} atteint *7 points* !
+        // 🔹 Passage au joueur suivant
+        const { currentPlayer: nextPlayer } = advanceTurn(room);
 
-📊 *SCORE FINAL :*
+        await sock.sendMessage(chatId, {
+            text: `➡️ Tour suivant : @${nextPlayer.split('@')[0]}`,
+            mentions: [nextPlayer]
+        });
+
+        // 🔹 Vérification victoire
+        const winnerEntry = Object.entries(room.game.scores).find(([_, score]) => score >= 10);
+        if (winnerEntry) {
+            const winner = winnerEntry[0];
+            await sock.sendMessage(chatId, {
+                text:
+`🏆 *VICTOIRE !* 🎉
+@${winner.split('@')[0]} atteint 10 points !
+
+📊 Score final :
 • @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
 • @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}
 
 Tapez *capital* pour rejouer !`,
-                    mentions: [senderId, room.game.playerA, room.game.playerB]
-                });
-
-                delete games[room.id];
-                return;
-            }
-
-            await sock.sendMessage(chatId, {
-                text:
-`✅ *Bonne réponse !*
-
-🏙️ Capitale : *${currentCapital}*
-🎉 +1 point pour @${senderId.split('@')[0]}
-
-📊 Scores :
-• @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}
-• @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
-                mentions: [senderId, room.game.playerA, room.game.playerB]
+                mentions: [room.game.playerA, room.game.playerB, winner]
             });
-
-            room.game.pickNewCapital();
-
-            setTimeout(async () => {
-                await sendCapitalHint(sock, room);
-                startTimer(sock, room);
-            }, 2000);
-
+            clearTimeout(room.timer);
+            delete games[room.id];
             return;
         }
 
-        /* ================== MAUVAISE REPONSE ================== */
-        if (result.status === 'wrong') {
-
-            room.roundsWithoutAnswer++;
-
-            const previousPlayer = room.game.currentTurn;
-
-            // 🔥 Passage de tour FORCÉ
-            room.game.switchTurn();
-
-            const nextPlayer = room.game.currentTurn;
-
-            await sock.sendMessage(chatId, {
-                text:
-`❌ *Mauvaise réponse !*
-
-🏙️ La capitale était : *${currentCapital}*
-
-➡️ Tour suivant : @${nextPlayer.split('@')[0]}`,
-                mentions: [previousPlayer, nextPlayer]
-            });
-
-            if (room.roundsWithoutAnswer >= 2) {
-                room.game.pickNewCapital();
-                room.roundsWithoutAnswer = 0;
-
-                await sock.sendMessage(chatId, {
-                    text: `🔀 *Nouveau pays sélectionné !*`
-                });
-            }
-
-            await sendCapitalHint(sock, room);
-            startTimer(sock, room);
-        }
+        // 🔹 Envoyer le prochain indice et relancer le timer
+        await sendCapitalHint(sock, room);
+        startTimer(sock, room);
 
     } catch (error) {
         console.error('Erreur handleCapitalAnswer:', error);
     }
 }
 
+
+/* =====================================================
+   STOP / QUIT / CLEANUP
+===================================================== */
 async function stopCapitalGame(sock, chatId, senderId) {
     try {
-        const room = Object.values(games).find(r => 
-            r.chatId === chatId && 
-            r.state === 'PLAYING'
-        );
-
-        if (!room) return sock.sendMessage(chatId, { 
-            text: '❌ Aucune partie CAPITAL en cours à arrêter.' 
-        });
+        const room = Object.values(games).find(r => r.chatId === chatId && r.state === 'PLAYING');
+        if (!room) return sock.sendMessage(chatId, { text: '❌ Aucune partie CAPITAL en cours à arrêter.' });
 
         clearTimeout(room.timer);
         delete games[room.id];
@@ -311,9 +263,6 @@ async function stopCapitalGame(sock, chatId, senderId) {
     }
 }
 
-/**
- * Quitter une partie CAPITAL
- */
 async function quitCapitalGame(sock, chatId, senderId) {
     try {
         const room = Object.values(games).find(r =>
@@ -321,16 +270,13 @@ async function quitCapitalGame(sock, chatId, senderId) {
             r.chatId === chatId &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );
-
-        if (!room) return sock.sendMessage(chatId, { 
-            text: '❌ Vous n\'êtes dans aucune partie CAPITAL en cours.' 
-        });
+        if (!room) return sock.sendMessage(chatId, { text: '❌ Vous n\'êtes dans aucune partie CAPITAL en cours.' });
 
         clearTimeout(room.timer);
         delete games[room.id];
 
         const winner = senderId === room.game.playerA ? room.game.playerB : room.game.playerA;
-        
+
         await sock.sendMessage(chatId, {
             text: `🏳️ *PARTIE ABANDONNÉE* 🏳️\n\n@${senderId.split('@')[0]} a quitté la partie.\n\n🏆 @${winner.split('@')[0]} remporte la partie par forfait !\n\n📊 Score final :\n• @${room.game.playerA.split('@')[0]} : ${room.game.scores[room.game.playerA]}\n• @${room.game.playerB.split('@')[0]} : ${room.game.scores[room.game.playerB]}`,
             mentions: [senderId, winner, room.game.playerA, room.game.playerB]
@@ -340,13 +286,9 @@ async function quitCapitalGame(sock, chatId, senderId) {
     }
 }
 
-/**
- * Nettoyer les parties inactives (cron job optionnel)
- */
 function cleanupInactiveGames() {
     const now = Date.now();
-    const inactiveTimeout = 5 * 60 * 1000; // 5 minutes
-    
+    const inactiveTimeout = 5 * 60 * 1000;
     Object.keys(games).forEach(roomId => {
         const room = games[roomId];
         if (now - room.lastActivity > inactiveTimeout) {
@@ -356,10 +298,7 @@ function cleanupInactiveGames() {
     });
 }
 
-// Nettoyage automatique toutes les 10 minutes
 setInterval(cleanupInactiveGames, 10 * 60 * 1000);
-
-
 
 /* =====================================================
    EXPORT

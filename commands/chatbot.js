@@ -201,7 +201,7 @@ async function getAIResponse(text, context = {}) {
     }
 
     // Réponses pour "bien"
-    if (lower === 'bien' || lower.includes('ça va bien')|| lower.includes('ca va bien') || lower.includes('je vais bien')|| lower.includes('je vais bien')) {
+    else if (lower === 'bien' || lower.includes('ça va bien')|| lower.includes('ca va bien') || lower.includes('je vais bien')|| lower.includes('je vais bien')) {
         const reponsesBien = [
             "Parfait alors 😊",
             "Super 😄",
@@ -211,7 +211,7 @@ async function getAIResponse(text, context = {}) {
     }
 
     // Réponses pour "merci"
-    if (lower.includes('merci')|| lower.includes('thank') || lower.includes('merci beaucoup')) {
+    else if (lower.includes('merci')|| lower.includes('thank') || lower.includes('merci beaucoup')) {
         const reponsesMerci = [
             "Avec plaisir 😎",
             "De rien !",
@@ -219,64 +219,66 @@ async function getAIResponse(text, context = {}) {
         ];
         return reponsesMerci[Math.floor(Math.random() * reponsesMerci.length)];
     }
+    else
+        {    // ===== GEMINI (fallback intelligent) =====
+        try {
+            const model = genAI.getGenerativeModel({
+                model: "gemini-2.5-flash"
+            });
 
-    // ===== GEMINI (fallback intelligent) =====
-try {
-    const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash"
-    });
+            const history = (context.messages || [])
+                .slice(-5)
+                .map(m => `- ${m}`)
+                .join('\n');
 
-    const history = (context.messages || [])
-        .slice(-5)
-        .map(m => `- ${m}`)
-        .join('\n');
+            const userInfo = context.userInfo || {};
+            const userProfile = `
+                Nom: ${userInfo.name || "inconnu"}
+                Âge: ${userInfo.age || "inconnu"}
+                Localisation: ${userInfo.location || "inconnue"}
+                `;
 
-    const userInfo = context.userInfo || {};
-    const userProfile = `
-        Nom: ${userInfo.name || "inconnu"}
-        Âge: ${userInfo.age || "inconnu"}
-        Localisation: ${userInfo.location || "inconnue"}
-        `;
+                    const prompt = `
+                Tu es un chatbot WhatsApp humain, amical et naturel.
+                Tu parles simplement, jamais comme une IA.
+                Tu adaptes ton ton : cool, respectueux, parfois drôle.
+                Réponses courtes et claires (WhatsApp).
 
-            const prompt = `
-        Tu es un chatbot WhatsApp humain, amical et naturel.
-        Tu parles simplement, jamais comme une IA.
-        Tu adaptes ton ton : cool, respectueux, parfois drôle.
-        Réponses courtes et claires (WhatsApp).
+                Profil utilisateur :
+                ${userProfile}
 
-        Profil utilisateur :
-        ${userProfile}
+                Historique récent :
+                ${history}
 
-        Historique récent :
-        ${history}
+                Message actuel :
+                "${text}"
 
-        Message actuel :
-        "${text}"
+                Réponds de manière conversationnelle.
+                `;
 
-        Réponds de manière conversationnelle.
-        `;
+                    const result = await model.generateContent(prompt);
 
-            const result = await model.generateContent(prompt);
+                    // ✅ récupération ULTRA SAFE du texte
+                    let responseText = null;
 
-            // ✅ récupération ULTRA SAFE du texte
-            let responseText = null;
+                    if (result?.response?.text) {
+                        responseText = result.response.text();
+                    } else if (
+                        result?.response?.candidates?.[0]?.content?.parts?.[0]?.text
+                    ) {
+                        responseText =
+                            result.response.candidates[0].content.parts[0].text;
+                    }
 
-            if (result?.response?.text) {
-                responseText = result.response.text();
-            } else if (
-                result?.response?.candidates?.[0]?.content?.parts?.[0]?.text
-            ) {
-                responseText =
-                    result.response.candidates[0].content.parts[0].text;
-            }
+                    return responseText?.trim() || "🤖 Hmm… j’hésite un peu 😅";
 
-            return responseText?.trim() || "🤖 Hmm… j’hésite un peu 😅";
-
-        } catch (error) {
-            console.error("❌ Erreur Gemini :", error.response?.data || error.message);
-            return "😅 J’ai eu un petit bug… réessaie encore.";
+                } catch (error) {
+                    console.error("❌ Erreur Gemini :", error.response?.data || error.message);
+                    return "😅 J’ai eu un petit bug… réessaie encore.";
+                }
         }
     }
+
 
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
     const data = loadUserGroupData();

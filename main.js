@@ -476,7 +476,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await settingsCommand(sock, chatId, message);
                 break;
             case userMessage === '*session':
-                await runSessionCommand(sock, chatId, message);
+                await runSessionCommand({
+                    sock,
+                    msg: message,
+                });
                 break;
             case userMessage.startsWith('*mode'):
                 // Check if sender is the owner
@@ -783,7 +786,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage === '*sc':
             case userMessage === '*script':
             case userMessage === '*repo':
-                await githubCommand(sock, chatId, message);
+                await githubCommand(sock, chatId, message,args);
                 break;
             case userMessage.startsWith('*antibadword'):
                 if (!isGroup) {
@@ -960,7 +963,11 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await clearTmpCommand(sock, chatId, message);
                 break;
             case userMessage === '*adduser':
-                await addCommand(sock, chatId, message);
+                await addCommand({
+                    sock,
+                    msg: message,
+                    args
+                });
                 break;
             case userMessage === '*removeuser':
                 await removeCommand(sock, chatId, message);
