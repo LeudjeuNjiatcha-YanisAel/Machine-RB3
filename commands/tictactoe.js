@@ -108,7 +108,7 @@ ${arr.slice(90, 100).join('')}
 ▢ *ID de la salle :* ${room.id}
 ▢ *Règles :*
 • Alignez 4 symboles verticalement, horizontalement ou en diagonale pour gagner
-• Tapez un numéro (1-100) pour placer votre symbole
+• Tapez *move numeor(1-100) pour placer votre symbole
 • Le premier chiffre de la 2 ligne correspond à la position 11, le premier de la 3ème ligne à 21, etc.
 • Tapez *quit* pour abandonner
 `;
