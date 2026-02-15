@@ -1,4 +1,5 @@
 const CapitalGame = require('../lib/capital');
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const games = {};
 
@@ -130,8 +131,8 @@ async function sendCapitalHint(sock, room) {
             room.game.playerB
         ]
     });
-
     room.lastActivity = Date.now();
+    await sleep(3000);
 }
 
 /* =====================================================
@@ -146,7 +147,7 @@ function startTimer(sock, room) {
         await sock.sendMessage(room.chatId, {
             text:
 `⏰ Temps écoulé !
-
+    
 ${tourFinished
 ? `✅ Tour ${room.turnNumber - 1} terminé`
 : `➡️ Le tour continue`
@@ -188,6 +189,7 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
         if (result.status === 'correct') {
             if (!room.game.scores[senderId]) room.game.scores[senderId] = 0;
             room.game.scores[senderId]++;
+            await sleep(3000);
         }
 
         // 🔹 Changer de pays dans tous les cas (bonne ou mauvaise réponse)
@@ -198,15 +200,17 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
                 ? `✅ *Bonne réponse !* 🎉 +1 point pour @${senderId.split('@')[0]}`
                 : `❌ *Mauvaise réponse !* 😢`,
             mentions: [senderId]
+            
         });
-
+        await sleep(3000);
         await sock.sendMessage(chatId, {
             text: `🔀 Nouveau pays : ${room.game.country}\n🏙️ Devinez la capitale !`
+            
         });
 
         // 🔹 Passage au joueur suivant
         const { currentPlayer: nextPlayer } = advanceTurn(room);
-
+        await sleep(3000);
         await sock.sendMessage(chatId, {
             text: `➡️ Tour suivant : @${nextPlayer.split('@')[0]}`,
             mentions: [nextPlayer]

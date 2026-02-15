@@ -155,7 +155,7 @@ const transfertCommand = require('./commands/transcript.js');
 const runSessionCommand = require('./commands/session.js');
 const autoResponse = require('./autoResponse');
 const { createRunwayVideo, waitForVideo } = require('./commands/runway');
-const millionCommand = require('./commands/million');
+const {execute,handleSlam} = require('./commands/million');
 
 // Global settings
 global.packname = settings.packname;
@@ -401,14 +401,14 @@ async function handleMessages(sock, messageUpdate, printLog) {
 
         // 🎮 Slam (réponse aux questions)
         if (userMessage.startsWith('*slam ')) {
-        await millionCommand.handleSlam(sock, message, userMessage);
+        await handleSlam(sock, message, userMessage);
         return;
         }
 
         // 🎮 Commande Million
         if (userMessage.startsWith('*million')) {
         const args = userMessage.split(/\s+/).slice(1);
-        await millionCommand.execute(sock, message, args);
+        await execute(sock, message, args);
         return;
         }
 
