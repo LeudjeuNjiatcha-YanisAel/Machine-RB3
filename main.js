@@ -156,6 +156,7 @@ const runSessionCommand = require('./commands/session.js');
 const autoResponse = require('./autoResponse');
 const { createRunwayVideo, waitForVideo } = require('./commands/runway');
 const millionCommand = require('./commands/million');
+
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
@@ -231,11 +232,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             '';
 
             // 🎮 Gestion du jeu Million - Slam
-        if (userMessage.startsWith('*slam ')) {
-            const millionCommand = require('./commands/million');
-            await millionCommand.handleSlam(sock, message, userMessage);
-            return;
-        }
+        
 
         // Only log command usage
         if (userMessage.startsWith('*')) {
@@ -402,9 +399,20 @@ async function handleMessages(sock, messageUpdate, printLog) {
         return; // Stop le reste
 }
 
+        // 🎮 Slam (réponse aux questions)
+        if (userMessage.startsWith('*slam ')) {
+        await millionCommand.handleSlam(sock, message, userMessage);
+        return;
+        }
 
+        // 🎮 Commande Million
+        if (userMessage.startsWith('*million')) {
+        const args = userMessage.split(/\s+/).slice(1);
+        await millionCommand.execute(sock, message, args);
+        return;
+        }
 
-        switch (true) {
+        switch (true) { 
             case userMessage === '*simage': {
                 const quotedMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
                 if (quotedMessage?.stickerMessage) {
@@ -669,10 +677,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await capitalCommand(sock, chatId, senderId);
             break;
 
-            case userMessage === '*million':
-                const args = userMessage.split(' ').slice(1);
-                await millionCommand.execute(sock,msg,args);
-            break;
             case userMessage === '*exit':
                 await quitCapitalGame(sock, chatId, senderId);
                 break;

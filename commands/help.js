@@ -22,7 +22,7 @@ _Tape une commande avec le préfixe (*)_
 *• *tts <texte>*
 *• *owner*
 *• *groupinfo*
-*• *osint @utilisateur*
+*• *osint numero*
 *• *extract*
 *• *topmembers*
 *• *chip*
@@ -41,7 +41,6 @@ _Tape une commande avec le préfixe (*)_
 *• *online*
 *• *compliment*
 *• *insult*
-*• *translate <text> <lang>*
 
 ══════════════════════
 🎮 *JEUX*
@@ -61,6 +60,7 @@ _Tape une commande avec le préfixe (*)_
 *• *image  <question>* (Image generation)
 *• *chatbot <on/off>* (Chatbot IA)
 *• *genere <question>* (Genère une video) 
+*• *translate <text> <lang>*
 
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
