@@ -86,6 +86,6 @@ async function handleSlam(sock, msg, text) {
 
 module.exports = {
     name: "million",
-    execute,
+    run:execute,
     handleSlam
 };

@@ -49,8 +49,6 @@ _Tape une commande avec le préfixe (*)_
 *• *tictactoe @user*
 *• *hangman*
 *• *million* 
-*• *guess <lettre>*
-*• *answer <réponse>*
 *• *capital*
 
 ══════════════════════
