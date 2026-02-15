@@ -155,7 +155,7 @@ const transfertCommand = require('./commands/transcript.js');
 const runSessionCommand = require('./commands/session.js');
 const autoResponse = require('./autoResponse');
 const { createRunwayVideo, waitForVideo } = require('./commands/runway');
-
+const millionCommand = require('./commands/million');
 // Global settings
 global.packname = settings.packname;
 global.author = settings.author;
@@ -229,6 +229,13 @@ async function handleMessages(sock, messageUpdate, printLog) {
             message.message?.imageMessage?.caption?.trim() ||
             message.message?.videoMessage?.caption?.trim() ||
             '';
+
+            // 🎮 Gestion du jeu Million - Slam
+        if (userMessage.startsWith('*slam ')) {
+            const millionCommand = require('./commands/million');
+            await millionCommand.handleSlam(sock, message, userMessage);
+            return;
+        }
 
         // Only log command usage
         if (userMessage.startsWith('*')) {
@@ -662,6 +669,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await capitalCommand(sock, chatId, senderId);
             break;
 
+            case userMessage === '*million':
+                const args = userMessage.split(' ').slice(1);
+                await millionCommand.execute(sock,msg,args);
+            break;
             case userMessage === '*exit':
                 await quitCapitalGame(sock, chatId, senderId);
                 break;
@@ -678,7 +689,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 // ⚠️ on envoie le texte BRUT
                 await handleTicTacToeMove(sock, chatId, senderId, moveText);
                 break;
-            
             case userMessage === '*chip':
                 await viewPhotoCommand(sock, chatId, message);
             break;

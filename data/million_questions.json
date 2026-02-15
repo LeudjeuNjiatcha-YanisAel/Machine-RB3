@@ -1,0 +1,871 @@
+[
+  {
+    "question": "Que signifie HTML ?",
+    "choices": [
+      "Hyper Text Markup Language",
+      "High Transfer Machine Language",
+      "Home Tool Markup Language",
+      "Hyperlinks Text Machine Language"
+    ],
+    "answer": 0,
+    "difficulty": 1
+  },
+  {
+    "question": "Qui a créé Linux ?",
+    "choices": [
+      "Bill Gates",
+      "Steve Jobs",
+      "Linus Torvalds",
+      "Mark Zuckerberg"
+    ],
+    "answer": 2,
+    "difficulty": 2
+  },
+  {
+    "question": "Quelle est la capitale du Canada ?",
+    "choices": [
+      "Toronto",
+      "Ottawa",
+      "Montréal",
+      "Vancouver"
+    ],
+    "answer": 1,
+    "difficulty": 1
+  },
+  {
+    "question": "Quel est le plus grand océan du monde ?",
+    "choices": [
+      "Océan Atlantique",
+      "Océan Indien",
+      "Océan Pacifique",
+      "Océan Arctique"
+    ],
+    "answer": 2,
+    "difficulty": 1
+  },
+  {
+    "question": "Qui a écrit 'Les Misérables' ?",
+    "choices": [
+      "Victor Hugo",
+      "Émile Zola",
+      "Gustave Flaubert",
+      "Honoré de Balzac"
+    ],
+    "answer": 0,
+    "difficulty": 2
+  },
+  {
+    "question": "Quel est le langage de programmation le plus utilisé en 2024 ?",
+    "choices": [
+      "Python",
+      "JavaScript",
+      "Java",
+      "C#"
+    ],
+    "answer": 0,
+    "difficulty": 3
+  },
+    {
+        "question": "Quelle est la formule chimique de l'eau ?",
+        "choices": [
+        "H2O",
+        "CO2",
+        "O2",
+        "NaCl"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Qui a peint la 'Mona Lisa' ?",
+        "choices": [
+        "Vincent van Gogh",
+        "Pablo Picasso",
+        "Leonardo da Vinci",
+        "Claude Monet"
+        ],
+        "answer": 2,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le plus grand pays du monde en superficie ?",
+        "choices": [
+        "États-Unis",
+        "Chine",
+        "Russie",
+        "Canada"
+        ],
+        "answer": 2,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le symbole chimique de l'or ?",
+        "choices": [
+        "Ag",
+        "Au",
+        "Fe",
+        "Pb"
+        ],
+        "answer": 1,
+        "difficulty": 1
+    },
+    {
+        "question": "Qui a écrit 'Le Petit Prince' ?",
+        "choices": [
+        "Antoine de Saint-Exupéry",
+        "Jules Verne",
+        "Albert Camus",
+        "Marcel Proust"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand désert du monde ?",
+        "choices": [
+        "Sahara",
+        "Gobi",
+        "Kalahari",
+        "Désert de l'Antarctique"
+        ],
+        "answer": 3,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le langage de programmation utilisé pour développer Android ?",
+        "choices": [
+        "Java",
+        "Swift",
+        "Kotlin",
+        "C++"
+        ],
+        "answer": 2,
+        "difficulty": 3
+    },
+    {
+        "question": "Qui a découvert la pénicilline ?",
+        "choices": [
+        "Alexander Fleming",
+        "Marie Curie",
+        "Louis Pasteur",
+        "Isaac Newton"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand mammifère terrestre ?",
+        "choices": [
+        "Éléphant d'Afrique",
+        "Girafe",
+        "Rhinocéros blanc",
+        "Hippopotame"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le symbole chimique du sodium ?",
+        "choices": [
+        "Na",
+        "K",
+        "Mg",
+        "Ca"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Qui a écrit '1984' ?",
+        "choices": [
+        "George Orwell",
+        "Aldous Huxley",
+        "Ray Bradbury",
+        "Philip K."],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand lac d'eau douce du monde ?",
+        "choices": [
+        "Lac Supérieur",
+        "Lac Victoria",
+        "Lac Baïkal",
+        "Lac Tanganyika"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le langage de programmation utilisé pour développer iOS ?",
+        "choices": [
+        "Swift",
+        "Java",
+        "Kotlin",
+        "C#"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Qui a découvert la gravité ?",
+        "choices": [
+        "Albert Einstein",
+        "Isaac Newton",
+        "Galilée",
+        "Nikola Tesla"
+        ],
+        "answer": 1,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand animal marin ?",
+        "choices": [
+        "Requin blanc",
+        "Baleine bleue",
+        "Orque",
+        "Calmar géant"
+        ],
+        "answer": 1,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le symbole chimique du fer ?",
+        "choices": [
+        "Fe",
+        "Cu",
+        "Zn",
+        "Al"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Qui a écrit 'Le Seigneur des Anneaux' ?",
+        "choices": [
+        "J.R.R. Tolkien",
+        "C.S. Lewis",
+        "George R.R. Martin",
+        "J.K. Rowling"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand volcan actif du monde ?",
+        "choices": [
+        "Mauna Loa",
+        "Vésuve",
+        "Etna",
+        "Kilauea"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le langage de programmation utilisé pour développer les applications web côté serveur ?",
+        "choices": [
+        "PHP",
+        "JavaScript",
+        "Python",
+        "Ruby"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Qui a découvert l'Amérique ?",
+        "choices": [
+        "Christophe Colomb",
+        "Vasco de Gama",
+        "Ferdinand Magellan",
+        "Amerigo Vespucci"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel est le plus grand arbre du monde ?",
+        "choices": [
+        "Séquoia géant",
+        "Baobab",
+        "Chêne",
+        "Érable"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel est le symbole chimique du cuivre ?",
+        "choices": [
+        "Cu",
+        "Ag",
+        "Au",
+        "Fe"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "Qui a écrit 'Harry Potter' ?",
+        "choices": [
+        "J.K. Rowling",
+        "Stephenie Meyer",
+        "Suzanne Collins",
+        "Rick Riordan"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+        {
+            "question": "Quel est le plus grand canyon du monde ?",
+            "choices": [
+            "Grand Canyon",
+            "Canyon de Colca",
+            "Canyon de Yarlung Tsangpo",
+            "Canyon de Fish River"
+            ],
+            "answer": 2,
+            "difficulty": 1
+        },
+        {
+            "question": "Quel est le langage de programmation utilisé pour développer les jeux vidéo ?",
+            "choices": [
+            "C++",
+            "Java",
+            "Python",
+            "C#"
+            ],
+            "answer": 0,
+            "difficulty": 3
+        },
+        {
+            "question": "Qui a découvert la théorie de la relativité ?",
+            "choices": [
+            "Albert Einstein",
+            "Isaac Newton",
+            "Galilée",
+            "Nikola Tesla"
+            ],
+            "answer": 0,
+            "difficulty": 2
+        },
+        {
+            "question": "Quel est le plus grand récif corallien du monde ?",
+            "choices": [
+            "Grande Barrière de Corail",
+            "Récif de Belize",
+            "Récif de la mer Rouge",
+            "Récif de Ningaloo"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "Quel est le symbole chimique du zinc ?",
+            "choices": [
+            "Zn",
+            "Cu",
+            "Fe",
+            "Al"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "Qui a écrit 'Le Comte de Monte-Cristo' ?",
+            "choices": [
+            "Alexandre Dumas",
+            "Victor Hugo",
+            "Émile Zola",
+            "Gustave Flaubert"
+            ],
+            "answer": 0,
+            "difficulty": 2
+        },
+        {
+            "question": "Quel est le plus grand glacier du monde ?",
+            "choices": [
+            "Glacier de Lambert",
+            "Glacier de Vatnajökull",
+            "Glacier de Perito Moreno",
+            "Glacier de Siachen"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "Quel est le langage de programmation utilisé pour développer les applications mobiles multiplateformes ?",
+            "choices": [
+            "Flutter",
+            "React Native",
+            "Xamarin",
+            "Ionic"
+            ],
+            "answer": 0,
+            "difficulty": 3
+        },
+        {
+            "question": "Qui a découvert la pénicilline ?",
+            "choices": [
+            "Alexander Fleming",
+            "Marie Curie",
+            "Louis Pasteur",
+            "Isaac Newton"
+            ],
+            "answer": 0,
+            "difficulty": 2
+        },
+        {
+            "question": "Quel est le plus grand mammifère terrestre ?",
+            "choices": [
+            "Éléphant d'Afrique",
+            "Girafe",
+            "Rhinocéros blanc",
+            "Hippopotame"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "Quel est le symbole chimique du sodium ?",
+            "choices": [
+            "Na",
+            "K",
+            "Mg",
+            "Ca"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "Qui a écrit '1984' ?",
+            "choices": [
+            "George Orwell",
+            "Aldous Huxley",
+            "Ray Bradbury",
+            "Philip K."
+            ],
+            "answer": 0,
+            "difficulty": 2
+        },
+        {
+            "question": "Quel est le plus grand lac d'eau douce du monde ?",
+            "choices": [
+            "Lac Supérieur",
+            "Lac Victoria",
+            "Lac Baïkal",
+            "Lac Tanganyika"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+            "question": "En quelle année l'homme a-t-il marché sur la lune pour la première fois ?",
+            "choices": [
+            "1965",
+            "1969",
+            "1972",
+            "1975"
+            ],
+            "answer": 1,
+            "difficulty": 2
+        },
+        {
+            "question": "quels sont les clubs a realise le sextuple",
+            "choices":[
+                "FC Barcelone , Bayern Munich , Psg ",
+                "Real Madrid , Liverpool , Juventus",
+                "Roma , Inter Milan , Ajax",
+                "Manchester United , Chelsea , Arsenal"
+            ],
+            "answer": 0,
+            "difficulty": 3
+        },
+        {
+            "question": "Quel est le plus grand pays du monde en termes de population ?",
+            "choices": [
+            "Chine",
+            "Inde",
+            "États-Unis",
+            "Indonésie"
+            ],
+            "answer": 0,
+            "difficulty": 1
+        },
+        {
+        "question": "Quel pays a remporté la Coupe du Monde 2018",
+        "choices": [
+            "France",
+            "Allemagne",
+            "Brésil",
+            "Argentine"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur est surnommé La Pulga",
+        "choices": [
+            "Cristiano Ronaldo",
+            "Lionel Messi",
+            "Neymar",
+            "Kylian Mbappé"
+        ],
+        "answer": 1,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel club a remporté le plus de Ligues des Champions",
+        "choices": [
+            "AC Milan",
+            "Bayern Munich",
+            "Real Madrid",
+            "Liverpool"
+        ],
+        "answer": 2,
+        "difficulty": 2
+    },
+    {
+        "question": "Combien de joueurs y a t il dans une equipe de football sur le terrain",
+        "choices": [
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "answer": 2,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel joueur portugais a remporté 5 Ballons d Or",
+        "choices": [
+            "Luis Figo",
+            "Cristiano Ronaldo",
+            "Pepe",
+            "Bernardo Silva"
+        ],
+        "answer": 1,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel pays organise la Coupe du Monde 2022",
+        "choices": [
+            "Qatar",
+            "Russie",
+            "États Unis",
+            "Japon"
+        ],
+        "answer": 0,
+        "difficulty": 1
+    },
+    {
+        "question": "En quelle annee la France a t elle remporté sa premiere Coupe du Monde",
+        "choices": [
+            "1998",
+            "2006",
+            "2018",
+            "1984"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel pays a le plus de titres en Coupe d Afrique des Nations",
+        "choices": [
+            "Cameroun",
+            "Egypte",
+            "Nigeria",
+            "Ghana"
+        ],
+        "answer": 1,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel joueur detient le record du plus grand nombre de buts en selection nationale masculine",
+        "choices": [
+            "Ali Daei",
+            "Cristiano Ronaldo",
+            "Lionel Messi",
+            "Robert Lewandowski"
+        ],
+        "answer": 1,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de Coupes du Monde de football",
+        "choices": [
+            "Allemagne",
+            "Italie",
+            "Argentine",
+            "Brésil"
+        ],
+        "answer": 3,
+        "difficulty": 2
+    },
+    {
+        "question": "Combien de points vaut un tir a 3 points au basketball",
+        "choices": [
+            "1",
+            "2",
+            "3",
+            "4"
+        ],
+        "answer": 2,
+        "difficulty": 1
+    },
+    {
+        "question": "Quel joueur de tennis a remporté le plus de titres du Grand Chelem chez les hommes",
+        "choices": [
+            "Roger Federer",
+            "Rafael Nadal",
+            "Novak Djokovic",
+            "Andy Murray"
+        ],
+        "answer": 2,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de rugby 2019",
+        "choices": [
+            "Angleterre",
+            "Nouvelle Zelande",
+            "Afrique du Sud",
+            "Australie"
+        ],
+        "answer": 2,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de Ballons d Or",
+        "choices": [
+            "Cristiano Ronaldo",
+            "Lionel Messi",
+            "Michel Platini",
+            "Johan Cruyff"
+        ],
+        "answer": 1,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de titres en Ligue des Nations de l UEFA",
+        "choices": [
+            "Portugal",
+            "Pays-Bas",
+            "France",
+            "Belgique"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de titres de meilleur buteur en Ligue des Champions",
+        "choices": [
+            "Cristiano Ronaldo",
+            "Lionel Messi",
+            "Robert Lewandowski",
+            "Raúl"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de football féminin 2019",
+        "choices": [
+            "États-Unis",
+            "Pays-Bas",
+            "Suède",
+            "Angleterre"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de basketball a remporté le plus de titres de MVP de la NBA",
+        "choices": [
+            "Michael Jordan",
+            "LeBron James",
+            "Kareem Abdul-Jabbar",
+            "Bill Russell"
+        ],
+        "answer": 2,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de titres en Copa América",
+        "choices": [
+            "Brésil",
+            "Argentine",
+            "Uruguay",
+            "Chili"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de titres de meilleur buteur en Premier League anglaise",
+        "choices": [
+            "Alan Shearer",
+            "Thierry Henry",
+            "Sergio Agüero",
+            "Wayne Rooney"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de football 2014",
+        "choices": [
+            "Allemagne",
+            "Brésil",
+            "Argentine",
+            "Pays-Bas"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de tennis a remporté le plus de titres du Grand Chelem chez les femmes",
+        "choices": [
+            "Serena Williams",
+            "Steffi Graf",
+            "Margaret Court",
+            "Chris Evert"
+        ],
+        "answer": 2,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de titres en Ligue des Champions féminine de l UEFA",
+        "choices": [
+            "Olympique Lyonnais",
+            "VfL Wolfsburg",
+            "1. FFC Frankfurt",
+            "Umeå IK"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de titres de meilleur buteur en Serie A italienne",
+        "choices": [
+            "Silvio Piola",
+            "Francesco Totti",
+            "Gunnar Nordahl",
+            "Roberto Baggio"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de football 2010",
+        "choices": [
+            "Espagne",
+            "Pays-Bas",
+            "Allemagne",
+            "Brésil"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de basketball a remporté le plus de titres de champion NBA avec une même équipe",
+        "choices": [
+            "Michael Jordan (Chicago Bulls)",
+            "Bill Russell (Boston Celtics)",
+            "Kobe Bryant (Los Angeles Lakers)",
+            "Tim Duncan (San Antonio Spurs)"
+        ],
+        "answer": 1,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de titres en Ligue des Nations féminine de l UEFA",
+        "choices": [
+            "Pays-Bas",
+            "France",
+            "Allemagne",
+            "Suède"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de titres de meilleur buteur en Ligue 1 française",
+        "choices": [
+            "Delio Onnis",
+            "Jean-Pierre Papin",
+            "Zlatan Ibrahimović",
+            "Edinson Cavani"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de football 2006",
+        "choices": [
+            "Italie",
+            "France",
+            "Allemagne",
+            "Brésil"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de tennis a remporté le plus de titres du Grand Chelem chez les hommes sur terre battue",
+        "choices": [
+            "Rafael Nadal",
+            "Björn Borg",
+            "Gustavo Kuerten",
+            "Guillermo Vilas"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté le plus de titres en Ligue des Champions masculine de l UEFA",
+        "choices": [
+            "Espagne",
+            "Italie",
+            "Angleterre",
+            "Allemagne"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de football a remporté le plus de titres de meilleur buteur en Bundesliga allemande",
+        "choices": [
+            "Gerd Müller",
+            "Robert Lewandowski",
+            "Jupp Heynckes",
+            "Manfred Burgsmüller"
+        ],
+        "answer": 0,
+        "difficulty": 3
+    },
+    {
+        "question": "Quel pays a remporté la Coupe du Monde de football 2002",
+        "choices": [
+            "Brésil",
+            "Allemagne",
+            "Cameroun",
+            "Turquie"
+        ],
+        "answer": 0,
+        "difficulty": 2
+    },
+    {
+        "question": "Quel joueur de basketball a remporté le plus de titres de champion NBA avec différentes équipes",
+        "choices": [
+            "Michael Jordan (Chicago Bulls, Washington Wizards)",
+            "LeBron James (Cleveland Cavaliers, Miami Heat, Los Angeles Lakers)",
+            "Kareem Abdul-Jabbar (Milwaukee Bucks, Los Angeles Lakers)",
+            "Bill Russell (Boston Celtics)"
+        ],
+        "answer": 1,
+        "difficulty": 3
+        }
+]
+
