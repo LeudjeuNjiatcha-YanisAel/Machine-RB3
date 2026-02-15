@@ -3,16 +3,6 @@ const path = require('path');
 const { callGeminiOfficial } = require('./commands/ai');
 const e = require('express');
 
-
-function isOwner(senderId, sock) {
-    if (!senderId || !sock?.user?.id) return false;
-
-    const botId = sock.user.id.split(':')[0]; // enlève device id
-    const sender = senderId.split(':')[0];
-
-    return sender === botId;
-}
-
 /* ================= CONFIG ================= */
 
 
@@ -47,7 +37,9 @@ const conversationMemory = {}; // { userId: [] }
 async function autoResponse(msg, sock) {
     try {
         if (!msg?.key?.remoteJid) return;
-        if (msg.key.fromMe) return;
+        // Autoriser owner commands mais éviter auto-reply sur soi
+        const isOwner = msg.key.fromMe;
+
 
         const remoteJid = msg.key.remoteJid;
         const isGroup = remoteJid.endsWith('@g.us');
@@ -69,7 +61,7 @@ async function autoResponse(msg, sock) {
 
         /* ================= OWNER COMMANDS ================= */
 
-        if (isOwner(senderId, sock))
+        if (msg.key.fromMe)
         {
 
             if (lowerText === '*autoresponse off') {
@@ -97,7 +89,8 @@ async function autoResponse(msg, sock) {
 
         /* ================= STOP SI OFF ================= */
 
-        if (!AUTO_RESPONSE_ENABLED) return;
+        if (!AUTO_RESPONSE_ENABLED && !isOwner) return;
+
 
         /* ================= TRIGGER ================= */
 

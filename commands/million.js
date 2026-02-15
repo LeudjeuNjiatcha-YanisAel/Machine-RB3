@@ -84,8 +84,4 @@ async function handleSlam(sock, msg, text) {
     sendQuestion(sock, chatId);
 }
 
-module.exports = {
-    name: "million",
-    run:execute,
-    handleSlam
-};
+module.exports = {execute,handleSlam};

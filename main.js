@@ -405,7 +405,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
         }
 
         // 🎮 Commande Million
-        if (userMessage.startsWith('*million')) {
+        if (userMessage.startsWith('*million start')) {
         const args = userMessage.split(/\s+/).slice(1);
         await execute(sock, message, args);
         return;
