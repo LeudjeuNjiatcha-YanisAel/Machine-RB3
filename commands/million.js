@@ -39,7 +39,7 @@ async function execute(sock, msg, args) {
     const chatId = msg.key.remoteJid;
     const sender = msg.key.participant || msg.key.remoteJid;
 
-    if (args[0] === "start") {
+    if (!args[0] || args[0] === "start") {
         if (games[chatId])
             return sock.sendMessage(chatId, { text: "❌ Partie déjà en cours." });
 

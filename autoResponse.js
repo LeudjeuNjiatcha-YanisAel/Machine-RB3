@@ -1,10 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 const { callGeminiOfficial } = require('./commands/ai');
+const e = require('express');
+
+
+function isOwner(senderId, sock) {
+    if (!senderId || !sock?.user?.id) return false;
+
+    const botId = sock.user.id.split(':')[0]; // enlève device id
+    const sender = senderId.split(':')[0];
+
+    return sender === botId;
+}
 
 /* ================= CONFIG ================= */
 
-const OWNER_JID = "237682441127@s.whatsapp.net";
+
 const CONFIG_PATH = path.join(__dirname, 'autoresponse.json');
 
 /* ================= STATE ================= */
@@ -41,9 +52,11 @@ async function autoResponse(msg, sock) {
         const remoteJid = msg.key.remoteJid;
         const isGroup = remoteJid.endsWith('@g.us');
 
-        const senderId = isGroup
-            ? msg.key.participant
-            : remoteJid;
+        const senderId =
+        msg.key.participant ||
+        msg.participant ||
+        remoteJid;
+
 
         let text =
             msg.message?.conversation ||
@@ -56,7 +69,8 @@ async function autoResponse(msg, sock) {
 
         /* ================= OWNER COMMANDS ================= */
 
-        if (senderId === OWNER_JID) {
+        if (isOwner(senderId, sock))
+        {
 
             if (lowerText === '*autoresponse off') {
                 AUTO_RESPONSE_ENABLED = false;
@@ -139,7 +153,7 @@ async function autoResponse(msg, sock) {
 
                 reply = await callGeminiOfficial(`
 Tu es un chatbot WhatsApp humain.
-Réponses naturelles, courtes, jamais robotique.
+Réponses naturelles, courtes, de maniere conversationnelle avec les emojis parfois, jamais robotique.
 
 Historique:
 ${history}
