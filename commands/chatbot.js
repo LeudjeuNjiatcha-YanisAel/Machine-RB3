@@ -4,7 +4,9 @@ require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
-
+const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash"
+        });
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
 // ================= MEMORY =================
@@ -102,10 +104,6 @@ async function getAIResponse(text, context = {}) {
 
     try {
 
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash"
-        });
-
         const history = (context.messages || [])
             .slice(-6)
             .map(m =>
@@ -186,13 +184,14 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
 
         const history = chatMemory.messages.get(senderId);
 
-        await showTyping(sock, chatId, cleanedMessage);
+        const typingPromise = showTyping(sock, chatId, cleanedMessage);
 
         const response = await getAIResponse(cleanedMessage, {
             messages: history,
             userInfo: chatMemory.userInfo.get(senderId)
         });
-
+        await typingPromise;
+        
         if (!response) return;
 
         await sock.sendMessage(chatId, {
