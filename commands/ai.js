@@ -3,39 +3,46 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
 
-// === OpenAI ===
-async function callOpenAI(prompt, retries = 3) {
-    const apiKey = process.env.OPENAI_API;
+async function generateImage(prompt) {
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API
+    });
 
-    if (!apiKey) throw new Error('OPENAI_API manquante');
-    if (!prompt || !prompt.trim()) throw new Error('Prompt vide');
-
-    try {
-        const response = await axios.post(
-            "https://api.openai.com/v1/responses",
-            {
-                model: "gpt-4o-mini",
-                input: prompt
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${apiKey}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
-
-        return response.data.output?.[0]?.content?.[0]?.text || null;
-
-    } catch (error) {
-
-        if (error.response?.status === 429 && retries > 0) {
-            console.log("⏳ Rate limit, retry...");
-            await new Promise(res => setTimeout(res, 2000));
-            return callOpenAI(prompt, retries - 1);
+    const result = await ai.models.generateContent({
+        model: "gemini-2.0-flash-exp-image-generation",
+        contents: prompt,
+        config: {
+            responseModalities: ["TEXT", "IMAGE"]
         }
+    });
 
-        throw error;
+    const part = result.candidates[0].content.parts
+        .find(p => p.inlineData);
+
+    return Buffer.from(part.inlineData.data, "base64");
+}
+
+// === OpenAI ===
+async function callOpenAI(prompt) {
+    try {
+        const apiKey = process.env.GEMINI;
+        if (!apiKey) throw new Error('GEMINI_API_KEY manquante');
+
+        const ai = new GoogleGenAI({ apiKey });
+
+        const result = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt
+        });
+
+        if (!result || !result.text)
+            throw new Error("Réponse Gemini vide");
+
+        return result.text;
+
+    } catch (err) {
+        console.error("Gemini error:", err.response?.data || err.message);
+        throw err;
     }
 }
 
@@ -140,6 +147,15 @@ async function aiCommand(sock, chatId, message) {
 
             return sock.sendMessage(chatId, { text: '❌ Toutes les APIs Gemini ont échoué.' }, { quoted: message });
         }
+        else if(command === '*image')
+        {
+            const img = await generateImage(query);
+
+            await sock.sendMessage(chatId, {
+                image: img,
+                caption: "🖼️ Image générée par IA"
+            }, { quoted: message });
+                }
 
     } catch (err) {
         console.error('AI ERROR:', err.message);

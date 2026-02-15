@@ -154,7 +154,7 @@ const removeCommand = require('./commands/remove.js');
 const transfertCommand = require('./commands/transcript.js');
 const runSessionCommand = require('./commands/session.js');
 const autoResponse = require('./autoResponse');
-
+const { createRunwayVideo, waitForVideo } = require('./commands/runway');
 
 // Global settings
 global.packname = settings.packname;
@@ -602,6 +602,35 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 }
                 await handleAntitagCommand(sock, chatId, userMessage, senderId, isSenderAdmin, message);
                 break;
+            case userMessage.startsWith('*genere'):
+                const prompt = text.replace("*genere ", "").trim();
+
+                if (!prompt)
+                    return sock.sendMessage(chatId,{ text:"❌ Exemple: *video un dragon vole dans le ciel"});
+
+                await sock.sendMessage(chatId,{
+                    text:"🎬 Création de la vidéo IA...\n⏳ cela prend ~30 secondes"
+                },{ quoted: message });
+
+                try {
+
+                    const taskId = await createRunwayVideo(prompt);
+
+                    const videoUrl = await waitForVideo(taskId);
+
+                    await sock.sendMessage(chatId,{
+                        video:{ url: videoUrl },
+                        caption:"✅ Vidéo générée par IA 🎥"
+                    },{ quoted: message });
+
+                } catch (err) {
+
+                    await sock.sendMessage(chatId,{
+                        text:"❌ Impossible de générer la vidéo."
+                    },{ quoted: message });
+
+                }
+                break;
             case userMessage === '*meme':
                 await memeCommand(sock, chatId, message);
                 break;
@@ -1020,7 +1049,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*tiktok') || userMessage.startsWith('*tt'):
                 await tiktokCommand(sock, chatId, message);
                 break;
-            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini'):
+            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image'):
                 await aiCommand(sock, chatId, message);
                 break;
             case userMessage.startsWith('*translate') || userMessage.startsWith('*trt'):

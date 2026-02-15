@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
@@ -10,371 +9,238 @@ const genAI = new GoogleGenerativeAI({
 
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
-// In-memory storage for chat history and user info
+// ================= MEMORY =================
 const chatMemory = {
-    messages: new Map(), // Stocke les 5 derniers messages par utilisateur
-    userInfo: new Map()  // Stocke les informations utilisateur
+    messages: new Map(),
+    userInfo: new Map()
 };
 
-// Load user group data
+// ===== Ajouter message mémoire =====
+function addMessageToMemory(userId, role, text) {
+    if (!chatMemory.messages.has(userId))
+        chatMemory.messages.set(userId, []);
+
+    const history = chatMemory.messages.get(userId);
+
+    history.push({
+        role,
+        text,
+        time: Date.now()
+    });
+
+    // garder seulement 12 messages
+    if (history.length > 12) history.shift();
+}
+
+// ================= DATA =================
 function loadUserGroupData() {
     try {
         const data = JSON.parse(fs.readFileSync(USER_GROUP_DATA));
 
-        // 🔒 Sécurisation ABSOLUE
-        if (!data.chatbot || typeof data.chatbot !== 'object') {
+        if (!data.chatbot || typeof data.chatbot !== 'object')
             data.chatbot = {};
-        }
 
         return data;
-    } catch (error) {
-        console.error('❌ Erreur lors du chargement des données du groupe utilisateur :', error.message);
+    } catch {
         return { chatbot: {} };
     }
 }
 
-
-// Add random delay between 2-5 seconds
-function getRandomDelay() {
-    return Math.floor(Math.random() * 3000) + 2000;
+// ================= HUMAN DELAY =================
+function getRandomDelay(text = "") {
+    const base = 700;
+    return base + text.length * 18;
 }
 
-// Add typing indicator
-async function showTyping(sock, chatId) {
+async function showTyping(sock, chatId, text = "") {
     try {
         await sock.presenceSubscribe(chatId);
         await sock.sendPresenceUpdate('composing', chatId);
-        await new Promise(resolve => setTimeout(resolve, getRandomDelay()));
-    } catch (error) {
-        console.error('Erreur de l’indicateur de saisie :', error);
-    }
+        await new Promise(r => setTimeout(r, getRandomDelay(text)));
+    } catch {}
 }
 
-// Extract user information from messages
+// ================= QUICK REPLIES =================
+function quickReplies(text) {
+    const lower = text.toLowerCase();
+
+    const random = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    if (["salut","bonjour","yo","bjr"].some(w=>lower.includes(w)))
+        return random(["Salut 😄","Yo 👋","Hey !"]);
+
+    if (["ça va","ca va","comment tu vas"].some(w=>lower.includes(w)))
+        return random(["Ça va tranquille 😎 et toi ?","Oui nickel !"]);
+
+    if (["merci","thanks"].some(w=>lower.includes(w)))
+        return random(["Avec plaisir 😉","De rien !"]);
+
+    return null;
+}
+
+// ================= USER INFO =================
 function extractUserInfo(message) {
     const info = {};
-    
-    // Extract name
-    if (message.toLowerCase().includes('my name is')) {
-        info.name = message.split('my name is')[1].trim().split(' ')[0];
-    }
-    
-    // Extract age
-    if (message.toLowerCase().includes('i am') && message.toLowerCase().includes('years old')) {
+    const lower = message.toLowerCase();
+
+    if (lower.includes('my name is'))
+        info.name = message.split('my name is')[1]?.trim().split(' ')[0];
+
+    if (lower.includes('years old'))
         info.age = message.match(/\d+/)?.[0];
-    }
-    
-    // Extract location
-    if (message.toLowerCase().includes('i live in') || message.toLowerCase().includes('i am from')) {
-        info.location = message.split(/(?:i live in|i am from)/i)[1].trim().split(/[.,!?]/)[0];
-    }
-    
+
+    if (lower.includes('i live in') || lower.includes('i am from'))
+        info.location = message.split(/(?:i live in|i am from)/i)[1]
+            ?.trim().split(/[.,!?]/)[0];
+
     return info;
 }
 
-async function handleChatbotCommand(sock, chatId, message, match) {
-    if (!match) {
-        await showTyping(sock, chatId);
-        return sock.sendMessage(chatId, {
-            text: `*CONFIGURATION DU CHATBOT*\n\n*chatbot on*\nActiver le chatbot\n\n*chatbot off*\nDésactiver le chatbot dans ce groupe`,
-            quoted: message
+// ================= AI RESPONSE =================
+async function getAIResponse(text, context = {}) {
+
+    // ⚡ réponses locales rapides
+    const fast = quickReplies(text);
+    if (fast) return fast;
+
+    try {
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash"
         });
+
+        const history = (context.messages || [])
+            .slice(-10)
+            .map(m =>
+                `${m.role === "user" ? "Utilisateur" : "Assistant"}: ${m.text}`
+            )
+            .join('\n');
+
+        const userInfo = context.userInfo || {};
+
+        const prompt = `
+Tu es un ami qui discute naturellement sur WhatsApp.
+
+Règles :
+- réponses courtes
+- ton humain et naturel
+- jamais robotique
+- parfois emojis légers
+- conversation fluide
+
+Profil utilisateur:
+Nom: ${userInfo.name || "inconnu"}
+Age: ${userInfo.age || "inconnu"}
+Lieu: ${userInfo.location || "inconnu"}
+
+Conversation:
+${history}
+
+Message:
+"${text}"
+
+Réponds naturellement:
+`;
+
+        const result = await model.generateContent(prompt);
+
+        let responseText = null;
+
+        if (result?.response?.text)
+            responseText = result.response.text();
+        else if (result?.response?.candidates?.[0]?.content?.parts?.[0]?.text)
+            responseText =
+                result.response.candidates[0].content.parts[0].text;
+
+        return responseText?.trim() || "Hmm 😅 reformule un peu.";
+
+    } catch (error) {
+        console.error("Gemini error:", error.message);
+        return "😅 Petit bug IA… réessaie.";
     }
-
-    const action = match.toLowerCase().trim();
-    const data = loadUserGroupData();
-
-    const senderId = message.key.participant || message.key.remoteJid;
-    const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-    const isOwner = senderId === botJid;
-
-    // ===== OWNER =====
-    if (isOwner) {
-        if (action === 'on') {
-            await showTyping(sock, chatId);
-            if (data.chatbot[chatId]) {
-                return sock.sendMessage(chatId, {
-                    text: '*Le chatbot est déjà activé pour ce groupe*',
-                    quoted: message
-                });
-            }
-
-            data.chatbot[chatId] = true;
-            fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
-
-            return sock.sendMessage(chatId, {
-                text: '*Le chatbot a été activé pour ce groupe*',
-                quoted: message
-            });
-        }
-
-        if (action === 'off') {
-            await showTyping(sock, chatId);
-            if (!data.chatbot[chatId]) {
-                return sock.sendMessage(chatId, {
-                    text: '*Le chatbot est déjà désactivé pour ce groupe*',
-                    quoted: message
-                });
-            }
-
-            delete data.chatbot[chatId];
-            fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
-
-            return sock.sendMessage(chatId, {
-                text: '*Le chatbot a été désactivé pour ce groupe*',
-                quoted: message
-            });
-        }
-    }
-
-    // ===== ADMINS =====
-    let isAdmin = false;
-    if (chatId.endsWith('@g.us')) {
-        try {
-            const meta = await sock.groupMetadata(chatId);
-            isAdmin = meta.participants.some(
-                p => p.id === senderId && (p.admin === 'admin' || p.admin === 'superadmin')
-            );
-        } catch {
-            isAdmin = false;
-        }
-    }
-
-    if (!isAdmin && !isOwner) {
-        return sock.sendMessage(chatId, {
-            text: '❌ Seuls les admins ou le propriétaire du bot peuvent utiliser cette commande.',
-            quoted: message
-        });
-    }
-
-    // ===== ACTION =====
-    if (action === 'on') {
-        data.chatbot[chatId] = true;
-        fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
-
-        return sock.sendMessage(chatId, {
-            text: '*Le chatbot a été activé pour ce groupe*',
-            quoted: message
-        });
-    }
-
-    if (action === 'off') {
-        delete data.chatbot[chatId];
-        fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data, null, 2));
-
-        return sock.sendMessage(chatId, {
-            text: '*Le chatbot a été désactivé pour ce groupe*',
-            quoted: message
-        });
-    }
-
-    return sock.sendMessage(chatId, {
-        text: '*Commande invalide. Utilisez `*chatbot` pour voir l’aide*',
-        quoted: message
-    });
 }
 
-
-async function getAIResponse(text, context = {}) {
-    const lower = text.toLowerCase();
-
-    // ===== RÉPONSES RAPIDES (locales, instantanées) =====
-    // Réponses pour "bonjour"
-    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('bjr') || lower.includes('yo')|| lower.includes('asser')) {
-        const reponsesBonjour = [
-            "Salut 👋 comment tu vas ?",
-            "Yes ! Quoi de neuf ?",
-            "Hey 😄 content de te voir !",
-            "Salut 😎 comment ça va ?"
-        ];
-        return reponsesBonjour[Math.floor(Math.random() * reponsesBonjour.length)];
-    }
-
-    // Réponses pour "ça va"
-    if (lower.includes('ça va') || lower.includes('ca va') || lower.includes('comment tu vas') || lower.includes('comment ça va')) {
-        const reponsesCaVa = [
-            "Oui ça va très bien 😄 et toi ?",
-            "Ça roule ! Et toi ?",
-            "Super 😎, et toi comment ça va ?"
-        ];
-        return reponsesCaVa[Math.floor(Math.random() * reponsesCaVa.length)];
-    }
-
-    // Réponses pour "bien"
-    else if (lower === 'bien' || lower.includes('ça va bien')|| lower.includes('ca va bien') || lower.includes('je vais bien')|| lower.includes('je vais bien')) {
-        const reponsesBien = [
-            "Parfait alors 😊",
-            "Super 😄",
-            "Content de l'entendre !"
-        ];
-        return reponsesBien[Math.floor(Math.random() * reponsesBien.length)];
-    }
-
-    // Réponses pour "merci"
-    else if (lower.includes('merci')|| lower.includes('thank') || lower.includes('merci beaucoup')) {
-        const reponsesMerci = [
-            "Avec plaisir 😎",
-            "De rien !",
-            "Je t'en prie 😉"
-        ];
-        return reponsesMerci[Math.floor(Math.random() * reponsesMerci.length)];
-    }
-    else
-        {    // ===== GEMINI (fallback intelligent) =====
-        try {
-            const model = genAI.getGenerativeModel({
-                model: "gemini-2.5-flash"
-            });
-
-            const history = (context.messages || [])
-                .slice(-5)
-                .map(m => `- ${m}`)
-                .join('\n');
-
-            const userInfo = context.userInfo || {};
-            const userProfile = `
-                Nom: ${userInfo.name || "inconnu"}
-                Âge: ${userInfo.age || "inconnu"}
-                Localisation: ${userInfo.location || "inconnue"}
-                `;
-
-                    const prompt = `
-                Tu es un chatbot WhatsApp humain, amical et naturel.
-                Tu parles simplement, jamais comme une IA.
-                Tu adaptes ton ton : cool, respectueux, parfois drôle.
-                Réponses courtes et claires (WhatsApp).
-
-                Profil utilisateur :
-                ${userProfile}
-
-                Historique récent :
-                ${history}
-
-                Message actuel :
-                "${text}"
-
-                Réponds de manière conversationnelle.
-                `;
-
-                    const result = await model.generateContent(prompt);
-
-                    // ✅ récupération ULTRA SAFE du texte
-                    let responseText = null;
-
-                    if (result?.response?.text) {
-                        responseText = result.response.text();
-                    } else if (
-                        result?.response?.candidates?.[0]?.content?.parts?.[0]?.text
-                    ) {
-                        responseText =
-                            result.response.candidates[0].content.parts[0].text;
-                    }
-
-                    return responseText?.trim() || "🤖 Hmm… j’hésite un peu 😅";
-
-                } catch (error) {
-                    console.error("❌ Erreur Gemini :", error.response?.data || error.message);
-                    return "😅 J’ai eu un petit bug… réessaie encore.";
-                }
-        }
-    }
-
-
+// ================= CHATBOT RESPONSE =================
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
+
     const data = loadUserGroupData();
     if (!data.chatbot[chatId]) return;
 
     try {
         const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-
-        let isBotMentioned = false;
-        let isReplyToBot = false;
-
-        // ----- DÉTECTION TAG / RÉPONSE -----
-        if (message.message?.extendedTextMessage) {
-            const context = message.message.extendedTextMessage.contextInfo || {};
-            const mentionedJid = context.mentionedJid || [];
-            const quotedParticipant = context.participant;
-
-            // Tag du bot
-            isBotMentioned = mentionedJid.includes(botJid);
-
-            // Réponse à un message du bot
-            if (quotedParticipant && quotedParticipant === botJid) {
-                isReplyToBot = true;
-            }
-        }
-
-        // Message privé → toujours autorisé
-        if (!chatId.endsWith('@g.us')) {
-            isBotMentioned = true;
-        }
-
-        // Message privé → toujours autorisé
-        if (!chatId.endsWith('@g.us')) {
-            isBotMentioned = true;
-        }
-
-        // En groupe : autoriser les messages normaux des membres
-        if (chatId.endsWith('@g.us')) {
-            // Ignorer seulement les messages du bot lui-même
         if (senderId === botJid) return;
-        }
 
-        // ----- NETTOYAGE DU MESSAGE -----
-        let cleanedMessage = userMessage
-            .replace(new RegExp(`@${botJid.split('@')[0]}`, 'g'), '')
-            .trim();
-
+        let cleanedMessage = userMessage.trim();
         if (!cleanedMessage || cleanedMessage.length < 2) return;
 
-        // ----- MÉMOIRE UTILISATEUR -----
-        if (!chatMemory.messages.has(senderId)) {
-            chatMemory.messages.set(senderId, []);
+        // Init mémoire utilisateur
+        if (!chatMemory.userInfo.has(senderId))
             chatMemory.userInfo.set(senderId, {});
-        }
 
-        const userInfo = extractUserInfo(cleanedMessage);
-        if (Object.keys(userInfo).length > 0) {
+        // Extraction infos
+        const info = extractUserInfo(cleanedMessage);
+        if (Object.keys(info).length > 0) {
             chatMemory.userInfo.set(senderId, {
                 ...chatMemory.userInfo.get(senderId),
-                ...userInfo
+                ...info
             });
         }
 
-        const messages = chatMemory.messages.get(senderId);
-        messages.push(cleanedMessage);
-        if (messages.length > 20) messages.shift();
+        // Ajouter message user mémoire
+        addMessageToMemory(senderId, "user", cleanedMessage);
 
-        await showTyping(sock, chatId);
+        const history = chatMemory.messages.get(senderId);
+
+        await showTyping(sock, chatId, cleanedMessage);
 
         const response = await getAIResponse(cleanedMessage, {
-            messages,
+            messages: history,
             userInfo: chatMemory.userInfo.get(senderId)
         });
 
-        if (!response) {
-            return sock.sendMessage(chatId, {
-                text: "🤔 Je réfléchis encore… reformule un peu ta question.",
-                quoted: message
-            });
-        }
+        if (!response) return;
 
         await sock.sendMessage(chatId, {
             text: response
         }, { quoted: message });
 
-    } catch (error) {
-        console.error('❌ Erreur chatbot :', error);
-        try {
-            await sock.sendMessage(chatId, {
-                text: "😅 Oups… petite erreur interne. Réessaie.",
-                quoted: message
-            });
-        } catch {}
+        // Ajouter réponse bot mémoire
+        addMessageToMemory(senderId, "assistant", response);
+
+    } catch (err) {
+        console.error("Chatbot error:", err);
     }
 }
 
+// ================= CHATBOT COMMAND =================
+async function handleChatbotCommand(sock, chatId, message, match) {
+
+    const data = loadUserGroupData();
+
+    if (!match) {
+        return sock.sendMessage(chatId,{
+            text:`*CONFIGURATION CHATBOT*
+
+chatbot on → activer
+chatbot off → désactiver`
+        },{quoted:message});
+    }
+
+    const action = match.toLowerCase().trim();
+
+    if (action === "on")
+        data.chatbot[chatId] = true;
+
+    if (action === "off")
+        delete data.chatbot[chatId];
+
+    fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data,null,2));
+
+    return sock.sendMessage(chatId,{
+        text:`✅ Chatbot ${action === "on" ? "activé" : "désactivé"}`
+    },{quoted:message});
+}
+
+// ================= EXPORT =================
 module.exports = {
     handleChatbotCommand,
     handleChatbotResponse

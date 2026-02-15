@@ -42,7 +42,6 @@ _Tape une commande avec le préfixe (*)_
 *• *compliment*
 *• *insult*
 *• *translate <text> <lang>*
-*• *chatbot <on/off>*
 
 ══════════════════════
 🎮 *JEUX*
@@ -58,6 +57,9 @@ _Tape une commande avec le préfixe (*)_
 ══════════════════════
 *• *gpt <question>*
 *• *gemini <question>*
+*• *image  <question>* (Image generation)
+*• *chatbot <on/off>* (Chatbot IA)
+*• *genere <question>* (Genère une video) 
 
 ══════════════════════
 📥 *DOWNLOAD / MÉDIAS*
