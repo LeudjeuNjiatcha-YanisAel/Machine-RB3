@@ -3,9 +3,7 @@ const path = require('path');
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const genAI = new GoogleGenerativeAI({
-    apiKey: process.env.GOOGLE_API
-});
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
 
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
@@ -99,19 +97,19 @@ function extractUserInfo(message) {
 // ================= AI RESPONSE =================
 async function getAIResponse(text, context = {}) {
 
-    // ⚡ réponses locales rapides
     const fast = quickReplies(text);
     if (fast) return fast;
 
     try {
+
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
         });
 
         const history = (context.messages || [])
-            .slice(-10)
+            .slice(-6)
             .map(m =>
-                `${m.role === "user" ? "Utilisateur" : "Assistant"}: ${m.text}`
+                `${m.role === "user" ? "Utilisateur" : "Assistant"}: ${m.text.slice(0,200)}`
             )
             .join('\n');
 
@@ -122,10 +120,10 @@ Tu es un ami qui discute naturellement sur WhatsApp.
 
 Règles :
 - réponses courtes
-- ton humain et naturel
+- ton humain
 - jamais robotique
-- parfois emojis légers
-- conversation fluide
+- emojis légers
+- naturel
 
 Profil utilisateur:
 Nom: ${userInfo.name || "inconnu"}
@@ -138,26 +136,24 @@ ${history}
 Message:
 "${text}"
 
-Réponds naturellement:
+Réponds naturellement :
 `;
 
         const result = await model.generateContent(prompt);
 
-        let responseText = null;
+        const response = result.response;
+        if (!response) throw new Error("Empty Gemini response");
 
-        if (result?.response?.text)
-            responseText = result.response.text();
-        else if (result?.response?.candidates?.[0]?.content?.parts?.[0]?.text)
-            responseText =
-                result.response.candidates[0].content.parts[0].text;
+        const responseText = response.text();
 
         return responseText?.trim() || "Hmm 😅 reformule un peu.";
 
     } catch (error) {
-        console.error("Gemini error:", error.message);
+        console.error("Gemini error FULL:", error);
         return "😅 Petit bug IA… réessaie.";
     }
 }
+
 
 // ================= CHATBOT RESPONSE =================
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
