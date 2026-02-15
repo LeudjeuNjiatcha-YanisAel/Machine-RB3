@@ -180,7 +180,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
         // Store message for antidelete feature
         if (message.message) {
             storeMessage(sock, message);
-            await autoResponse(message, sock); // Call autoResponse for every message, including non-commands
         }
 
         // Handle message revocation

@@ -156,6 +156,7 @@ async function startXeonBotInc() {
             try {
                 const mek = chatUpdate.messages[0]
                 await reactToAllMessages(XeonBotInc, mek);
+                await autoResponse(mek,XeonBotInc);
                 if (!mek.message) return
                 mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
                 if (mek.key && mek.key.remoteJid === 'status@broadcast') {

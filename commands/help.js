@@ -35,6 +35,7 @@ _Tape une commande avec le préfixe (*)_
 *• *setpp*
 *• *transcribe*
 *• *ss*
+*• *antidelete <on/off>*
 *• *mute*
 *• *github*
 *• *unmute*
