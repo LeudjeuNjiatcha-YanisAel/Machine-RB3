@@ -60,6 +60,8 @@ const conversationMemory = {}; // { userId: [] }
 async function autoResponse(msg, sock) {
     try {
         if (!msg?.key?.remoteJid) return;
+        if (msg.key.fromMe) return;
+
         const remoteJid = msg.key.remoteJid;
         const isGroup = remoteJid.endsWith('@g.us');
 
@@ -67,8 +69,6 @@ async function autoResponse(msg, sock) {
             ? msg.key.participant
             : remoteJid;
 
-        // ❗ bloquer seulement les messages du bot lui-même
-        if (msg.key.fromMe && !isOwner(senderId, msg)) return;
         let text =
             msg.message?.conversation ||
             msg.message?.extendedTextMessage?.text;
@@ -81,8 +81,7 @@ async function autoResponse(msg, sock) {
         /* ================= OWNER COMMANDS ================= */
 
         if (isOwner(senderId, msg))
-        {
-            console.log("REAL SENDER:", senderId);
+    {
 
             if (lowerText === '*autoresponse off') {
                 AUTO_RESPONSE_ENABLED = false;
