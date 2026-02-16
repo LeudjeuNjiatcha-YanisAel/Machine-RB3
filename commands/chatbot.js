@@ -119,6 +119,7 @@ Tu es un ami qui discute naturellement sur WhatsApp.
 Règles :
 - réponses courtes
 - ton humain
+- precis et concis
 - jamais robotique
 - emojis légers
 - naturel
@@ -191,7 +192,7 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
             userInfo: chatMemory.userInfo.get(senderId)
         });
         await typingPromise;
-        
+
         if (!response) return;
 
         await sock.sendMessage(chatId, {
