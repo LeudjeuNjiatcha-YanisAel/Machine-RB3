@@ -10,61 +10,79 @@ async function playCommand(sock, chatId, message) {
         const searchQuery = text.split(' ').slice(1).join(' ').trim();
 
         if (!searchQuery) {
-            return sock.sendMessage(chatId, { text: "🎵 Utilisation : *play nom_de_la_chanson*" });
+            return sock.sendMessage(chatId, { 
+                text: "🎵 Utilisation : *play nom_de_la_chanson*" 
+            });
         }
 
-        // 🔍 Recherche YouTube
+        // 🔎 Recherche YouTube
         const { videos } = await yts(searchQuery);
         if (!videos.length) {
-            return sock.sendMessage(chatId, { text: "❌ Aucune musique trouvée." });
+            return sock.sendMessage(chatId, { 
+                text: "❌ Aucune musique trouvée." 
+            });
         }
 
         const video = videos[0];
 
-        // Message d’attente
         await sock.sendMessage(chatId, {
-            text: `⏳ Téléchargement en cours de *${video.title}*...`,
+            text: `⏳ Téléchargement de *${video.title}* en cours...`,
             quoted: message
         });
 
-        // Créer un dossier temporaire
+        // 📁 Créer dossier temporaire dans /tmp (Render compatible)
         const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'music-'));
-        const outputPath = path.join(tmpDir, '%(title).50s.%(ext)s');
+        const outputPath = path.join(tmpDir, 'audio.%(ext)s');
 
-        // Appel yt-dlp pour extraire l’audio en mp3
+        // 🎵 Télécharger audio
         await new Promise((resolve, reject) => {
             execFile('yt-dlp', [
                 video.url,
+                '-f', 'bestaudio',
+                '--no-playlist',
                 '--extract-audio',
                 '--audio-format', 'mp3',
                 '--audio-quality', '192K',
+                '--geo-bypass',
+                '--add-header', 'User-Agent:Mozilla/5.0',
                 '-o', outputPath
-            ], { timeout: 120000 }, (err, stdout, stderr) => {
-                if (err) return reject(err);
-                resolve(stdout);
+            ], { timeout: 180000 }, (err, stdout, stderr) => {
+
+                console.log("STDOUT:", stdout);
+                console.log("STDERR:", stderr);
+
+                if (err) {
+                    console.error("YT-DLP ERROR:", err);
+                    return reject(err);
+                }
+
+                resolve();
             });
         });
 
-        // Trouver le fichier mp3 téléchargé
+        // 📂 Trouver le mp3
         const files = fs.readdirSync(tmpDir).filter(f => f.endsWith('.mp3'));
-        if (!files.length) throw new Error("Fichier mp3 non trouvé");
+        if (!files.length) throw new Error("MP3 non trouvé");
 
         const mp3Path = path.join(tmpDir, files[0]);
 
-        // Envoyer le mp3
+        // ⚡ IMPORTANT : envoyer en buffer (PAS en url)
+        const audioBuffer = fs.readFileSync(mp3Path);
+
         await sock.sendMessage(chatId, {
-            audio: { url: mp3Path },
+            audio: audioBuffer,
             mimetype: 'audio/mpeg',
             fileName: `${video.title}.mp3`
         }, { quoted: message });
 
-        // Nettoyer le dossier temporaire
+        // 🧹 Nettoyage
         fs.rmSync(tmpDir, { recursive: true, force: true });
 
     } catch (err) {
         console.error('❌ playCommand error:', err);
+
         await sock.sendMessage(chatId, {
-            text: "⚠️ Erreur lors du téléchargement ou de la conversion. Réessaie plus tard."
+            text: "⚠️ Impossible de télécharger la musique. Réessaie plus tard."
         }, { quoted: message });
     }
 }
