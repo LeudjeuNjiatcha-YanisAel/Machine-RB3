@@ -72,8 +72,11 @@ async function execute(sock, msg, args) {
                 await sock.sendMessage(chatId, {
                     text:
                 `🎮 Partie créée !
-
+                *Regle A avoir*
+                 - Si vous rater une question vous etes elimine
+                 - Le gagnant de la partie aura droit a une faveur de ma part
                 👉 Tape * *million join* pour participer
+                👉 Tape * *million stop pour quitter la partie
                 ⏳ L'hôte lance avec * *million go*`
                 });
 

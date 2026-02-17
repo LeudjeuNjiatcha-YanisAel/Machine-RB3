@@ -156,7 +156,7 @@ ${tourFinished
 🎯 Joueur suivant : @${currentPlayer.split('@')[0]}`,
             mentions: [previousPlayer, currentPlayer]
         });
-
+        room.game.pickNewCapital();
         await sendCapitalHint(sock, room);
         startTimer(sock, room);
     }, 25000);
@@ -192,7 +192,6 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
             await sleep(3000);
         }
 
-        // 🔹 Changer de pays dans tous les cas (bonne ou mauvaise réponse)
         room.game.pickNewCapital();
 
         await sock.sendMessage(chatId, {

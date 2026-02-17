@@ -1,206 +1,206 @@
-const fs = require('fs');
-const path = require('path');
-const { callGeminiOfficial } = require('./commands/ai');
-const e = require('express');
+// const fs = require('fs');
+// const path = require('path');
+// const { callGeminiOfficial } = require('./commands/ai');
+// const e = require('express');
 
-const OWNER_NUMBER = "237682441127";
-
-
-function isOwner(senderId, msg) {
-    if (!senderId) return false;
-
-    // cas normal
-    let id = senderId;
-
-    // si WhatsApp cache le numéro (@lid)
-    if (senderId.endsWith('@lid')) {
-        id =
-            msg?.message?.extendedTextMessage?.contextInfo?.participant ||
-            msg?.key?.participant ||
-            senderId;
-    }
-
-    // nettoyer : enlever @... et :device
-    const cleanNumber = id.split('@')[0].split(':')[0];
-
-    return cleanNumber === OWNER_NUMBER;
-}
-
-/* ================= CONFIG ================= */
+// const OWNER_NUMBER = "237682441127";
 
 
-const CONFIG_PATH = path.join(__dirname, 'autoresponse.json');
+// function isOwner(senderId, msg) {
+//     if (!senderId) return false;
 
-/* ================= STATE ================= */
+//     // cas normal
+//     let id = senderId;
 
-let AUTO_RESPONSE_ENABLED = true;
+//     // si WhatsApp cache le numéro (@lid)
+//     if (senderId.endsWith('@lid')) {
+//         id =
+//             msg?.message?.extendedTextMessage?.contextInfo?.participant ||
+//             msg?.key?.participant ||
+//             senderId;
+//     }
 
-// Charger état sauvegardé
-try {
-    if (fs.existsSync(CONFIG_PATH)) {
-        const saved = JSON.parse(fs.readFileSync(CONFIG_PATH));
-        AUTO_RESPONSE_ENABLED = saved.enabled ?? true;
-    }
-} catch (e) {
-    console.log("AutoResponse config load error");
-}
+//     // nettoyer : enlever @... et :device
+//     const cleanNumber = id.split('@')[0].split(':')[0];
 
-function saveState() {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify({
-        enabled: AUTO_RESPONSE_ENABLED
-    }, null, 2));
-}
+//     return cleanNumber === OWNER_NUMBER;
+// }
 
-/* ================= MEMORY ================= */
+// /* ================= CONFIG ================= */
 
-const conversationMemory = {}; // { userId: [] }
 
-/* ================= MAIN ================= */
+// const CONFIG_PATH = path.join(__dirname, 'autoresponse.json');
 
-async function autoResponse(msg, sock) {
-    try {
-        if (!msg?.key?.remoteJid) return;
-        if (msg.key.fromMe) return;
+// /* ================= STATE ================= */
 
-        const remoteJid = msg.key.remoteJid;
-        const isGroup = remoteJid.endsWith('@g.us');
+// let AUTO_RESPONSE_ENABLED = true;
 
-        const senderId = isGroup
-            ? msg.key.participant
-            : remoteJid;
+// // Charger état sauvegardé
+// try {
+//     if (fs.existsSync(CONFIG_PATH)) {
+//         const saved = JSON.parse(fs.readFileSync(CONFIG_PATH));
+//         AUTO_RESPONSE_ENABLED = saved.enabled ?? true;
+//     }
+// } catch (e) {
+//     console.log("AutoResponse config load error");
+// }
 
-        let text =
-            msg.message?.conversation ||
-            msg.message?.extendedTextMessage?.text;
+// function saveState() {
+//     fs.writeFileSync(CONFIG_PATH, JSON.stringify({
+//         enabled: AUTO_RESPONSE_ENABLED
+//     }, null, 2));
+// }
 
-        if (!text) return;
+// /* ================= MEMORY ================= */
 
-        const rawText = text.trim();
-        const lowerText = rawText.toLowerCase();
+// const conversationMemory = {}; // { userId: [] }
 
-        /* ================= OWNER COMMANDS ================= */
+// /* ================= MAIN ================= */
 
-        if (isOwner(senderId, msg))
-    {
+// async function autoResponse(msg, sock) {
+//     try {
+//         if (!msg?.key?.remoteJid) return;
+//         if (msg.key.fromMe) return;
 
-            if (lowerText === '*autoresponse off') {
-                AUTO_RESPONSE_ENABLED = false;
-                saveState();
+//         const remoteJid = msg.key.remoteJid;
+//         const isGroup = remoteJid.endsWith('@g.us');
 
-                await sock.sendMessage(remoteJid, {
-                    text: "⛔ Auto-response désactivée"
-                }, { quoted: msg });
+//         const senderId = isGroup
+//             ? msg.key.participant
+//             : remoteJid;
 
-                return;
-            }
+//         let text =
+//             msg.message?.conversation ||
+//             msg.message?.extendedTextMessage?.text;
 
-            if (lowerText === '*autoresponse on') {
-                AUTO_RESPONSE_ENABLED = true;
-                saveState();
+//         if (!text) return;
 
-                await sock.sendMessage(remoteJid, {
-                    text: "✅ Auto-response activée"
-                }, { quoted: msg });
+//         const rawText = text.trim();
+//         const lowerText = rawText.toLowerCase();
 
-                return;
-            }
-        }
+//         /* ================= OWNER COMMANDS ================= */
 
-        /* ================= STOP SI OFF ================= */
+//         if (isOwner(senderId, msg))
+//     {
 
-        if (!AUTO_RESPONSE_ENABLED) return;
+//             if (lowerText === '*autoresponse off') {
+//                 AUTO_RESPONSE_ENABLED = false;
+//                 saveState();
 
-        /* ================= TRIGGER ================= */
+//                 await sock.sendMessage(remoteJid, {
+//                     text: "⛔ Auto-response désactivée"
+//                 }, { quoted: msg });
 
-        let isMentioned = false;
+//                 return;
+//             }
 
-        if (isGroup) {
-            const mentions =
-                msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+//             if (lowerText === '*autoresponse on') {
+//                 AUTO_RESPONSE_ENABLED = true;
+//                 saveState();
 
-            const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-            isMentioned = mentions.includes(botJid);
-        }
+//                 await sock.sendMessage(remoteJid, {
+//                     text: "✅ Auto-response activée"
+//                 }, { quoted: msg });
 
-        // répondre seulement en DM ou mention
-        if (!( !isGroup || isMentioned )) return;
+//                 return;
+//             }
+//         }
 
-        /* ================= MEMORY ================= */
+//         /* ================= STOP SI OFF ================= */
 
-        if (!conversationMemory[senderId])
-            conversationMemory[senderId] = [];
+//         if (!AUTO_RESPONSE_ENABLED) return;
 
-        conversationMemory[senderId].push(`User: ${rawText}`);
+//         /* ================= TRIGGER ================= */
 
-        if (conversationMemory[senderId].length > 5)
-            conversationMemory[senderId].shift();
+//         let isMentioned = false;
 
-        const history = conversationMemory[senderId].join('\n');
+//         if (isGroup) {
+//             const mentions =
+//                 msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
 
-        /* ================= QUICK REPLIES ================= */
+//             const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
+//             isMentioned = mentions.includes(botJid);
+//         }
 
-        let reply = null;
+//         // répondre seulement en DM ou mention
+//         if (!( !isGroup || isMentioned )) return;
 
-        if (/(bonjour|salut|bjr|yo)/i.test(lowerText))
-            reply = "Salut 👋 comment tu vas ?";
-        else if (/(merci|thanks)/i.test(lowerText))
-            reply = "Avec plaisir 😄";
-        else if (/(bye|au revoir)/i.test(lowerText))
-            reply = "À bientôt 👋";
-        else if (/(ton nom|comment tu t'appelles)/i.test(lowerText)) {
-            reply = "Je suis un bot WhatsApp 🤖";
-        }
-        else if (/(aide|help)/i.test(lowerText)) {
-            reply = "Je peux discuter et répondre intelligemment 😉";
-        }
-        else if (/(blague|joke)/i.test(lowerText)) {
-            reply = "Pourquoi les devs aiment la nuit ? Parce que les bugs dorment 😄";
-        }
+//         /* ================= MEMORY ================= */
 
-        /* ================= GEMINI ================= */
+//         if (!conversationMemory[senderId])
+//             conversationMemory[senderId] = [];
 
-        if (!reply) {
-            try {
+//         conversationMemory[senderId].push(`User: ${rawText}`);
 
-                reply = await callGeminiOfficial(`
-Tu es un chatbot WhatsApp humain.
-Réponses naturelles, courtes, de maniere conversationnelle avec les emojis parfois, jamais robotique.
+//         if (conversationMemory[senderId].length > 5)
+//             conversationMemory[senderId].shift();
 
-Historique:
-${history}
+//         const history = conversationMemory[senderId].join('\n');
 
-Message:
-"${rawText}"
-                `);
+//         /* ================= QUICK REPLIES ================= */
 
-                if (!reply?.trim())
-                    reply = "🤖 Hmm… redis-moi 😅";
+//         let reply = null;
 
-            } catch (err) {
-                console.error("Gemini error:", err.message);
-                reply = "😅 Petit bug IA.";
-            }
-        }
+//         if (/(bonjour|salut|bjr|yo)/i.test(lowerText))
+//             reply = "Salut 👋 comment tu vas ?";
+//         else if (/(merci|thanks)/i.test(lowerText))
+//             reply = "Avec plaisir 😄";
+//         else if (/(bye|au revoir)/i.test(lowerText))
+//             reply = "À bientôt 👋";
+//         else if (/(ton nom|comment tu t'appelles)/i.test(lowerText)) {
+//             reply = "Je suis un bot WhatsApp 🤖";
+//         }
+//         else if (/(aide|help)/i.test(lowerText)) {
+//             reply = "Je peux discuter et répondre intelligemment 😉";
+//         }
+//         else if (/(blague|joke)/i.test(lowerText)) {
+//             reply = "Pourquoi les devs aiment la nuit ? Parce que les bugs dorment 😄";
+//         }
 
-        /* ================= SAVE MEMORY ================= */
+//         /* ================= GEMINI ================= */
 
-        conversationMemory[senderId].push(`Bot: ${reply}`);
+//         if (!reply) {
+//             try {
 
-        if (conversationMemory[senderId].length > 5)
-            conversationMemory[senderId].shift();
+//                 reply = await callGeminiOfficial(`
+// Tu es un chatbot WhatsApp humain.
+// Réponses naturelles, courtes, de maniere conversationnelle avec les emojis parfois, jamais robotique.
 
-        /* ================= SEND ================= */
+// Historique:
+// ${history}
 
-        await sock.sendMessage(
-            remoteJid,
-            { text: reply },
-            { quoted: msg }
-        );
+// Message:
+// "${rawText}"
+//                 `);
 
-    } catch (err) {
-        console.error("AutoResponse Error:", err);
-    }
-}
+//                 if (!reply?.trim())
+//                     reply = "🤖 Hmm… redis-moi 😅";
 
-module.exports = autoResponse;
+//             } catch (err) {
+//                 console.error("Gemini error:", err.message);
+//                 reply = "😅 Petit bug IA.";
+//             }
+//         }
+
+//         /* ================= SAVE MEMORY ================= */
+
+//         conversationMemory[senderId].push(`Bot: ${reply}`);
+
+//         if (conversationMemory[senderId].length > 5)
+//             conversationMemory[senderId].shift();
+
+//         /* ================= SEND ================= */
+
+//         await sock.sendMessage(
+//             remoteJid,
+//             { text: reply },
+//             { quoted: msg }
+//         );
+
+//     } catch (err) {
+//         console.error("AutoResponse Error:", err);
+//     }
+// }
+
+// module.exports = autoResponse;
 

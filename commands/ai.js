@@ -3,9 +3,10 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
 
+
 async function generateImage(prompt) {
     const ai = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API
+        apiKey: process.env.IMAGE
     });
 
     const result = await ai.models.generateContent({
@@ -92,9 +93,8 @@ async function aiCommand(sock, chatId, message) {
 
         await sock.sendMessage(chatId, { react: { text: '🤖', key: message.key } });
 
-        // === GPT via OpenAI + APIs tierces ===
         if (command === '*gpt') {
-            // 1️⃣ OpenAI
+            //  OpenAI
             try {
                 const answer = await callOpenAI(query);
                 if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
@@ -102,50 +102,77 @@ async function aiCommand(sock, chatId, message) {
                 console.error('OpenAI failed:', e.message);
             }
 
-            // 2️⃣ APIs tierces
-            const apis = [
-                `https://zellapi.autos/ai/chatbot?text=${encodeURIComponent(query)}`,
-                `https://api.ryzendesu.vip/api/ai/chatgpt?text=${encodeURIComponent(query)}`
-            ];
+            //  Ici on teste plusieurs cles
+            const keys = process.env.AI_STUDIO?.split(',');
+            if(!keys || keys.length === 0)
+            throw new Error('GEMINI_KEYS manquantes');
 
-            for (const api of apis) {
-                try {
-                    const res = await fetch(api);
-                    const data = await res.json();
-                    const answer = data.result || data.answer || data.response;
-                    if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-                } catch {}
+            for (let i = 0; i < keys.length ; i++)
+            {
+                const apiKey = keys[i].trim();
+                try
+                {
+                    const api = new GoogleGenAI({ apiKey });
+
+                    const result = await api.models.generateContent({
+                        model: "gemini-2.5-flash",
+                        contents: query
+                    });
+
+
+                    if (!result || !result.text)
+                        throw new Error("Réponse Gemini vide");
+
+                    if (result) return sock.sendMessage(chatId, { text: result.text }, { quoted: message });
+
+                } catch (err) {
+                    console.log(`❌ Clé ${i + 1} erreur`);
+                    
+                }
             }
-
-            return sock.sendMessage(chatId, { text: '❌ GPT a échoué. Réessaie plus tard.' }, { quoted: message });
+            return sock.sendMessage(chatId, {
+                text: '❌ Toutes les clés Gemini ont échoué.'
+            }, { quoted: message });
         }
-
         // === Gemini ===
         else if (command === '*gemini') {
-            // 1️⃣ Gemini officiel
+            //  Gemini officiel
             try {
                 const answer = await callGeminiOfficial(query);
                 if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
             } catch (e) {
                 console.error('Gemini OFFICIEL failed:', e.message);
             }
+            // teste d'autres cles
+            const keys = process.env.AI_STUDIO?.split(',');
+            
+            if(!keys || keys.length === 0)
+            throw new Error('GEMINI_KEYS manquantes');
 
-            // 2️⃣ APIs fallback
-            const apis = [
-                `https://vapis.my.id/api/gemini?q=${encodeURIComponent(query)}`,
-                `https://api.siputzx.my.id/api/ai/gemini-pro?content=${encodeURIComponent(query)}`
-            ];
+            for (let i = 0; i < keys.length ; i++)
+            {
+                const apiKey = keys[i].trim();
+                try
+                {
+                    const api = new GoogleGenAI({ apiKey });
 
-            for (const api of apis) {
-                try {
-                    const res = await fetch(api);
-                    const data = await res.json();
-                    const answer = data.message || data.data || data.answer || data.result || data.response;
-                    if (answer) return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-                } catch {}
+                    const result = await api.models.generateContent({
+                        model: "gemini-2.5-flash",
+                        contents: query
+                    });
+
+                    if (!result || !result.text)
+                        throw new Error("Réponse Gemini vide");
+
+                    if (result) return sock.sendMessage(chatId, { text: result.text }, { quoted: message });
+
+                } catch (err) {
+                    console.log(`❌ Clé ${i + 1} erreur`);
+                }
             }
-
-            return sock.sendMessage(chatId, { text: '❌ Toutes les APIs Gemini ont échoué.' }, { quoted: message });
+            return sock.sendMessage(chatId, {
+                text: '❌ Toutes les clés Gemini ont échoué.'
+            }, { quoted: message });
         }
         else if(command === '*image')
         {
@@ -160,7 +187,8 @@ async function aiCommand(sock, chatId, message) {
     } catch (err) {
         console.error('AI ERROR:', err.message);
         await sock.sendMessage(chatId, { text: '❌ Erreur IA, réessaie plus tard.' }, { quoted: message });
-    }
+    }   
 }
+
 
 module.exports = { aiCommand, callGeminiOfficial, callOpenAI };
