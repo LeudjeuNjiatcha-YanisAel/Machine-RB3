@@ -30,9 +30,9 @@ async function pingCommand(sock, chatId, message) {
 
         const botInfo = `
 ┏━━〔 🤖 *MachineBot-RB3* 〕━━┓
-┃ 🚀 Ping     : ${ping} ms
-┃ ⏱️ Uptime   : ${uptimeFormatted}
-┃ 🔖 Version  : v${settings.version}
+┃ 🚀 *Ping*     : *${ping} ms*
+┃ ⏱️ *Uptime*   : ${uptimeFormatted}
+┃ 🔖 *Version*  : v${settings.version}
 ┗━━━━━━━━━━━━━━━━━━━┛`.trim();
 
         // Reply to the original message with the bot info
