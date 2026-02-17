@@ -617,7 +617,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 await handleAntitagCommand(sock, chatId, userMessage, senderId, isSenderAdmin, message);
                 break;
             case userMessage.startsWith('*genere'):
-                const prompt = text.replace("*genere ", "").trim();
+                const prompt = userMessage.replace("*genere ", "").trim();
 
                 if (!prompt)
                     return sock.sendMessage(chatId,{ text:"❌ Exemple: *video un dragon vole dans le ciel"});
@@ -704,6 +704,10 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 break;
             case userMessage.startsWith('*hangman'):
                 startHangman(sock, chatId);
+                break;
+            case userMessage.startsWith('*youtube'):
+                const youtubeCommand = require('./commands/youtube');
+                await youtubeCommand(sock, chatId,senderId,userMessage);
                 break;
             case userMessage.startsWith('*guess'):
                 const guessedLetter = userMessage.split(' ')[1];

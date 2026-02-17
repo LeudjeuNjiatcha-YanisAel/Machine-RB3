@@ -141,11 +141,11 @@
 
 //         let reply = null;
 
-//         if (/(bonjour|salut|bjr|yo)/i.test(lowerText))
+//         if (/(bonjour|salut|bjr|yo|asser)/i.test(lowerText))
 //             reply = "Salut 👋 comment tu vas ?";
 //         else if (/(merci|thanks)/i.test(lowerText))
 //             reply = "Avec plaisir 😄";
-//         else if (/(bye|au revoir)/i.test(lowerText))
+//         else if (/(bye|au revoir|apres)/i.test(lowerText))
 //             reply = "À bientôt 👋";
 //         else if (/(ton nom|comment tu t'appelles)/i.test(lowerText)) {
 //             reply = "Je suis un bot WhatsApp 🤖";

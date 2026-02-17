@@ -1,7 +1,5 @@
 {
-  "autoReaction": true,
-  "allowedGroups": [
-    "120363424570211579@g.us"
-  ],
-  "chatbot": {}
+  "chatbot": {
+    "120363405867499629@g.us": true
+  }
 }

@@ -74,12 +74,20 @@ async function callGeminiOfficial(prompt) {
 // === Command handler ===
 async function aiCommand(sock, chatId, message) {
     try {
-        const text =
-            message.message?.conversation ||
-            message.message?.extendedTextMessage?.text ||
-            message.message?.imageMessage?.caption ||
-            message.message?.videoMessage?.caption;
-        if (!text) return;
+        let text = '';
+
+            if (message.message?.conversation) {
+            text = message.message.conversation;
+            }
+            else if (message.message?.extendedTextMessage?.text) {
+            text = message.message.extendedTextMessage.text;
+            }
+            else if (message.message?.imageMessage?.caption) {
+            text = message.message.imageMessage.caption;
+            }
+            else if (message.message?.videoMessage?.caption) {
+            text = message.message.videoMessage.caption;
+            }
 
         const parts = text.trim().split(' ');
         const command = parts[0].toLowerCase(); // .gpt / .gemini

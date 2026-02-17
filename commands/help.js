@@ -65,6 +65,7 @@ _Tape une commande avec le préfixe (*)_
 📥 *DOWNLOAD / MÉDIAS*
 ══════════════════════
 *• *play <musique>*
+*• *youtube <sujet> (commentaire sur le sujets)*
 *• *tiktok <lien>*
 *• *ytmp4 <lien>*
 

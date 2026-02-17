@@ -6,11 +6,11 @@ async function sendQuestion(sock, chatId) {
     if (!game) return;
 
     const q = game.currentQuestion;
-
     const text =
 `💎 *QUI VEUT GAGNER DES MACH$* 💎
 
 🎯 Joueur : @${game.currentTurn.split("@")[0]}
+❤️ Vies : ${"❤️".repeat(game.lives[game.currentTurn] || 0)}
 💰 Argent : ${game.moneyLevels[game.level]}🤑 €
 
 ❓ *${q.question}*
@@ -30,6 +30,7 @@ D) ${q.choices[3]}
 
     game.timer = setTimeout(() => {
         sock.sendMessage(chatId, { text: "⏰ Temps écoulé !" });
+        game.nextQuestion();
         game.switchTurn();
         sendQuestion(sock, chatId);
     }, 20000);
@@ -46,7 +47,7 @@ async function execute(sock, msg, args) {
         return sock.sendMessage(chatId, { text: "❌ Aucune partie." });
 
     game.addPlayer(sender);
-
+    
     return sock.sendMessage(chatId, {
         text: `✅ @${sender.split("@")[0]} a rejoint la partie !`,
         mentions: [sender]
@@ -73,11 +74,12 @@ async function execute(sock, msg, args) {
                     text:
                 `🎮 Partie créée !
                 *Regle A avoir*
-                 - Si vous rater une question vous etes elimine
+                 - Si vous rater une question vous perdez une vies
+                 - Vous etes eliminer si vous n'avez plus de vies
                  - Le gagnant de la partie aura droit a une faveur de ma part
                 👉 Tape * *million join* pour participer
                 👉 Tape * *million stop pour quitter la partie
-                ⏳ L'hôte lance avec * *million go*`
+                ⏳ L'hôte lance avec * *million go* `
                 });
 
     }
@@ -93,7 +95,14 @@ async function handleSlam(sock, msg, text) {
     const sender = msg.key.participant || msg.key.remoteJid;
     const game = games[chatId];
     if (!game) return;
-
+    if (!game.players.includes(sender)) {
+    await sock.sendMessage(chatId, {
+        text: `💀 @${sender.split("@")[0]} tu es éliminé de la partie.`,
+        mentions: [sender]
+    });
+    return;
+    }
+    
     if (sender !== game.currentTurn)
         return sock.sendMessage(chatId, { text: "⛔ Pas ton tour." });
 
@@ -111,11 +120,9 @@ async function handleSlam(sock, msg, text) {
     }else if (result.status === "wrong") {
 
         await sock.sendMessage(chatId, {
-            text: `💀 @${sender.split("@")[0]} est éliminé !`,
-            mentions: [sender]
+        text: `❌ Mauvaise réponse ! Vies❤️ restantes : ${result.lives}`
         });
 
-        game.eliminatePlayer(sender);
 
         const winner = game.getWinner();
 
@@ -132,10 +139,36 @@ async function handleSlam(sock, msg, text) {
         game.switchTurn();
     }   
 
-    else if (result.status === "win") {
-        await sock.sendMessage(chatId, { text: `🏆 1 MILLION € GAGNÉ !!!` });
+    else if (result.status === "wrong") {
+
+    await sock.sendMessage(chatId, {
+        text: `❌ Mauvaise réponse ! ❤️ restantes : ${result.lives}`
+    });
+
+    game.switchTurn();
+}
+else if (result.status === "eliminated") {
+
+    await sock.sendMessage(chatId, {
+        text: `💀 @${sender.split("@")[0]} est éliminé !`,
+        mentions: [sender]
+    });
+
+    game.eliminatePlayer(sender);
+
+    const winner = game.getWinner();
+
+    if (winner) {
+        await sock.sendMessage(chatId, {
+            text: `🏆 @${winner.split("@")[0]} est le dernier survivant et gagne la partie !`,
+            mentions: [winner]
+        });
+
         delete games[chatId];
         return;
+    }
+
+        game.switchTurn();
     }
 
     sendQuestion(sock, chatId);
