@@ -18,7 +18,7 @@ Tape une commande avec le préfixe (*)
 💻 *github*       → Repo du projet
 📊 *groupinfo*    → Infos du groupe
 👀 *online*       → Voir activité
-🧩 *chip*         → Infos système
+📸 *chip*         → Infos système
 
 ━━━━━━━━━━━━━━━━━━
 🛡️ *ADMIN & MODÉRATION*
