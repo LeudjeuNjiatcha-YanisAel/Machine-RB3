@@ -1,7 +1,7 @@
 const settings = {
   packname: 'Machine Bot',
   author: '‎',
-  botName: "Machine Bot",
+  botName: "MachineBot-RB3",
   botOwner: 'Machine', // Your name
   ownerNumber: '682441127', //Set your number here without + symbol, just add country code & number without any space
   giphyApiKey: 'qnl7ssQChTdPjsKta2Ax2LMaGXz303tq',

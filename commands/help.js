@@ -1,12 +1,16 @@
-const helpMessage = `
-╭━━━〔 🤖 ${settings.botName || 'MachineBot-RB3'} 〕━━━╮
-┃ ⚡ Version : ${settings.version || '3.0.0'}
-┃ 👨‍💻 Dev     : ${settings.botOwner || 'Mr Robot'}
-┃ 📳 Contact : 682441127
-╰━━━━━━━━━━━━━━━━━━━━━━╯
+const settings = require('../settings');
+const fs = require('fs');
+const path = require('path');
 
-👑 _Bienvenue dans le système._👑
-Tape une commande avec le préfixe (*)
+async function helpCommand(sock, chatId, message) {
+    const helpMessage = `╭━━〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕━╮
+┃ ⚡ Version : *${settings.version || '3.0.0'}*
+┃ 👨‍💻 Developpeur  : *${settings.botOwner || 'Mr Robot'}*
+┃ 📳 Contact : *682441127*
+╰━━━━━━━━━━━━━━━━━━━╯
+
+👑 Bienvenue dans le système.👑
+_Tape une commande avec le préfixe (*)_
 
 ━━━━━━━━━━━━━━━━━━
 🧠  *SYSTÈME & GÉNÉRAL*
@@ -17,8 +21,8 @@ Tape une commande avec le préfixe (*)
 👑 *owner*        → Contacter le dev
 💻 *github*       → Repo du projet
 📊 *groupinfo*    → Infos du groupe
-👀 *online*       → Voir activité
-📸 *chip*         → Infos système
+👀 *online*       → Voir activité mem
+📸 *chip*         → Extraire la pp
 
 ━━━━━━━━━━━━━━━━━━
 🛡️ *ADMIN & MODÉRATION*
@@ -26,20 +30,29 @@ Tape une commande avec le préfixe (*)
 🔇 *mute* / 🔊 *unmute*
 🚫 *antidelete on/off*
 🏷️ *tagall*
+✅ *autoread on/off*
 🗑️ *delete <msg>*
+🚫 *antibadword on/off*
+👮 *staff*
+❌ *kick* 
 ⭐ *sudo*
+😀 *autoreact on/off*
+✅ *autostatus on/off*
 🖼️ *setpp*
 
 ━━━━━━━━━━━━━━━━━━
 🎭 *OUTILS & UTILITAIRES*
 ━━━━━━━━━━━━━━━━━━
-🔊 *tts <texte>*
-📝 *transcribe*
-📸 *ss*
-🎨 *sticker*
-😎 *character*
-🤣 *emojimix*
-📦 *extract*
+🔊 *tts <texte>* → Texte en vocal
+📸 *ss* → Capture ecran
+🎨 *sticker* → Convertir en sticker
+😎 *character* → Trait physique
+🎋 *sand <texte>*
+🎇 *impressive <texte>*
+🔆 *matrix <texte>*
+🚓 *waste*
+🤣 *emojimix* → Fusionner 02 emo
+📦 *extract* → Extrait vue unique
 📈 *topmembers*
 🌍 *translate <texte> <lang>*
 🔎 *osint numero*
@@ -49,9 +62,10 @@ Tape une commande avec le préfixe (*)
 ━━━━━━━━━━━━━━━━━━
 🧠 *gpt <question>*
 ✨ *gemini <question>*
-🖼️ *image <prompt>*        → Génère image IA
-🎬 *genere <prompt>*       → Vidéo IA
-💬 *chatbot on/off*        → IA automatique
+🧠 *deepseek <question>*
+🖼️ *image <prompt>*      
+🎬 *genere <prompt>*     → Vidéo IA
+💬 *chatbot on/off*      → IA automatique
 
 ━━━━━━━━━━━━━━━━━━
 📥 *DOWNLOAD & MÉDIAS*
@@ -64,7 +78,6 @@ Tape une commande avec le préfixe (*)
 🎮 *JEUX MR ROBOT*
 ━━━━━━━━━━━━━━━━━━
 ❌*tictactoe @user*
-🔤 *hangman*
 💰 *million*
 🌍 *capital*
 
@@ -74,3 +87,23 @@ Tape une commande avec le préfixe (*)
 _Nous sommes anonyme. Nous sommes la FSOCIETY._
 ━━━━━━━━━━━━━━━━━━
 `;
+
+    try {
+        const imagePath = path.join(__dirname, '../assets/bot_image.jpeg');
+        
+        if (fs.existsSync(imagePath)) {
+            const imageBuffer = fs.readFileSync(imagePath);
+            await sock.sendMessage(chatId, {
+                image: imageBuffer,
+                caption: helpMessage
+            }, { quoted: message });
+        } else {
+            await sock.sendMessage(chatId, { text: helpMessage });
+        }
+    } catch (error) {
+        console.error('Error in help command:', error);
+        await sock.sendMessage(chatId, { text: helpMessage });
+    }
+}
+
+module.exports = helpCommand;

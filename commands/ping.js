@@ -38,13 +38,13 @@ async function pingCommand(sock, chatId, message) {
         const now = new Date().toLocaleString();
         const botInfo = `
 ┏━━〔 🤖 *MachineBot-RB3* 〕━━┓
-┃ 🚀 *Ping*     : *${ping} ms*
-  📡 *Latence API* : ${apiLatency} ms
-┃ ⏱️ *Uptime*   : ${uptimeFormatted}
-┃ 🔖 *Version*  : v${settings.version}
-┃ 🌐 *Platform* : ${platform}
-┃ 🟢 *NodeJS*   : ${nodeVersion}
-┃ 🕒 *Heure*     : ${now}
+┃ 🚀 *Ping*     : _*${ping} ms*_
+┃ 📡 *Latence API* : _*${apiLatency} ms*_
+┃ ⏱️ *Uptime*   : _${uptimeFormatted}_
+┃ 🔖 *Version*  : _v${settings.version}_
+┃ 🌐 *Platform* : _${platform}_
+┃ 🟢 *NodeJS*   : _*${nodeVersion}*_
+┃ 🕒 *Heure*     : _${now}_
 ┃
 ┃   🚀 Powered by *Machine*
 ┗━━━━━━━━━━━━━━━━━━━━┛`.trim();

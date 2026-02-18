@@ -97,7 +97,6 @@ const playCommand = require('./commands/play');
 const songCommand = require('./commands/song');
 const {aiCommand,callGeminiOfficial} = require('./commands/ai');
 const { handleTranslateCommand } = require('./commands/translate');
-const { handleSsCommand } = require('./commands/ss');
 const { reactToAllMessages, handleAreactCommand } = require('./lib/reactions');
 const sudoCommand = require('./commands/sudo');
 const updateCommand = require('./commands/update');
@@ -835,7 +834,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*play') || userMessage.startsWith('*mp3') || userMessage.startsWith('*ytmp3') || userMessage.startsWith('*song'):
                 await songCommand(sock, chatId, message);
                 break;
-            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image'):
+            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek'):
                 await aiCommand(sock, chatId, message);
                 break;
             case userMessage.startsWith('*translate') || userMessage.startsWith('*trt'):

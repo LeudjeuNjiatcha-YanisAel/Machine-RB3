@@ -1,7 +1,36 @@
 const { GoogleGenAI } = require('@google/genai');
+const OpenAI = require("openai");
 const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
+
+
+async function Image(prompt) {
+    try {
+        const response = await axios.post(
+            "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+            {
+                inputs: prompt,
+                options: { wait_for_model: true }
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.HF_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                responseType: "arraybuffer",
+                timeout: 180000
+
+            }
+        );
+
+        return Buffer.from(response.data);
+
+    } catch (err) {
+        console.error("HF IMAGE ERROR:", err.response?.status, err.message);
+        throw err;
+    }
+}
 
 
 async function generateImage(prompt) {
@@ -21,6 +50,40 @@ async function generateImage(prompt) {
         .find(p => p.inlineData);
 
     return Buffer.from(part.inlineData.data, "base64");
+}
+
+// === DeepSeek ===
+async function callDeepSeek(prompt) {
+    try {
+        const apiKey = process.env.DEEPSEEK_API_KEY;
+        if (!apiKey) throw new Error("DEEPSEEK_API_KEY manquante");
+
+        const client = new OpenAI({
+            apiKey,
+            baseURL: "https://api.deepseek.com"
+        });
+
+        const response = await client.chat.completions.create({
+            model: "deepseek-chat",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful AI assistant inside a hacker-style WhatsApp bot created by Mr Robot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7
+        });
+
+        return response.choices[0].message.content;
+
+    } catch (err) {
+        console.error("DeepSeek error:", err.message);
+        throw err;
+    }
 }
 
 // === OpenAI ===
@@ -184,13 +247,29 @@ async function aiCommand(sock, chatId, message) {
         }
         else if(command === '*image')
         {
-            const img = await generateImage(query);
+            const img = await Image(query);
 
             await sock.sendMessage(chatId, {
                 image: img,
                 caption: "🖼️ Image générée par IA"
             }, { quoted: message });
-                }
+               
+        }
+                    // DeepSeek
+        else if (command === '*deepseek') {
+            try {
+                const answer = await callDeepSeek(query);
+                if (answer)
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+
+            } catch (e) {
+                console.error('DeepSeek failed:', e.message);
+                return sock.sendMessage(chatId, {
+                    text: '❌ DeepSeek indisponible pour le moment.'
+                }, { quoted: message });
+            }
+        }
+
 
     } catch (err) {
         console.error('AI ERROR:', err.message);
@@ -199,4 +278,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI };
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek , Image };
