@@ -528,16 +528,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                     await sock.sendMessage(chatId, { text: 'Failed to update bot access mode',  });
                 }
                 break;
-            case userMessage.startsWith('*anticall'):
-                if (!message.key.fromMe && !senderIsOwnerOrSudo) {
-                    await sock.sendMessage(chatId, { text: 'Only owner/sudo can use anticall.' }, { quoted: message });
-                    break;
-                }
-                {
-                    const args = userMessage.split(' ').slice(1).join(' ');
-                    await anticallCommand(sock, chatId, message, args);
-                }
-                break;
             case userMessage.startsWith('*pmblocker'):
                 {
                     const args = userMessage.split(' ').slice(1).join(' ');
@@ -880,12 +870,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*setgpp'):
                 await setGroupPhoto(sock, chatId, senderId, message);
                 break;
-            case userMessage.startsWith('*igsc'):
-                await igsCommand(sock, chatId, message, true);
-                break;
-            case userMessage.startsWith('*igs'):
-                await igsCommand(sock, chatId, message, false);
-                break;
             case userMessage.startsWith('*music'):
                 await playCommand(sock, chatId, message);
                 break;
@@ -908,17 +892,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 break;
             case userMessage.startsWith('*sudo'):
                 await sudoCommand(sock, chatId, message);
-                break;
-            case userMessage === '*goodnight' || userMessage === '*lovenight' || userMessage === '*gn':
-                await goodnightCommand(sock, chatId, message);
-                break;
-            case userMessage === '*shayari' || userMessage === '*shayri':
-                await shayariCommand(sock, chatId, message);
-                break;
-            case userMessage === '*roseday':
-                await rosedayCommand(sock, chatId, message);
-                break;
-            case userMessage.startsWith('*imagine') || userMessage.startsWith('*flux') || userMessage.startsWith('*dalle'): await imagineCommand(sock, chatId, message);
                 break;
             case userMessage === '*jid': await groupJidCommand(sock, chatId, message);
                 break;
@@ -945,13 +918,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 }
                 break;
             
-            case userMessage.startsWith('*tweet'):
-                {
-                    const parts = userMessage.trim().split(/\s+/);
-                    const args = ['tweet', ...parts.slice(1)];
-                    await miscCommand(sock, chatId, message, args);
-                }
-                break;
             case userMessage.startsWith('*ytcomment'):
                 {
                     const parts = userMessage.trim().split(/\s+/);
@@ -960,27 +926,6 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 }
                 break;
             
-            // animu aliases
-            case userMessage.startsWith('*nom'):
-            case userMessage.startsWith('*poke'):
-            case userMessage.startsWith('*cry'):
-            case userMessage.startsWith('*kiss'):
-            case userMessage.startsWith('*pat'):
-            case userMessage.startsWith('*hug'):
-            case userMessage.startsWith('*wink'):
-            case userMessage.startsWith('*facepalm'):
-            case userMessage.startsWith('*face-palm'):
-            case userMessage.startsWith('*animuquote'):
-            case userMessage.startsWith('*quote'):
-            case userMessage.startsWith('*loli'):
-                {
-                    const parts = userMessage.trim().split(/\s+/);
-                    let sub = parts[0].slice(1);
-                    if (sub === 'facepalm') sub = 'face-palm';
-                    if (sub === 'quote' || sub === 'animuquote') sub = 'quote';
-                    await animeCommand(sock, chatId, message, [sub]);
-                }
-                break;
             case userMessage.startsWith('*update'):
                 {
                     const parts = rawText.trim().split(/\s+/);
