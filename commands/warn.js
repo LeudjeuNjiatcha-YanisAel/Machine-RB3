@@ -70,7 +70,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         
         if (!userToWarn) {
             await sock.sendMessage(chatId, { 
-                text: '❌ Error: Please mention the user or reply to their message to warn!'
+                text: '❌ Error: Mentionner un utilisateur avec le mot de recommandation!'
             });
             return;
         }
@@ -95,8 +95,8 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
             fs.writeFileSync(warningsPath, JSON.stringify(warnings, null, 2));
 
             const warningMessage = `*『 WARNING ALERT 』*\n\n` +
-                `👤 *Warned User:* @${userToWarn.split('@')[0]}\n` +
-                `⚠️ *Warning Count:* ${warnings[chatId][userToWarn]}/3\n` +
+                `👤 *Warned Utilisateur:* @${userToWarn.split('@')[0]}\n` +
+                `⚠️ *Warning Nombre:* ${warnings[chatId][userToWarn]}/3\n` +
                 `👑 *Warned By:* @${senderId.split('@')[0]}\n\n` +
                 `📅 *Date:* ${new Date().toLocaleString()}`;
 

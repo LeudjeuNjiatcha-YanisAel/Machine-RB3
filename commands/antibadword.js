@@ -4,7 +4,7 @@ const isAdminHelper = require('../lib/isAdmin');
 async function antibadwordCommand(sock, chatId, message, senderId, isSenderAdmin) {
     try {
         if (!isSenderAdmin) {
-            await sock.sendMessage(chatId, { text: '```For Group Admins Only!```' }, { quoted: message });
+            await sock.sendMessage(chatId, { text: '```Pour Groupe Admins Seulement!```' }, { quoted: message });
             return;
         }
 

@@ -27,19 +27,26 @@ async function pingCommand(sock, chatId, message) {
 
         const uptimeInSeconds = process.uptime();
         const uptimeFormatted = formatTime(uptimeInSeconds);
-
+        const platform = os.platform();
+        const nodeVersion = process.version;
+        const now = new Date().toLocaleString();
         const botInfo = `
 ┏━━〔 🤖 *MachineBot-RB3* 〕━━┓
 ┃ 🚀 *Ping*     : *${ping} ms*
 ┃ ⏱️ *Uptime*   : ${uptimeFormatted}
 ┃ 🔖 *Version*  : v${settings.version}
-┗━━━━━━━━━━━━━━━━━━━┛`.trim();
+┃ 🌐 *Platform* : ${platform}
+┃ 🟢 *NodeJS*   : ${nodeVersion}
+┃ 🕒 *Heure*     : ${now}
+┃
+┃   🚀 Powered by *Machine*
+┗━━━━━━━━━━━━━━━━━━━━┛`.trim();
 
         // Reply to the original message with the bot info
         await sock.sendMessage(chatId, { text: botInfo},{ quoted: message });
 
     } catch (error) {
-        console.error('Error in ping command:', error);
+        console.error('Erreur dans ping command:', error);
         await sock.sendMessage(chatId, { text: '❌ Failed to get bot status.' });
     }
 }
