@@ -25,6 +25,12 @@ async function pingCommand(sock, chatId, message) {
         const end = Date.now();
         const ping = Math.round((end - start) / 2);
 
+
+        // 📡 Latence API WhatsApp
+        const apiStart = Date.now();
+        await sock.sendPresenceUpdate('composing', chatId);
+        const apiLatency = Date.now() - apiStart;
+
         const uptimeInSeconds = process.uptime();
         const uptimeFormatted = formatTime(uptimeInSeconds);
         const platform = os.platform();
@@ -33,6 +39,7 @@ async function pingCommand(sock, chatId, message) {
         const botInfo = `
 ┏━━〔 🤖 *MachineBot-RB3* 〕━━┓
 ┃ 🚀 *Ping*     : *${ping} ms*
+  📡 *Latence API* : ${apiLatency} ms
 ┃ ⏱️ *Uptime*   : ${uptimeFormatted}
 ┃ 🔖 *Version*  : v${settings.version}
 ┃ 🌐 *Platform* : ${platform}

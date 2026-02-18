@@ -1,95 +1,76 @@
-const settings = require('../settings');
-const fs = require('fs');
-const path = require('path');
-
-async function helpCommand(sock, chatId, message) {
-    const helpMessage = `
+const helpMessage = `
 ╭━━━〔 🤖 ${settings.botName || 'MachineBot-RB3'} 〕━━━╮
-┃ ✨ Version : ${settings.version || '3.0.0'}
-┃ 👤 Dev     : ${settings.botOwner || 'Mr Robot'}
-┃ 📳 Contact  : 682441127
+┃ ⚡ Version : ${settings.version || '3.0.0'}
+┃ 👨‍💻 Dev     : ${settings.botOwner || 'Mr Robot'}
+┃ 📳 Contact : 682441127
 ╰━━━━━━━━━━━━━━━━━━━━━━╯
 
-🌟 *MENU PRINCIPAL* 🌟
-_Tape une commande avec le préfixe (*)_
+👑 _Bienvenue dans le système._👑
+Tape une commande avec le préfixe (*)
 
-══════════════════════
-🌐 *COMMANDES GÉNÉRALES*
-══════════════════════
-*• *help / *menu*
-*• *ping*
-*• *alive*
-*• *tts <texte>*
-*• *owner*
-*• *groupinfo*
-*• *osint numero*
-*• *extract*
-*• *topmembers*
-*• *chip*
-*• *delete <num_message>*
-*• *sticker*
-*• *tagall*
-*• *character*
-*• *emojimix*
-*• *sudo*
-*• *setpp*
-*• *transcribe*
-*• *ss*
-*• *antidelete <on/off>*
-*• *mute*
-*• *github*
-*• *unmute*
-*• *online*
-*• *compliment*
-*• *insult*
+━━━━━━━━━━━━━━━━━━
+🧠  *SYSTÈME & GÉNÉRAL*
+━━━━━━━━━━━━━━━━━━
+⚙️ *help / menu*  → Affiche le menu
+🏓 *ping*         → Test de vitesse
+🟢 *alive*        → Statut du bot
+👑 *owner*        → Contacter le dev
+💻 *github*       → Repo du projet
+📊 *groupinfo*    → Infos du groupe
+👀 *online*       → Voir activité
+🧩 *chip*         → Infos système
 
-══════════════════════
-🎮 *JEUX*
-══════════════════════
-*• *tictactoe @user*
-*• *hangman*
-*• *million* 
-*• *capital*
+━━━━━━━━━━━━━━━━━━
+🛡️ *ADMIN & MODÉRATION*
+━━━━━━━━━━━━━━━━━━
+🔇 *mute* / 🔊 *unmute*
+🚫 *antidelete on/off*
+🏷️ *tagall*
+🗑️ *delete <msg>*
+⭐ *sudo*
+🖼️ *setpp*
 
-══════════════════════
+━━━━━━━━━━━━━━━━━━
+🎭 *OUTILS & UTILITAIRES*
+━━━━━━━━━━━━━━━━━━
+🔊 *tts <texte>*
+📝 *transcribe*
+📸 *ss*
+🎨 *sticker*
+😎 *character*
+🤣 *emojimix*
+📦 *extract*
+📈 *topmembers*
+🌍 *translate <texte> <lang>*
+🔎 *osint numero*
+
+━━━━━━━━━━━━━━━━━━
 🤖 *INTELLIGENCE ARTIFICIELLE*
-══════════════════════
-*• *gpt <question>*
-*• *gemini <question>*
-*• *image  <question>* (Image generation)
-*• *chatbot <on/off>* (Chatbot IA)
-*• *genere <question>* (Genère une video) 
-*• *translate <text> <lang>*
+━━━━━━━━━━━━━━━━━━
+🧠 *gpt <question>*
+✨ *gemini <question>*
+🖼️ *image <prompt>*        → Génère image IA
+🎬 *genere <prompt>*       → Vidéo IA
+💬 *chatbot on/off*        → IA automatique
 
-══════════════════════
-📥 *DOWNLOAD / MÉDIAS*
-══════════════════════
-*• *play <musique>*
-*• *youtube <sujet> (commentaire sur le sujets)*
-*• *tiktok <lien>*
-*• *ytmp4 <lien>*
+━━━━━━━━━━━━━━━━━━
+📥 *DOWNLOAD & MÉDIAS*
+━━━━━━━━━━━━━━━━━━
+🎵 *play <musique>*
+▶️ *youtube <sujet>*
+🎬 *ytmp4 <lien>*
 
-══════════════════════
-✨ *${settings.botName || 'MachineBot-RB3'}*
-⚡ Rapide *• 🔒 Sécurisé *• 🤖 Intelligent
-══════════════════════
+━━━━━━━━━━━━━━━━━━
+🎮 *JEUX MR ROBOT*
+━━━━━━━━━━━━━━━━━━
+❌*tictactoe @user*
+🔤 *hangman*
+💰 *million*
+🌍 *capital*
+
+━━━━━━━━━━━━━━━━━━
+💀 ${settings.botName || 'MachineBot-RB3'}
+⚡ Rapide • 🔒 Sécurisé • 🤖 Intelligent
+_Nous sommes anonyme. Nous sommes la FSOCIETY._
+━━━━━━━━━━━━━━━━━━
 `;
-    try {
-        const imagePath = path.join(__dirname, '../assets/bot_image.jpeg');
-        
-        if (fs.existsSync(imagePath)) {
-            const imageBuffer = fs.readFileSync(imagePath);
-            await sock.sendMessage(chatId, {
-                image: imageBuffer,
-                caption: helpMessage
-            }, { quoted: message });
-        } else {
-            await sock.sendMessage(chatId, { text: helpMessage });
-        }
-    } catch (error) {
-        console.error('Error in help command:', error);
-        await sock.sendMessage(chatId, { text: helpMessage });
-    }
-}
-
-module.exports = helpCommand;

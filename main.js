@@ -514,7 +514,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*antitag'):
                 if (!isGroup) {
                     await sock.sendMessage(chatId, {
-                        text: 'Cet commande peut etre seulement  utiliser dans un groups.',
+                        text: 'Cet commande peut etre seulement  utiliser dans un groupes.',
                         
                     }, { quoted: message });
                     return;
