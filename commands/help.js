@@ -63,6 +63,7 @@ _Tape une commande avec le préfixe (*)_
 🧠 *gpt <question>*
 ✨ *gemini <question>*
 🧠 *deepseek <question>*
+✨ *llama <question>*
 🖼️ *image <prompt>*      
 🎬 *genere <prompt>*     → Vidéo IA
 💬 *chatbot on/off*      → IA automatique

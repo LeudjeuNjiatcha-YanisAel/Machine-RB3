@@ -4,14 +4,50 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
 
+async function callMetaAI(prompt) {
+
+    const client = new OpenAI({
+        apiKey: process.env.GROQ_API_KEY,
+        baseURL: "https://api.groq.com/openai/v1"
+    });
+
+    const completion = await client.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }]
+    });
+
+    return completion.choices[0].message.content;
+}
 
 async function Image(prompt) {
     try {
+
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+
+        const response = await axios.get(url, {
+            responseType: "arraybuffer",
+            timeout: 120000
+        });
+
+        return Buffer.from(response.data);
+
+    } catch (err) {
+        console.error("IMAGE ERROR:", err.message);
+        throw err;
+    }
+}
+
+
+async function gImage(prompt) {
+    try {
+
         const response = await axios.post(
-            "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+            "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1",
             {
                 inputs: prompt,
-                options: { wait_for_model: true }
+                options: {
+                    wait_for_model: true
+                }
             },
             {
                 headers: {
@@ -20,17 +56,21 @@ async function Image(prompt) {
                 },
                 responseType: "arraybuffer",
                 timeout: 180000
-
             }
         );
 
         return Buffer.from(response.data);
 
     } catch (err) {
-        console.error("HF IMAGE ERROR:", err.response?.status, err.message);
+        console.error(
+            "HF IMAGE ERROR:",
+            err.response?.status,
+            err.response?.data || err.message
+        );
         throw err;
     }
 }
+
 
 
 async function generateImage(prompt) {
@@ -269,8 +309,19 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
+        else if (command === '*llama') {
+            try {
+                const answer = await callMetaAI(query);
+                if (answer)
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
 
-
+            } catch (e) {
+                console.error('Meta AI failed:', e.message);
+                return sock.sendMessage(chatId, {
+                    text: '❌ Meta AI indisponible pour le moment.'
+                }, { quoted: message });
+            }
+        }
     } catch (err) {
         console.error('AI ERROR:', err.message);
         await sock.sendMessage(chatId, { text: '❌ Erreur IA, réessaie plus tard.' }, { quoted: message });
@@ -278,4 +329,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek , Image };
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek , Image , callMetaAI};

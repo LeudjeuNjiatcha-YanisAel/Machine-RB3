@@ -1,7 +1,14 @@
 const fs = require('fs');
 const path = require('path');
+const {callMetaAI} = require('./ai');
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
+
+const groq = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: "https://api.groq.com/openai/v1"
+});
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
 const model = genAI.getGenerativeModel({
@@ -188,7 +195,14 @@ Réponds naturellement :
 
     } catch (error) {
         console.error("Gemini error FULL:", error);
+        try {
+        const llamaReply = await callMetaAI(prompt);
+        return llamaReply || "Hmm 🤔 reformule un peu.";
+        } 
+        catch (llamaErr) {
+        console.error("Fallback Llama failed:", llamaErr);
         return "😅 Petit bug IA… réessaie.";
+        }
     }
 }
 

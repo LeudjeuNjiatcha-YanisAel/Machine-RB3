@@ -46,7 +46,7 @@ async function pingCommand(sock, chatId, message) {
 ┃ 🟢 *NodeJS*   : _*${nodeVersion}*_
 ┃ 🕒 *Heure*     : _${now}_
 ┃
-┃   🚀 Powered by *Machine*
+┃   🚀 Produit par *Machine*
 ┗━━━━━━━━━━━━━━━━━━━━┛`.trim();
 
         // Reply to the original message with the bot info

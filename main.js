@@ -834,7 +834,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*play') || userMessage.startsWith('*mp3') || userMessage.startsWith('*ytmp3') || userMessage.startsWith('*song'):
                 await songCommand(sock, chatId, message);
                 break;
-            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek'):
+            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek') || userMessage.startsWith('*dalle') || userMessage.startsWith('*llama'):
                 await aiCommand(sock, chatId, message);
                 break;
             case userMessage.startsWith('*translate') || userMessage.startsWith('*trt'):
