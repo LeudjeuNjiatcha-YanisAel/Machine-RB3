@@ -42,6 +42,7 @@ async function capitalCommand(sock, chatId, senderId) {
             room.playerB = senderId;
             room.game = new CapitalGame(room.playerA, senderId);
             room.state = 'PLAYING';
+            room.cooldowns = {}; // ✅ AJOUT
             room.roundsWithoutAnswer = 0;
 
             room.turnNumber = 1;
@@ -62,17 +63,18 @@ Joueur : @${room.game.currentTurn.split('@')[0]}
 
         } else {
             room = {
-                id: 'capital-' + Date.now(),
-                chatId,
-                playerA: senderId,
-                playerB: null,
-                game: null,
-                state: 'WAITING',
-                timer: null,
-                roundsWithoutAnswer: 0,
-                turnNumber: 1,
-                turnStarter: null,
-                lastActivity: Date.now()
+            id: 'capital-' + Date.now(),
+            chatId,
+            playerA: senderId,
+            playerB: null,
+            game: null,
+            state: 'WAITING',
+            timer: null,
+            roundsWithoutAnswer: 0,
+            turnNumber: 1,
+            turnStarter: null,
+            lastActivity: Date.now(),
+            cooldowns: {} // ✅ AJOUT SEULEMENT CETTE LIGNE
             };
 
             games[room.id] = room;
@@ -81,7 +83,8 @@ Joueur : @${room.game.currentTurn.split('@')[0]}
                 text:
 `⏳ En attente d'un adversaire...
 👤 Créateur : @${senderId.split('@')[0]}
-Tapez *capital* pour rejoindre`,
+Tapez **capital* pour rejoindre,
+Tapez **exit* pour quitter`,
                 mentions: [senderId]
             });
         }
@@ -174,6 +177,36 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
         );
         if (!room) return;
 
+        // ✅ FORMAT OBLIGATOIRE : rep answer
+        if (!text.toLowerCase().startsWith("rep ")) return;
+
+        const answer = text.slice(4).trim();
+        if (!answer) {
+            return sock.sendMessage(chatId, {
+                text: "⚠️ Utilise : rep taReponse"
+            });
+        }
+
+        // ✅ ANTI-SPAM 10 SECONDES
+        const now = Date.now();
+        const cooldownTime = 10000;
+
+        if (!room.cooldowns[senderId]) {
+            room.cooldowns[senderId] = 0;
+        }
+
+        if (now - room.cooldowns[senderId] < cooldownTime) {
+            const remaining = Math.ceil(
+                (cooldownTime - (now - room.cooldowns[senderId])) / 1000
+            );
+            return sock.sendMessage(chatId, {
+                text: `🚫 Anti-spam actif.\n⏳ Attends ${remaining}s avant de répondre.`
+            });
+        }
+
+        room.cooldowns[senderId] = now;
+
+        // 🔹 Vérification du tour
         if (senderId !== room.game.currentTurn) {
             return sock.sendMessage(chatId, {
                 text: `⏳ *Ce n'est pas ton tour !*\n🎯 Tour actuel : @${room.game.currentTurn.split('@')[0]}`,
@@ -183,8 +216,8 @@ async function handleCapitalAnswer(sock, chatId, senderId, text) {
 
         clearTimeout(room.timer);
 
-        const result = room.game.checkAnswer(senderId, text);
-
+        const result = room.game.checkAnswer(senderId, answer);
+        
         // ✅ Si bonne réponse, ajouter le score
         if (result.status === 'correct') {
             if (!room.game.scores[senderId]) room.game.scores[senderId] = 0;

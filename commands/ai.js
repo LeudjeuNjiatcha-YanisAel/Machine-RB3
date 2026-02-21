@@ -38,35 +38,23 @@ async function Image(prompt) {
 }
 
 
-async function gImage(prompt) {
+async function freeImage(prompt) {
     try {
-
         const response = await axios.post(
             "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1",
-            {
-                inputs: prompt,
-                options: {
-                    wait_for_model: true
-                }
-            },
+            { inputs: prompt, options: { wait_for_model: true } },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.HF_API_KEY}`,
+                    Authorization: `Bearer ${process.env.HF_API_KEY}`, // clé HuggingFace gratuite
                     "Content-Type": "application/json"
                 },
                 responseType: "arraybuffer",
                 timeout: 180000
             }
         );
-
         return Buffer.from(response.data);
-
     } catch (err) {
-        console.error(
-            "HF IMAGE ERROR:",
-            err.response?.status,
-            err.response?.data || err.message
-        );
+        console.error("HF IMAGE ERROR:", err.response?.status, err.response?.data || err.message);
         throw err;
     }
 }
@@ -287,7 +275,7 @@ async function aiCommand(sock, chatId, message) {
         }
         else if(command === '*image')
         {
-            const img = await Image(query);
+            const img = await freeImage(query);
 
             await sock.sendMessage(chatId, {
                 image: img,

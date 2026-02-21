@@ -130,7 +130,6 @@ function quickReplies(text) {
     return null;
 }
 
-// ================= USER INFO =================
 function extractUserInfo(message) {
     const info = {};
     const lower = message.toLowerCase();
@@ -148,7 +147,6 @@ function extractUserInfo(message) {
     return info;
 }
 
-// ================= AI RESPONSE =================
 async function getAIResponse(text, context = {}) {
 
     const fast = quickReplies(text);
@@ -211,6 +209,9 @@ Réponds naturellement :
 async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
     const isGroup = chatId.endsWith('@g.us');
     if (!isGroup) return;
+
+    // 🚫 Ignore les messages envoyés par toi-même
+    if (message.key.fromMe) return;
 
     const data = loadUserGroupData();
     if (!data.chatbot[chatId]) return;

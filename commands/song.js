@@ -2,6 +2,7 @@ const axios = require('axios');
 const yts = require('yt-search');
 const fs = require('fs');
 const path = require('path');
+const ytdl = require('@distube/ytdl-core');
 
 const AXIOS_DEFAULTS = {
 	timeout: 60000,

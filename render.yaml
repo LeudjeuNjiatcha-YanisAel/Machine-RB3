@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: whatsapp-bot
+    env: node
+    plan: free
+    buildCommand: |
+      npm install
+      apt-get update
+      apt-get install -y yt-dlp ffmpeg
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    healthCheckPath: /
