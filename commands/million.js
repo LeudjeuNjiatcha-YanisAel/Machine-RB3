@@ -11,7 +11,7 @@ async function sendQuestion(sock, chatId) {
 
 🎯 Joueur : @${game.currentTurn.split("@")[0]}
 ❤️ Vies : ${"❤️".repeat(game.lives[game.currentTurn] || 0)}
-💰 Argent : ${game.moneyLevels[game.level]}🤑 €
+💰 Argent : ${game.money[game.currentTurn]}🤑 €
 
 ❓ *${q.question}*
 
@@ -28,11 +28,37 @@ D) ${q.choices[3]}
         mentions: [game.currentTurn]
     });
 
-    game.timer = setTimeout(() => {
-        sock.sendMessage(chatId, { text: "⏰ Temps écoulé !" });
-        game.nextQuestion();
-        game.switchTurn();
-        sendQuestion(sock, chatId);
+    game.timer = setTimeout(async () => {
+    const player = game.currentTurn;
+
+    sock.sendMessage(chatId, { text: "⏰ Temps écoulé !" });
+
+    const result = game.loseLife(player);
+
+    if (result.status === "eliminated") {
+
+        await sock.sendMessage(chatId, {
+            text: `💀 @${player.split("@")[0]} est éliminé !`,
+            mentions: [player]
+        });
+
+        game.eliminatePlayer(player);
+
+        const winner = game.getWinner();
+        if (winner) {
+            await sock.sendMessage(chatId, {
+                text: `🏆 @${winner.split("@")[0]} gagne la partie !`,
+                mentions: [winner]
+            });
+
+            delete games[chatId];
+            return;
+        }
+    }
+
+    game.switchTurn();
+    sendQuestion(sock, chatId);
+
     }, 20000);
 }
 
@@ -79,7 +105,7 @@ async function execute(sock, msg, args) {
                  - Le gagnant de la partie aura droit a une faveur de ma part
                 👉 Tape * *million join* pour participer
                 👉 Tape * *million stop pour quitter la partie
-                ⏳ L'hôte lance avec * *million go* `
+                ⏳ L'hôte lance avec **million go* `
                 });
 
     }
@@ -117,12 +143,23 @@ async function handleSlam(sock, msg, text) {
     if (result.status === "correct") {
         await sock.sendMessage(chatId, { text: `✅ Bonne réponse !` });
         game.switchTurn();
-    }else if (result.status === "wrong") {
+    }
+    else if (result.status === "wrong") {
 
         await sock.sendMessage(chatId, {
-        text: `❌ Mauvaise réponse ! Vies❤️ restantes : ${result.lives}`
+            text: `❌ Mauvaise réponse ! ❤️ restantes : ${result.lives}`
         });
 
+        game.switchTurn();
+    }
+    else if (result.status === "eliminated") {
+
+        await sock.sendMessage(chatId, {
+            text: `💀 @${sender.split("@")[0]} est éliminé !`,
+            mentions: [sender]
+        });
+
+        game.eliminatePlayer(sender);
 
         const winner = game.getWinner();
 
@@ -136,39 +173,6 @@ async function handleSlam(sock, msg, text) {
             return;
         }
 
-        game.switchTurn();
-    }   
-
-    else if (result.status === "wrong") {
-
-    await sock.sendMessage(chatId, {
-        text: `❌ Mauvaise réponse ! ❤️ restantes : ${result.lives}`
-    });
-
-    game.switchTurn();
-}
-else if (result.status === "eliminated") {
-
-    await sock.sendMessage(chatId, {
-        text: `💀 @${sender.split("@")[0]} est éliminé !`,
-        mentions: [sender]
-    });
-
-    game.eliminatePlayer(sender);
-
-    const winner = game.getWinner();
-
-    if (winner) {
-        await sock.sendMessage(chatId, {
-            text: `🏆 @${winner.split("@")[0]} est le dernier survivant et gagne la partie !`,
-            mentions: [winner]
-        });
-
-        delete games[chatId];
-        return;
-    }
-
-        game.switchTurn();
     }
 
     sendQuestion(sock, chatId);

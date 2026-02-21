@@ -122,7 +122,7 @@ function quickReplies(text) {
     if (["ça va","ca va","comment tu vas","bien"].some(w=>lower.includes(w)))
         return random(["bien! 😎 et toi ?","Oui nickel !","En sante!","Me voici Tout"]);
 
-    if (["merci","thanks"].some(w=>lower.includes(w)))
+    if (["merci","thanks","good"].some(w=>lower.includes(w)))
         return random(["Avec plaisir 😉","De rien !"]);
     if(["souci","pb","aider","aide","probleme"].some(w =>lower.includes(w)))
         return random(["A quelle niveau ?","ca conserne quoi"])
