@@ -85,7 +85,6 @@ function loadUserGroupData() {
     }
 }
 
-// ================= HUMAN DELAY =================
 function getRandomDelay(text = "") {
     const base = 700;
     return base + text.length * 18;
@@ -279,7 +278,6 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
     }
 }
 
-// ================= CHATBOT COMMAND =================
 async function handleChatbotCommand(sock, chatId, message, match) {
 
     const data = loadUserGroupData();
@@ -288,8 +286,8 @@ async function handleChatbotCommand(sock, chatId, message, match) {
         return sock.sendMessage(chatId,{
             text:`*CONFIGURATION CHATBOT*
 
-chatbot on → activer
-chatbot off → désactiver`
+*chatbot on → activer
+*chatbot off → désactiver`
         },{quoted:message});
     }
 
