@@ -12,7 +12,7 @@ async function antibadwordCommand(sock, chatId, message, senderId, isSenderAdmin
         const text = message.message?.conversation || 
                     message.message?.extendedTextMessage?.text || '';
         const match = text.split(' ').slice(1).join(' ');
-
+        
         await handleAntiBadwordCommand(sock, chatId, message, match);
     } catch (error) {
         console.error('Error in antibadword command:', error);

@@ -1,206 +1,229 @@
-// const fs = require('fs');
-// const path = require('path');
-// const { callGeminiOfficial } = require('./commands/ai');
-// const e = require('express');
+const fs = require('fs');
+const path = require('path');
+const isOwnerOrSudo = require('./lib/isOwner');
+const { callGeminiOfficial } = require('./commands/ai');
 
-// const OWNER_NUMBER = "237682441127";
+const CONFIG_PATH = path.join(__dirname, './data/autoresponse.json');
 
+let AUTO_RESPONSE_ENABLED = true;
 
-// function isOwner(senderId, msg) {
-//     if (!senderId) return false;
+/* ================================================== */
+/* ================== LOAD / SAVE =================== */
+/* ================================================== */
 
-//     // cas normal
-//     let id = senderId;
+function cleanJid(jid = '') {
+    return jid.split(':')[0];
+}
 
-//     // si WhatsApp cache le numéro (@lid)
-//     if (senderId.endsWith('@lid')) {
-//         id =
-//             msg?.message?.extendedTextMessage?.contextInfo?.participant ||
-//             msg?.key?.participant ||
-//             senderId;
-//     }
+function loadState() {
+    try {
+        if (fs.existsSync(CONFIG_PATH)) {
+            const data = JSON.parse(fs.readFileSync(CONFIG_PATH));
+            AUTO_RESPONSE_ENABLED = data.enabled ?? true;
+        }
+    } catch (err) {
+        console.error("AutoResponse Load Error:", err);
+    }
+}
 
-//     // nettoyer : enlever @... et :device
-//     const cleanNumber = id.split('@')[0].split(':')[0];
+function saveState() {
+    try {
+        fs.writeFileSync(
+            CONFIG_PATH,
+            JSON.stringify({ enabled: AUTO_RESPONSE_ENABLED }, null, 2)
+        );
+    } catch (err) {
+        console.error("AutoResponse Save Error:", err);
+    }
+}
 
-//     return cleanNumber === OWNER_NUMBER;
-// }
+loadState();
 
-// /* ================= CONFIG ================= */
+/* ================================================== */
+/* ================= MEMORY SYSTEM ================== */
+/* ================================================== */
 
+const conversationMemory = {};
 
-// const CONFIG_PATH = path.join(__dirname, 'autoresponse.json');
+function updateMemory(userId, role, text) {
+    if (!conversationMemory[userId]) {
+        conversationMemory[userId] = [];
+    }
 
-// /* ================= STATE ================= */
+    conversationMemory[userId].push(`${role}: ${text}`);
 
-// let AUTO_RESPONSE_ENABLED = true;
+    if (conversationMemory[userId].length > 6) {
+        conversationMemory[userId].shift();
+    }
+}
 
-// // Charger état sauvegardé
-// try {
-//     if (fs.existsSync(CONFIG_PATH)) {
-//         const saved = JSON.parse(fs.readFileSync(CONFIG_PATH));
-//         AUTO_RESPONSE_ENABLED = saved.enabled ?? true;
-//     }
-// } catch (e) {
-//     console.log("AutoResponse config load error");
-// }
+function getHistory(userId) {
+    return conversationMemory[userId]
+        ? conversationMemory[userId].join('\n')
+        : '';
+}
 
-// function saveState() {
-//     fs.writeFileSync(CONFIG_PATH, JSON.stringify({
-//         enabled: AUTO_RESPONSE_ENABLED
-//     }, null, 2));
-// }
+/* ================================================== */
+/* ================= QUICK REPLIES ================== */
+/* ================================================== */
 
-// /* ================= MEMORY ================= */
+function getQuickReply(text) {
+    const lower = text.toLowerCase();
 
-// const conversationMemory = {}; // { userId: [] }
+    if (/(bonjour|salut|bjr|yo|cc)/i.test(lower)) return "Salut 👋 comment tu vas ?";
+    if (/(ça va|comment ça va)/i.test(lower)) return "Je vais bien 😌 et toi ?";
+    if (/(merci|thanks|thx)/i.test(lower)) return "Avec plaisir 😄";
+    if (/(bye|au revoir|à plus)/i.test(lower)) return "À bientôt 👋";
+    if (/(ton nom|tu t'appelles)/i.test(lower)) return "Je suis ton bot WhatsApp 🤖";
+    if (/(qui t'a créé|créateur)/i.test(lower)) return "J’ai été créé par mon développeur 😎";
+    if (/(tu fais quoi|fonction)/i.test(lower)) return "Je peux discuter, répondre et aider 😌";
+    if (/(mdr|lol|😂)/i.test(lower)) return "😂😂 tu es en forme toi";
+    if (/(bonne nuit)/i.test(lower)) return "Bonne nuit 😴 dors bien";
+    if (/(bonne journée)/i.test(lower)) return "Bonne journée ☀️";
+    if (/(je m'ennuie)/i.test(lower)) return "On peut discuter 😄 raconte-moi quelque chose";
+    if (/(aide|help)/i.test(lower)) return "Tu peux me parler normalement ou utiliser les commandes 😌";
 
-// /* ================= MAIN ================= */
+    return null;
+}
 
-// async function autoResponse(msg, sock) {
-//     try {
-//         if (!msg?.key?.remoteJid) return;
-//         if (msg.key.fromMe) return;
+/* ================================================== */
+/* ===================== MAIN ======================= */
+/* ================================================== */
 
-//         const remoteJid = msg.key.remoteJid;
-//         const isGroup = remoteJid.endsWith('@g.us');
+async function autoResponse(sock, msg) {
+    try {
+        if (!msg?.key?.remoteJid) return;
 
-//         const senderId = isGroup
-//             ? msg.key.participant
-//             : remoteJid;
+        const remoteJid = msg.key.remoteJid;
 
-//         let text =
-//             msg.message?.conversation ||
-//             msg.message?.extendedTextMessage?.text;
+        // Inbox uniquement
+        if (remoteJid.endsWith('@g.us')) return;
 
-//         if (!text) return;
+        const text =
+            msg.message?.conversation ||
+            msg.message?.extendedTextMessage?.text;
 
-//         const rawText = text.trim();
-//         const lowerText = rawText.toLowerCase();
+        if (!text) return;
 
-//         /* ================= OWNER COMMANDS ================= */
+        const rawText = text.trim();
+        const lowerText = rawText.toLowerCase();
+        const args = lowerText.split(/\s+/);
 
-//         if (isOwner(senderId, msg))
-//     {
+        // ❗ Bloquer les messages du bot SAUF les commandes
+        if (msg.key.fromMe && !rawText.startsWith('*')) return;
 
-//             if (lowerText === '*autoresponse off') {
-//                 AUTO_RESPONSE_ENABLED = false;
-//                 saveState();
+        const senderIdRaw = msg.key.fromMe
+            ? sock.user.id
+            : msg.key.participant || msg.key.remoteJid;
 
-//                 await sock.sendMessage(remoteJid, {
-//                     text: "⛔ Auto-response désactivée"
-//                 }, { quoted: msg });
+        const senderId = cleanJid(senderIdRaw);
 
-//                 return;
-//             }
+        /* ================================================== */
+        /* ================= OWNER COMMAND ================== */
+        /* ================================================== */
 
-//             if (lowerText === '*autoresponse on') {
-//                 AUTO_RESPONSE_ENABLED = true;
-//                 saveState();
+        if (args[0] === '*autoresponse') {
+            const isOwner = await isOwnerOrSudo(senderId, sock, remoteJid);
 
-//                 await sock.sendMessage(remoteJid, {
-//                     text: "✅ Auto-response activée"
-//                 }, { quoted: msg });
+            if (!isOwner) {
+                return sock.sendMessage(
+                    remoteJid,
+                    { text: "❌ Commande réservée au propriétaire." },
+                    { quoted: msg }
+                );
+            }
 
-//                 return;
-//             }
-//         }
+            if (args[1] === 'off') {
+                AUTO_RESPONSE_ENABLED = false;
+                saveState();
+                return sock.sendMessage(
+                    remoteJid,
+                    { text: "⛔ Auto-response désactivée." },
+                    { quoted: msg }
+                );
+            }
 
-//         /* ================= STOP SI OFF ================= */
+            if (args[1] === 'on') {
+                AUTO_RESPONSE_ENABLED = true;
+                saveState();
+                return sock.sendMessage(
+                    remoteJid,
+                    { text: "✅ Auto-response activée." },
+                    { quoted: msg }
+                );
+            }
 
-//         if (!AUTO_RESPONSE_ENABLED) return;
+            return sock.sendMessage(
+                remoteJid,
+                { text: "Usage: *autoresponse on/off" },
+                { quoted: msg }
+            );
+        }
 
-//         /* ================= TRIGGER ================= */
+        /* ================================================== */
+        /* ================= STOP IF OFF ==================== */
+        /* ================================================== */
 
-//         let isMentioned = false;
+        if (!AUTO_RESPONSE_ENABLED) return;
 
-//         if (isGroup) {
-//             const mentions =
-//                 msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+        /* ================================================== */
+        /* ================= MEMORY UPDATE ================== */
+        /* ================================================== */
 
-//             const botJid = sock.user.id.split(':')[0] + '@s.whatsapp.net';
-//             isMentioned = mentions.includes(botJid);
-//         }
+        updateMemory(senderId, "User", rawText);
+        const history = getHistory(senderId);
 
-//         // répondre seulement en DM ou mention
-//         if (!( !isGroup || isMentioned )) return;
+        /* ================================================== */
+        /* ================= QUICK REPLY ==================== */
+        /* ================================================== */
 
-//         /* ================= MEMORY ================= */
+        let reply = getQuickReply(rawText);
 
-//         if (!conversationMemory[senderId])
-//             conversationMemory[senderId] = [];
+        /* ================================================== */
+        /* ================== IA FALLBACK =================== */
+        /* ================================================== */
 
-//         conversationMemory[senderId].push(`User: ${rawText}`);
+        if (!reply) {
+            try {
+                reply = await callGeminiOfficial(`
+Tu es un chatbot WhatsApp humain.
+Réponses naturelles, courtes, emojis légers.
 
-//         if (conversationMemory[senderId].length > 5)
-//             conversationMemory[senderId].shift();
+Historique:
+${history}
 
-//         const history = conversationMemory[senderId].join('\n');
+Message:
+"${rawText}"
+                `);
 
-//         /* ================= QUICK REPLIES ================= */
+                if (!reply || !reply.trim()) {
+                    reply = "🤖 Hmm… redis-moi 😅";
+                }
+            } catch (err) {
+                console.error("Gemini Error:", err);
+                reply = "😅 Petit bug IA.";
+            }
+        }
 
-//         let reply = null;
+        /* ================================================== */
+        /* ================= SAVE BOT MEMORY ================ */
+        /* ================================================== */
 
-//         if (/(bonjour|salut|bjr|yo|asser)/i.test(lowerText))
-//             reply = "Salut 👋 comment tu vas ?";
-//         else if (/(merci|thanks)/i.test(lowerText))
-//             reply = "Avec plaisir 😄";
-//         else if (/(bye|au revoir|apres)/i.test(lowerText))
-//             reply = "À bientôt 👋";
-//         else if (/(ton nom|comment tu t'appelles)/i.test(lowerText)) {
-//             reply = "Je suis un bot WhatsApp 🤖";
-//         }
-//         else if (/(aide|help)/i.test(lowerText)) {
-//             reply = "Je peux discuter et répondre intelligemment 😉";
-//         }
-//         else if (/(blague|joke)/i.test(lowerText)) {
-//             reply = "Pourquoi les devs aiment la nuit ? Parce que les bugs dorment 😄";
-//         }
+        updateMemory(senderId, "Bot", reply);
 
-//         /* ================= GEMINI ================= */
+        /* ================================================== */
+        /* ================= SEND MESSAGE =================== */
+        /* ================================================== */
 
-//         if (!reply) {
-//             try {
+        await sock.sendMessage(
+            remoteJid,
+            { text: reply },
+            { quoted: msg }
+        );
 
-//                 reply = await callGeminiOfficial(`
-// Tu es un chatbot WhatsApp humain.
-// Réponses naturelles, courtes, de maniere conversationnelle avec les emojis parfois, jamais robotique.
+    } catch (err) {
+        console.error("AutoResponse Error:", err);
+    }
+}
 
-// Historique:
-// ${history}
-
-// Message:
-// "${rawText}"
-//                 `);
-
-//                 if (!reply?.trim())
-//                     reply = "🤖 Hmm… redis-moi 😅";
-
-//             } catch (err) {
-//                 console.error("Gemini error:", err.message);
-//                 reply = "😅 Petit bug IA.";
-//             }
-//         }
-
-//         /* ================= SAVE MEMORY ================= */
-
-//         conversationMemory[senderId].push(`Bot: ${reply}`);
-
-//         if (conversationMemory[senderId].length > 5)
-//             conversationMemory[senderId].shift();
-
-//         /* ================= SEND ================= */
-
-//         await sock.sendMessage(
-//             remoteJid,
-//             { text: reply },
-//             { quoted: msg }
-//         );
-
-//     } catch (err) {
-//         console.error("AutoResponse Error:", err);
-//     }
-// }
-
-// module.exports = autoResponse;
-
+module.exports = autoResponse;

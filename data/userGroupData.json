@@ -1,6 +1,12 @@
 {
   "chatbot": {
-    "120363405867499629@g.us": true,
-    "120363424570211579@g.us": true
-  }
+    "120363405867499629@g.us": false
+  },
+  "antibadword": {
+    "120363424570211579@g.us": {
+      "enabled": true,
+      "action": "kick"
+    }
+  },
+  "autoReaction": false
 }

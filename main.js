@@ -109,7 +109,6 @@ require('dotenv').config();
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
 const { games } = require('./commands/capital');
 const runSessionCommand = require('./commands/session.js');
-const autoResponse = require('./autoResponse');
 const { createRunwayVideo, waitForVideo } = require('./commands/runway');
 const {execute,handleSlam} = require('./commands/million');
 
@@ -390,7 +389,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*ban'):
                 if (!isGroup) {
                     if (!message.key.fromMe && !senderIsSudo) {
-                        await sock.sendMessage(chatId, { text: 'Only owner/sudo can use .ban in private chat.' }, { quoted: message });
+                        await sock.sendMessage(chatId, { text: 'Only owner/sudo can use *ban in private chat.' }, { quoted: message });
                         break;
                     }
                 }
@@ -399,7 +398,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
             case userMessage.startsWith('*unban'):
                 if (!isGroup) {
                     if (!message.key.fromMe && !senderIsSudo) {
-                        await sock.sendMessage(chatId, { text: 'Only owner/sudo can use .unban in private chat.' }, { quoted: message });
+                        await sock.sendMessage(chatId, { text: 'Only owner/sudo can use *unban in private chat.' }, { quoted: message });
                         break;
                     }
                 }
@@ -670,7 +669,7 @@ async function handleMessages(sock, messageUpdate, printLog) {
                 isBotAdmin = adminStatus.isBotAdmin;
 
                 if (!isBotAdmin) {
-                    await sock.sendMessage(chatId, { text: '*Bot must be admin to use this feature*',  }, { quoted: message });
+                    await sock.sendMessage(chatId, { text: '*Bot doit etre admin pour l\'utilisation*',  }, { quoted: message });
                     return;
                 }
 

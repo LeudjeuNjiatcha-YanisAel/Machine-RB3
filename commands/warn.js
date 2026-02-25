@@ -96,7 +96,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
 
             const warningMessage = `*『 WARNING ALERT 』*\n\n` +
                 `👤 *Warned Utilisateur:* @${userToWarn.split('@')[0]}\n` +
-                `⚠️ *Warning Nombre:* ${warnings[chatId][userToWarn]}/3\n` +
+                `⚠️ *Recommandation Nombre:* ${warnings[chatId][userToWarn]}/3\n` +
                 `👑 *Warned By:* @${senderId.split('@')[0]}\n\n` +
                 `📅 *Date:* ${new Date().toLocaleString()}`;
 
