@@ -85,6 +85,4 @@ async function infoCommand(sock, chatId, message) {
     }
 }
 
-module.exports = {
-    infoCommand
-};
+module.exports = infoCommand;

@@ -78,6 +78,7 @@ const takeCommand = require('./commands/take');
 const characterCommand = require('./commands/character');
 const wastedCommand = require('./commands/wasted');
 const groupInfoCommand = require('./commands/groupinfo');
+const infoCommand = require('./commands/info');
 const resetlinkCommand = require('./commands/resetlink');
 const staffCommand = require('./commands/staff');
 const unbanCommand = require('./commands/unban');
