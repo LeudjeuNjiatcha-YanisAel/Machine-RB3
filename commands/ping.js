@@ -37,7 +37,7 @@ async function pingCommand(sock, chatId, message) {
         const nodeVersion = process.version;
         const now = new Date().toLocaleString();
         const botInfo = `
-┏━━〔 🤖 *MachineBot-RB3* 〕━━┓
+┏━━≼〔 🤖 *MachineBot-RB3* 〕≽━━┓
 ┃ 🚀 *Ping*     : _*${ping} ms*_
 ┃ 📡 *Latence API* : _*${apiLatency} ms*_
 ┃ ⏱️ *Uptime*   : _${uptimeFormatted}_

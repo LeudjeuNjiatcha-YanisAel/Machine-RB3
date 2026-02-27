@@ -3,92 +3,92 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    const helpMessage = `╭━━〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕━╮
+    const helpMessage = `╭━━≼〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕≽━╮
 ┃ ⚡ Version : *${settings.version || '3.0.0'}*
 ┃ 👨‍💻 Developpeur  : *${settings.botOwner || 'Mr Robot'}*
 ┃ 📳 Contact : *682441127*
 ╰━━━━━━━━━━━━━━━━━━━╯
 
-👑 Bienvenue dans le système.👑
-_Tape une commande avec le préfixe (*)_
+👑 Bienvenue Dans Le Système.👑
+_ 💡 Tape une commande avec le préfixe (*)_
 
-━━━━━━━━━━━━━━━━━━
-🧠  *SYSTÈME & GÉNÉRAL*
-━━━━━━━━━━━━━━━━━━
-⚙️ *help / menu*  → Affiche le menu
-🏓 *ping*         → Test de vitesse
-🟢 *alive*        → Statut du bot
-👑 *owner*        → Contacter le dev
-💻 *github*       → Repo du projet
-📊 *groupinfo*    → Infos du groupe
-👀 *online*       → Voir activité mem
-📸 *chip*         → Extraire la pp
+╭───≼  🧠 *SYSTÈME & GÉNÉRAL* ≽───╮
+│
+│⚙️ *help / menu*  → Affiche le menu
+│🏓 *ping*         → Test de vitesse
+│🟢 *alive*        → Statut du bot
+│👑 *owner*        → Contacter le dev
+│💻 *github*       → Repo du projet
+│📊 *groupinfo*    → Infos du groupe
+│👀 *online*       → Voir activité mem
+│📸 *chip*         → Extraire la pp
+╰──────────────────
 
-━━━━━━━━━━━━━━━━━━
-🛡️ *ADMIN & MODÉRATION*
-━━━━━━━━━━━━━━━━━━
-🔇 *mute* / 🔊 *unmute*
-🚫 *antidelete on/off*
-🏷️ *tagall*
-✅ *autoread on/off*
-🗑️ *delete <msg>*
-🚫 *antibadword on/off*
-👮 *staff*
-❌ *kick* 
-⭐ *sudo*
-😀 *autoreact on/off*
-✅ *autostatus on/off*
-🖼️ *setpp*
+╭───≼ 🛡️ *ADMIN & MODÉRATION* ≽───╮
+│
+│ 🔇 *mute* / 🔊 *unmute*
+│ 🚫 *antidelete on/off*
+│ 🏷️ *tagall*
+│ ✅ *autoread on/off*
+│ 🗑️ *delete <msg>*
+│ 🚫 *antibadword on/off*
+│ 👮 *staff*
+│ ❌ *kick* 
+│ ⭐ *sudo*
+│ 😀 *autoreact on/off*
+│ ✅ *autostatus on/off*
+│ 🖼️ *setpp*
+╰──────────────────
 
-━━━━━━━━━━━━━━━━━━
-🎭 *OUTILS & UTILITAIRES*
-━━━━━━━━━━━━━━━━━━
-🔊 *tts <texte>* → Texte en vocal
-📸 *ss* → Capture ecran
-🎨 *sticker* → Convertir en sticker
-😎 *character* → Trait physique
-🎋 *sand <texte>*
-🎇 *impressive <texte>*
-🔆 *matrix <texte>*
-🚓 *waste*
-🤣 *emojimix* → Fusionner 02 emo
-📦 *extract* → Extrait vue unique
-📈 *topmembers*
-📈 *audit* activite bot
-🌍 *translate <texte> <lang>*
-🔎 *osint numero*
+╭───≼ 🎭 *OUTILS & UTILITAIRES* ≽───╮
+│
+│ 🔊 *tts <texte>* → Texte en vocal
+│ 📸 *ss* → Capture ecran
+│ 🎨 *sticker* → Convertir en sticker
+│ 😎 *character* → Trait physique
+│ 🎋 *sand <texte>*
+│ 🎇 *impressive <texte>*
+│ 🔆 *matrix <texte>*
+│ 🚓 *waste*
+│ 🤣 *emojimix* → Fusionner 02 emo
+│ 📦 *extract* → Extrait vue unique
+│ 📈 *topmembers*
+│ 📈 *audit* activite bot
+│ 🌍 *translate <texte> <lang>*
+│ 🔎 *osint numero*
+╰──────────────────
 
-━━━━━━━━━━━━━━━━━━
-🤖 *INTELLIGENCE ARTIFICIELLE*
-━━━━━━━━━━━━━━━━━━
-🧠 *gpt <question>*
-💡 *gemini <question>*
-🧠 *deepseek <question>*
-🔰 *resume* (en réponse à un message)
-✨ *llama <question>*
-🖼️ *image <prompt>*      
-🎬 *genere <prompt>*     → Vidéo IA
-💬 *chatbot on/off*      → IA automatique
+╭───≼ 🤖 *INTELLIGENCE ARTIFICIELLE* ≽───╮
+│
+│ 🧠 *gpt <question>*
+│ 💡 *gemini <question>*
+│ 🧠 *deepseek <question>*
+│ 🔰 *resume* (en réponse à un message)
+│ ✨ *llama <question>*
+│ 🖼️ *image <prompt>*      
+│ 🎬 *genere <prompt>*     → Vidéo IA
+│ 💬 *chatbot on/off*      → IA automatique
+╰──────────────────
 
-━━━━━━━━━━━━━━━━━━
-📥 *DOWNLOAD & MÉDIAS*
-━━━━━━━━━━━━━━━━━━
-🎵 *play <musique>*
-▶️ *youtube <sujet>*
-🎬 *ytmp4 <lien>*
+╭───≼ 📥 *DOWNLOAD & MÉDIAS* ≽───╮
+│
+│ 🎵 *play <musique>*
+│ ▶️ *youtube <sujet>*
+│ 🎬 *ytmp4 <lien>*
+╰──────────────────
 
-━━━━━━━━━━━━━━━━━━
-🎮 *JEUX MR ROBOT*
-━━━━━━━━━━━━━━━━━━
-❌*tictactoe @user*
-💰 *million*
-🌍 *capital*
+╭───≼ 🎮 *GAMES MR ROBOT* ≽───╮
+│
+│ ❌*tictactoe @user*
+│ 💰 *million*
+│ 🌍 *capital*
+╰──────────────────
+╭──────────────────
+│💀 ${settings.botName || 'MachineBot-RB3'}
+│⚡ Rapide • 🔒 Sécurisé •  🤖 Intelligent
+╰───≼ 💀 _Nous Sommes *Anonymes*_ 💀 ≽──╯
+╰───≼ 🔥 _Nous Sommes La *FSOCIETY*_ 🔥 ≽──╯
 
-━━━━━━━━━━━━━━━━━━
-💀 ${settings.botName || 'MachineBot-RB3'}
-⚡ Rapide • 🔒 Sécurisé • 🤖 Intelligent
-_Nous sommes anonyme. Nous sommes la FSOCIETY._
-━━━━━━━━━━━━━━━━━━
 `;
 
     try {
