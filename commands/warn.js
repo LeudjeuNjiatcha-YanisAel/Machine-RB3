@@ -27,7 +27,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         // First check if it's a group
         if (!chatId.endsWith('@g.us')) {
             await sock.sendMessage(chatId, { 
-                text: 'This command can only be used in groups!'
+                text: 'Commande peut seulement etre utiliser dans groups!'
             });
             return;
         }
@@ -38,21 +38,21 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
             
             if (!isBotAdmin) {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Error: Please make the bot an admin first to use this command.'
+                    text: '❌ Erreur: Besoin d\'etre admin pour  utiliser cet commande.'
                 });
                 return;
             }
 
             if (!isSenderAdmin) {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Error: Only group admins can use the warn command.'
+                    text: '❌ Erreur: Seul L\'admin peut utiliser cet commande.'
                 });
                 return;
             }
         } catch (adminError) {
             console.error('Error checking admin status:', adminError);
             await sock.sendMessage(chatId, { 
-                text: '❌ Error: Please make sure the bot is an admin of this group.'
+                text: '❌ Erreur: Besoin d\'etre admin pour cet action.'
             });
             return;
         }
@@ -70,7 +70,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         
         if (!userToWarn) {
             await sock.sendMessage(chatId, { 
-                text: '❌ Error: Mentionner un utilisateur avec le mot de recommandation!'
+                text: '❌ Erreur: Mentionner un utilisateur avec le mot de recommandation!'
             });
             return;
         }
@@ -94,10 +94,10 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
             warnings[chatId][userToWarn]++;
             fs.writeFileSync(warningsPath, JSON.stringify(warnings, null, 2));
 
-            const warningMessage = `*『 WARNING ALERT 』*\n\n` +
-                `👤 *Warned Utilisateur:* @${userToWarn.split('@')[0]}\n` +
-                `⚠️ *Recommandation Nombre:* ${warnings[chatId][userToWarn]}/3\n` +
-                `👑 *Warned By:* @${senderId.split('@')[0]}\n\n` +
+            const warningMessage = `    *『 🚨ADVERTISSEMENT ALERT🚨 』*\n\n` +
+                `👤 *Utilisateur Advertir:* @${userToWarn.split('@')[0]}\n` +
+                `⚠️ *Nombre Advertissement:* ${warnings[chatId][userToWarn]}/3\n` +
+                `👑 *Avertir Par:* @${senderId.split('@')[0]}\n\n` +
                 `📅 *Date:* ${new Date().toLocaleString()}`;
 
             await sock.sendMessage(chatId, { 
@@ -125,7 +125,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         } catch (error) {
             console.error('Error in warn command:', error);
             await sock.sendMessage(chatId, { 
-                text: '❌ Failed to warn user!'
+                text: '❌ Faieued to warn user!'
             });
         }
     } catch (error) {
@@ -134,7 +134,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
             await new Promise(resolve => setTimeout(resolve, 2000));
             try {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Rate limit reached. Please try again in a few seconds.'
+                    text: '❌ Rateu limit reached. Please try again in a few seconds.'
                 });
             } catch (retryError) {
                 console.error('Error sending retry message:', retryError);
@@ -142,7 +142,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         } else {
             try {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Failed to warn user. Make sure the bot is admin and has sufficient permissions.'
+                    text: '❌ Faieued to warn user. Make sure the bot is admin and has sufficient permissions.'
                 });
             } catch (sendError) {
                 console.error('Error sending error message:', sendError);
