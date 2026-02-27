@@ -47,22 +47,42 @@ const express = require('express');
 const { reactToAllMessages } = require('./lib/reactions');
 const autoResponse = require('./autoResponse');
 const {logMessage} = require("./lib/audit");
+const unzipper = require('unzipper');
 
-const AUTH_FOLDER = path.join(__dirname, './session');
-const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
 
-// 🔥 RESTAURATION DE SESSION DEPUIS RENDER
-if (process.env.SESSION_DATA && !fs.existsSync(CREDS_PATH)) {
+// ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
+const SESSION_DIR = path.join(__dirname, './session');
+const SESSION_ZIP = path.join(__dirname, './session.zip');
+
+async function restoreSessionFromEnv() {
+    if (!process.env.SESSION_DATA) {
+        console.log('ℹ️ Aucune SESSION_DATA trouvée');
+        return;
+    }
+
+    if (fs.existsSync(SESSION_DIR)) {
+        console.log('ℹ️ Dossier session déjà présent, restauration ignorée');
+        return;
+    }
+
     try {
-        if (!fs.existsSync(AUTH_FOLDER)) {
-            fs.mkdirSync(AUTH_FOLDER, { recursive: true });
-        }
+        fs.mkdirSync(SESSION_DIR, { recursive: true });
 
-        const sessionBuffer = Buffer.from(process.env.SESSION_DATA, 'base64');
-        fs.writeFileSync(CREDS_PATH, sessionBuffer);
-        console.log('✅ Session restaurée depuis ENV (Render)');
+        fs.writeFileSync(
+            SESSION_ZIP,
+            Buffer.from(process.env.SESSION_DATA, 'base64')
+        );
+
+        await fs.createReadStream(SESSION_ZIP)
+            .pipe(unzipper.Extract({ path: SESSION_DIR }))
+            .promise();
+
+        fs.unlinkSync(SESSION_ZIP);
+
+        console.log('✅ Session restaurée depuis SESSION_DATA (multi-fichiers)');
+        console.log('📂 Fichiers session :', fs.readdirSync(SESSION_DIR));
     } catch (err) {
-        console.error('❌ Erreur restauration session:', err);
+        console.error('❌ Erreur restauration session multi-fichiers:', err);
     }
 }
 
@@ -222,9 +242,8 @@ async function startXeonBotInc() {
                         `\nVeuillez saisir ce code dans WhatsApp :\n` +
                         `1. Ouvrez WhatsApp\n` +
                         `2. Paramètres > Appareils associés\n` +
-                        `3. Associer un appareil\n` +
-                        `4. Entrez le code ci-dessus`
-                    ))
+                        `3. Associer un appareil\n`))
+ console.log(chalk.blue(`4. Entrez le code ci-dessus`)) 
                 } catch (error) {
                     console.error('Erreur lors de la génération du code :', error)
                     console.log(chalk.red(
@@ -248,7 +267,8 @@ async function startXeonBotInc() {
                     text:
                         `🤖 Bot connecté avec succès !\n\n` +
                         `⏰ Heure : ${new Date().toLocaleString()}\n` +
-                        `✅ Statut : En ligne et opérationnel`
+                        `✅ Statut : En ligne et opérationnel`+
+                        `💫 Botnumber : ${botNumber}`
                 })
                 
 
@@ -280,11 +300,13 @@ async function startXeonBotInc() {
         startXeonBotInc()
     }
 }
-
-startXeonBotInc().catch(error => {
-    console.error('Erreur fatale :', error)
-    process.exit(1)
-})
+(async () => {
+    await restoreSessionFromEnv()
+    startXeonBotInc().catch(error => {
+        console.error('Erreur fatale :', error)
+        process.exit(1)
+    })
+})();
 
 process.on('uncaughtException', (err) => {
     console.error('Exception non capturée :', err)

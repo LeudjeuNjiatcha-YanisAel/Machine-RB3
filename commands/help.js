@@ -62,7 +62,7 @@ _Tape une commande avec le préfixe (*)_
 🤖 *INTELLIGENCE ARTIFICIELLE*
 ━━━━━━━━━━━━━━━━━━
 🧠 *gpt <question>*
-✨ *gemini <question>*
+💡 *gemini <question>*
 🧠 *deepseek <question>*
 🔰 *resume* (en réponse à un message)
 ✨ *llama <question>*
