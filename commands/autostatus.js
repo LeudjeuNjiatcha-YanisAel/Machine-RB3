@@ -33,7 +33,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             const status = config.enabled ? 'activé' : 'désactivé';
             const reactStatus = config.reactOn ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
-                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n.autostatus on - Activer la vue automatique des statuts\n.autostatus off - Désactiver la vue automatique des statuts\n.autostatus react on - Activer les réactions aux statuts\n.autostatus react off - Désactiver les réactions aux statuts`,
+                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
             });
             return;
         }
@@ -57,7 +57,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             // Gestion de la sous-commande react
             if (!args[1]) {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Veuillez préciser on/off pour les réactions !\nUtilisez : .autostatus react on/off',
+                    text: '❌ Veuillez préciser on/off pour les réactions !\nUtilisez : *autostatus react on/off',
                 });
                 return;
             }
@@ -77,12 +77,12 @@ async function autoStatusCommand(sock, chatId, msg, args) {
                 });
             } else {
                 await sock.sendMessage(chatId, { 
-                    text: '❌ Commande de réaction invalide ! Utilisez : .autostatus react on/off',
+                    text: '❌ Commande de réaction invalide ! Utilisez : *autostatus react on/off',
                 });
             }
         } else {
             await sock.sendMessage(chatId, { 
-                text: '❌ Commande invalide ! Utilisez :\n.autostatus on/off - Activer/désactiver la vue automatique des statuts\n.autostatus react on/off - Activer/désactiver les réactions aux statuts',
+                text: '❌ Commande invalide ! Utilisez :\n*autostatus on/off - Activer/désactiver la vue automatique des statuts\n*autostatus react on/off - Activer/désactiver les réactions aux statuts',
             });
         }
 

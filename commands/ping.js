@@ -37,17 +37,16 @@ async function pingCommand(sock, chatId, message) {
         const nodeVersion = process.version;
         const now = new Date().toLocaleString();
         const botInfo = `
-┏━━≼〔 🤖 *MachineBot-RB3* 〕≽━━┓
-┃ 🚀 *Ping*     : _*${ping} ms*_
-┃ 📡 *Latence API* : _*${apiLatency} ms*_
-┃ ⏱️ *Uptime*   : _${uptimeFormatted}_
-┃ 🔖 *Version*  : _v${settings.version}_
-┃ 🌐 *Platform* : _${platform}_
-┃ 🟢 *NodeJS*   : _*${nodeVersion}*_
-┃ 🕒 *Heure*     : _${now}_
-┃
-┃   🚀 Produit par *Machine*
-┗━━━━━━━━━━━━━━━━━━━━┛`.trim();
+╭━━≼〔 🤖 *MachineBot-RB3* 〕≽━━╮
+│ 🚀 *Ping*     : _*${ping} ms*_
+│ 📡 *Latence API* : _*${apiLatency} ms*_
+│ ⏱️ *Uptime*   : _${uptimeFormatted}_
+│ 🔖 *Version*  : _v${settings.version}_
+│ 🌐 *Platform* : _${platform}_
+│ 🟢 *NodeJS*   : _*${nodeVersion}*_
+│ 🕒 *Heure*     : _${now}_
+│
+╰───≼  🚀 Produit par *Machine* ≽──╯`.trim();
 
         // Reply to the original message with the bot info
         await sock.sendMessage(chatId, { text: botInfo},{ quoted: message });

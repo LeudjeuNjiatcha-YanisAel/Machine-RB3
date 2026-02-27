@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    const helpMessage = `╭━━≼〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕≽━╮
+    const helpMessage = `╭≼〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕≽━╮
 ┃ ⚡ Version : *${settings.version || '3.0.0'}*
 ┃ 👨‍💻 Developpeur  : *${settings.botOwner || 'Mr Robot'}*
 ┃ 📳 Contact : *682441127*
@@ -97,7 +97,6 @@ _ 💡 Tape une commande avec le préfixe (*)_
         if (fs.existsSync(imagePath)) {
             const imageBuffer = fs.readFileSync(imagePath);
             await sock.sendMessage(chatId, {
-                image: imageBuffer,
                 caption: helpMessage
             }, { quoted: message });
         } else {
