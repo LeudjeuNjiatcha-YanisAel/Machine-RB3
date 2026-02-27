@@ -10,9 +10,9 @@ async function helpCommand(sock, chatId, message) {
 ╰━━━━━━━━━━━━━━━━━━━╯
 
 👑 Bienvenue Dans Le Système.👑
-_ 💡 Tape une commande avec le préfixe (*)_
+_Tape une commande avec le préfixe (*)_
 
-╭───≼  🧠 *SYSTÈME & GÉNÉRAL* ≽───╮
+╭───≼  🧠 *SYSTÈME & GÉNÉRAL* 
 │
 │⚙️ *help / menu*  → Affiche le menu
 │🏓 *ping*         → Test de vitesse
@@ -24,7 +24,7 @@ _ 💡 Tape une commande avec le préfixe (*)_
 │📸 *chip*         → Extraire la pp
 ╰──────────────────
 
-╭───≼ 🛡️ *ADMIN & MODÉRATION* ≽───╮
+╭───≼ 🛡️ *ADMIN & MODÉRATION* 
 │
 │ 🔇 *mute* / 🔊 *unmute*
 │ 🚫 *antidelete on/off*
@@ -40,7 +40,7 @@ _ 💡 Tape une commande avec le préfixe (*)_
 │ 🖼️ *setpp*
 ╰──────────────────
 
-╭───≼ 🎭 *OUTILS & UTILITAIRES* ≽───╮
+╭───≼ 🎭 *OUTILS & UTILITAIRES* 
 │
 │ 🔊 *tts <texte>* → Texte en vocal
 │ 📸 *ss* → Capture ecran
@@ -58,26 +58,26 @@ _ 💡 Tape une commande avec le préfixe (*)_
 │ 🔎 *osint numero*
 ╰──────────────────
 
-╭───≼ 🤖 *INTELLIGENCE ARTIFICIELLE* ≽───╮
+╭───≼ 🤖 *INT ARTIFICIEL* 
 │
 │ 🧠 *gpt <question>*
 │ 💡 *gemini <question>*
 │ 🧠 *deepseek <question>*
-│ 🔰 *resume* (en réponse à un message)
+│ 🔰 *essentiel* 
 │ ✨ *llama <question>*
 │ 🖼️ *image <prompt>*      
 │ 🎬 *genere <prompt>*     → Vidéo IA
 │ 💬 *chatbot on/off*      → IA automatique
 ╰──────────────────
 
-╭───≼ 📥 *DOWNLOAD & MÉDIAS* ≽───╮
+╭───≼ 📥 *DOWNLOAD & MÉDIAS* 
 │
 │ 🎵 *play <musique>*
 │ ▶️ *youtube <sujet>*
 │ 🎬 *ytmp4 <lien>*
 ╰──────────────────
 
-╭───≼ 🎮 *GAMES MR ROBOT* ≽───╮
+╭───≼ 🎮 *GAMES MR ROBOT* 
 │
 │ ❌*tictactoe @user*
 │ 💰 *million*
@@ -86,8 +86,8 @@ _ 💡 Tape une commande avec le préfixe (*)_
 ╭──────────────────
 │💀 ${settings.botName || 'MachineBot-RB3'}
 │⚡ Rapide • 🔒 Sécurisé •  🤖 Intelligent
-╰───≼ 💀 _Nous Sommes *Anonymes*_ 💀 ≽──╯
-╰───≼ 🔥 _Nous Sommes La *FSOCIETY*_ 🔥 ≽──╯
+╰───≼ 💀 _Nous Sommes *Anonymes*_ 
+╰───≼ 🔥 _Nous Sommes La *FSOCIETY*_
 
 `;
 

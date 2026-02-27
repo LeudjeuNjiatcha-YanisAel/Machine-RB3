@@ -899,7 +899,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*removebg') || userMessage.startsWith('*rmbg') || userMessage.startsWith('*nobg'):
                 await removebgCommand.exec(sock,message,userMessage.split(' ').slice(1));
                 break;
-            case userMessage.startsWith('*resume'):
+            case userMessage.startsWith('*essentiel'):
                 {
                     await resumeCommand(sock,chatId,message);
                 }
