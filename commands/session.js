@@ -1,62 +1,45 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const AUTH_FOLDER = path.join(__dirname, "../session");
-const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
+async function runSessionCommand({ sock, msg, replyWithTag }) {
+        try {
+            const AUTH_FOLDER = path.join(__dirname, "../session");
+            const CREDS_PATH = path.join(AUTH_FOLDER, "creds.json");
 
-async function runSessionCommand({ sock, msg}) {
-    try {
-        if (!sock || !msg) {
-            console.error('sock ou msg non défini');
-            return;
-        }
+            if (!fs.existsSync(CREDS_PATH)) {
+                return replyWithTag(
+                    sock,
+                    msg.key.remoteJid,
+                    msg,
+                    "❌ Aucune session trouvée. Connecte le bot une première fois."
+                );
+            }
 
-        // Récupération sécurisée du chatId
-        const chatId = msg?.key?.remoteJid || msg?.from;
-        if (!chatId) {
-            console.error('Impossible de récupérer le chatId');
-            return;
-        }
+            const credsBuffer = fs.readFileSync(CREDS_PATH);
+            const sessionBase64 = Buffer.from(credsBuffer).toString("base64");
 
-        if (!fs.existsSync(CREDS_PATH)) {
-            return await replyWithTag(
-                sock,
-                chatId,
-                msg,
-                "❌ Fichier de session introuvable."
+            let message = `🤫 *SESSION DATA — CONFIDENTIEL*\n\n`;
+            message += `Ajoute ceci dans les variables d'environnement :\n\n`;
+            message += `🧩 *Nom* : SESSION_DATA\n`;
+            message += `📦 *Valeur* :\n`;
+            message += `\`\`\`${sessionBase64}\`\`\`\n\n`;
+            message += `⚠️ *Ne partage jamais cette clé*\n`;
+            message += `ℹ️ Redémarre le service après l'ajout.`;
+
+            await sock.sendMessage(
+                msg.key.remoteJid,
+                { text: message },
+                { quoted: msg }
             );
-        }
 
-        const creds = fs.readFileSync(CREDS_PATH);
-        const sessionBase64 = creds.toString('base64');
-
-        let statusMsg = `🤫 *SESSION ID (NE PAS PARTAGER)*\n\n`;
-        statusMsg += `Copiez le texte ci-dessous et ajoutez-le sur Render :\n`;
-        statusMsg += `Nom de variable : *SESSION_DATA*\n\n`;
-        statusMsg += `\`\`\`${sessionBase64}\`\`\`\n\n`;
-        statusMsg += `ℹ️ *Persistance Render :*\n`;
-        statusMsg += process.env.SESSION_DATA
-            ? `✅ SESSION_DATA détectée`
-            : `❌ SESSION_DATA non définie sur Render`;
-
-        await sock.sendMessage(
-            chatId,
-            { text: statusMsg },
-            { quoted: msg || undefined }
-        );
-
-    } catch (err) {
-        console.error('Session Error:', err);
-        const chatId = msg?.key?.remoteJid || msg?.from;
-        if (chatId) {
+        } catch (err) {
+            console.error("SESSION CMD ERROR:", err);
             await replyWithTag(
                 sock,
-                chatId,
+                msg.key.remoteJid,
                 msg,
-                "❌ Une erreur est survenue."
+                "❌ Erreur lors de la génération de la session."
             );
         }
     }
-}
-
-module.exports = runSessionCommand;
+module.exports = {runSessionCommand};

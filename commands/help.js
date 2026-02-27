@@ -54,6 +54,7 @@ _Tape une commande avec le préfixe (*)_
 🤣 *emojimix* → Fusionner 02 emo
 📦 *extract* → Extrait vue unique
 📈 *topmembers*
+📈 *audit* activite bot
 🌍 *translate <texte> <lang>*
 🔎 *osint numero*
 
@@ -63,6 +64,7 @@ _Tape une commande avec le préfixe (*)_
 🧠 *gpt <question>*
 ✨ *gemini <question>*
 🧠 *deepseek <question>*
+🔰 *resume* (en réponse à un message)
 ✨ *llama <question>*
 🖼️ *image <prompt>*      
 🎬 *genere <prompt>*     → Vidéo IA

@@ -3,9 +3,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const games = {};
 
-/* =====================================================
-   UTILITAIRE DE GESTION DES TOURS
-===================================================== */
+/* UTILITAIRE DE GESTION DES TOURS */
 function advanceTurn(room) {
     const previousPlayer = room.game.currentTurn;
 
@@ -20,9 +18,7 @@ function advanceTurn(room) {
     return { previousPlayer, currentPlayer: room.game.currentTurn, tourFinished };
 }
 
-/* =====================================================
-   LANCER / REJOINDRE PARTIE
-===================================================== */
+/* LANCER / REJOINDRE PARTIE */
 async function capitalCommand(sock, chatId, senderId) {
     try {
         const existingRoom = Object.values(games).find(r =>
@@ -93,18 +89,14 @@ Tapez **exit* pour quitter`,
     }
 }
 
-/* =====================================================
-   MASQUER CAPITALE
-===================================================== */
+/* MASQUER CAPITALE */
 function maskCapital(capital) {
     const first = capital.charAt(0).toUpperCase();
     const masked = '_ '.repeat(capital.length - 1).trim();
     return `${first} ${masked}`;
 }
 
-/* =====================================================
-   ENVOI QUESTION
-===================================================== */
+/* ENVOI QUESTION */
 async function sendCapitalHint(sock, room) {
     const masked = maskCapital(room.game.capital.toLowerCase());
     const country = room.game.country;
@@ -138,9 +130,7 @@ async function sendCapitalHint(sock, room) {
     await sleep(3000);
 }
 
-/* =====================================================
-   TIMER
-===================================================== */
+/* TIMER */
 function startTimer(sock, room) {
     if (room.timer) clearTimeout(room.timer);
 
@@ -165,9 +155,7 @@ ${tourFinished
     }, 25000);
 }
 
-/* =====================================================
-   REPONSE JOUEUR
-===================================================== */
+/* REPONSE JOUEUR */
 async function handleCapitalAnswer(sock, chatId, senderId, text) {
     try {
         const room = Object.values(games).find(r =>
@@ -279,9 +267,7 @@ Tapez *capital* pour rejouer !`,
 }
 
 
-/* =====================================================
-   STOP / QUIT / CLEANUP
-===================================================== */
+/* STOP / QUIT / CLEANUP */
 async function stopCapitalGame(sock, chatId, senderId) {
     try {
         const room = Object.values(games).find(r => r.chatId === chatId && r.state === 'PLAYING');
@@ -336,9 +322,7 @@ function cleanupInactiveGames() {
 
 setInterval(cleanupInactiveGames, 10 * 60 * 1000);
 
-/* =====================================================
-   EXPORT
-===================================================== */
+/* EXPORT */
 module.exports = {
     capitalCommand,
     handleCapitalAnswer,

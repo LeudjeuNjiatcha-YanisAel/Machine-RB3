@@ -1,0 +1,107 @@
+{
+  "messages": [
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:48:57.376Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:48:59.148Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:51:55.679Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:52:07.021Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-27T00:25:15.727Z",
+      "messageType": "conversation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "*ping",
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:48:58.166Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-26T23:49:16.804Z"
+    },
+    {
+      "command": "*ping",
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:51:56.378Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-26T23:52:07.694Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-26T23:52:45.891Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-26T23:58:54.046Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-27T00:24:36.095Z"
+    },
+    {
+      "command": "*ping",
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-27T00:25:16.542Z"
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-27T00:25:24.329Z"
+    }
+  ],
+  "botMessages": [
+    {
+      "to": "120363424570211579@g.us",
+      "text": "\n╭━━━〔 📊 BOT AUDIT 〕━━━⬣\n┃ 👤 *Messages reçus* : 4\n┃ ⚙️ *Commandes utilisées* : 6\n┃ 🤖 *Réponses du bot* : 0\n╰━━━━━━━━━━━━━━━━⬣\n\n╭━━━〔 👤 *UTILISATEUR* 〕━━━⬣\n┃ 🧾 *Nom* : @224524230492262\n┃ 📌 *Total commandes* : 3\n╰━━━━━━━━━━━━━━━━⬣\n\n📜 *5 Dernières commandes :*\n\n 1. ⚡ **audit*\n    🕒 27/02/2026 00:52:07\n\n 2. ⚡ **ping*\n    🕒 27/02/2026 00:51:56\n\n 3. ⚡ **ping*\n    🕒 27/02/2026 00:48:58\n\n",
+      "time": "2026-02-26T23:58:54.804Z"
+    },
+    {
+      "to": "120363424570211579@g.us",
+      "text": "\n╭━━━〔 📊 *BOT AUDIT* 〕━━━⬣\n┃ 👤 *Messages reçus* : 4\n┃ ⚙️ *Commandes utilisées* : 7\n┃ 🤖 *Réponses du bot* : 1\n╰━━━━━━━━━━━━━━━━⬣\n\n╭━━━〔 👤 *UTILISATEUR* 〕━━━⬣\n┃ 🧾 *Nom* : @224524230492262\n┃ 📌 *Total commandes* : 3\n╰━━━━━━━━━━━━━━━━⬣\n\n📜 *5 Dernières commandes :*\n\n 1. 📘 **audit*\n    🕒 27/02/2026 00:52:07\n\n 2. 📘 **ping*\n    🕒 27/02/2026 00:51:56\n\n 3. 📘 **ping*\n    🕒 27/02/2026 00:48:58\n\n",
+      "time": "2026-02-27T00:24:37.362Z"
+    },
+    {
+      "to": "120363424570211579@g.us",
+      "text": "\n╭━━━〔 📊 *BOT AUDIT* 〕━━━⬣\n┃ 👤 *Messages reçus* : 5\n┃ ⚙️ *Commandes utilisées* : 9\n┃ 🤖 *Réponses du bot* : 2\n╰━━━━━━━━━━━━━━━━⬣\n\n╭━━━〔 👤 *UTILISATEUR* 〕━━━⬣\n┃ 🧾 *Nom* : @224524230492262\n┃ 📌 *Total commandes* : 4\n╰━━━━━━━━━━━━━━━━⬣\n\n📜 *5 Dernières commandes :*\n\n 1. 📘 **ping*\n    🕒 27/02/2026 01:25:16\n\n 2. 📘 **audit*\n    🕒 27/02/2026 00:52:07\n\n 3. 📘 **ping*\n    🕒 27/02/2026 00:51:56\n\n 4. 📘 **ping*\n    🕒 27/02/2026 00:48:58\n\n",
+      "time": "2026-02-27T00:25:24.752Z"
+    }
+  ]
+}

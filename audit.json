@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": 1772151734211,
+      "messageType": "conversation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": 1772151691065
+    },
+    {
+      "command": "*ping",
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": 1772151734889
+    },
+    {
+      "command": "*audit",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": 1772151747535
+    }
+  ],
+  "botMessages": []
+}

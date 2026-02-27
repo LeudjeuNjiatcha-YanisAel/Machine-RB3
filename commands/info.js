@@ -45,7 +45,7 @@ async function infoCommand(sock, chatId, message) {
 
         if (!phone) {
             return await sock.sendMessage(chatId, {
-                text: '❌ Numéro invalide. Exemple : *info 699123456*'
+                text: '❌ Numéro invalide. Exemple : *osint 699123456*'
             });
         }
 

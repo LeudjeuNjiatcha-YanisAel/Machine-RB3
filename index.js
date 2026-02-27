@@ -46,7 +46,7 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 const express = require('express');
 const { reactToAllMessages } = require('./lib/reactions');
 const autoResponse = require('./autoResponse');
-
+const {logMessage} = require("./lib/audit");
 
 const AUTH_FOLDER = path.join(__dirname, './session');
 const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
@@ -54,6 +54,10 @@ const CREDS_PATH = path.join(AUTH_FOLDER, 'creds.json');
 // 🔥 RESTAURATION DE SESSION DEPUIS RENDER
 if (process.env.SESSION_DATA && !fs.existsSync(CREDS_PATH)) {
     try {
+        if (!fs.existsSync(AUTH_FOLDER)) {
+            fs.mkdirSync(AUTH_FOLDER, { recursive: true });
+        }
+
         const sessionBuffer = Buffer.from(process.env.SESSION_DATA, 'base64');
         fs.writeFileSync(CREDS_PATH, sessionBuffer);
         console.log('✅ Session restaurée depuis ENV (Render)');
@@ -246,14 +250,26 @@ async function startXeonBotInc() {
                         `⏰ Heure : ${new Date().toLocaleString()}\n` +
                         `✅ Statut : En ligne et opérationnel`
                 })
+                
 
                 console.log(chalk.blue(`Version du bot : ${settings.version}`))
             }
 
             if (connection === 'close') {
-                console.log(chalk.red('Connexion fermée, tentative de reconnexion...'))
-                await delay(5000)
-                startXeonBotInc()
+                const reason = lastDisconnect?.error?.output?.statusCode;
+
+                if (reason === DisconnectReason.loggedOut) {
+                    console.log('🧹 Session invalide, suppression...');
+                    fs.rmSync(AUTH_FOLDER, { recursive: true, force: true });
+                    process.exit(1);
+                }
+                if (reason !== DisconnectReason.loggedOut) {
+                    console.log(chalk.red('🔄 Reconnexion en cours...'));
+                    await delay(5000);
+                    startXeonBotInc();
+                } else {
+                    console.log(chalk.red('❌ Déconnecté (logout). Supprime SESSION_DATA.'));
+                }
             }
         })
 
