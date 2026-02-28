@@ -114,6 +114,41 @@ async function callDeepSeek(prompt) {
     }
 }
 
+// === Cerebras AI ===
+async function callCerebras(prompt) {
+    try {
+        const apiKey = process.env.CEREBRAS_API_KEY;
+        if (!apiKey) throw new Error("CEREBRAS_API_KEY manquante");
+
+        const client = new OpenAI({
+            apiKey,
+            baseURL: "https://api.cerebras.ai/v1"
+        });
+
+        const response = await client.chat.completions.create({
+            model: "llama3.1-70b", // modèle rapide Cerebras
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a powerful AI assistant inside a hacker-style WhatsApp bot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7
+        });
+
+        return response.choices[0].message.content;
+
+    } catch (err) {
+        console.error("Cerebras error:", err.message);
+        throw err;
+    }
+}
+
+
 // === OpenAI ===
 async function callOpenAI(prompt) {
     try {
@@ -307,6 +342,20 @@ async function aiCommand(sock, chatId, message) {
                 console.error('Meta AI failed:', e.message);
                 return sock.sendMessage(chatId, {
                     text: '❌ Meta AI indisponible pour le moment.'
+                }, { quoted: message });
+            }
+        }
+
+        else if (command === '*cerebras') {
+            try {
+                const answer = await callCerebras(query);
+                if (answer)
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+
+            } catch (e) {
+                console.error('Cerebras failed:', e.message);
+                return sock.sendMessage(chatId, {
+                    text: '❌ Cerebras indisponible.'
                 }, { quoted: message });
             }
         }
