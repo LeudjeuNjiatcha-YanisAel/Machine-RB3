@@ -115,6 +115,10 @@ const {execute,handleSlam} = require('./commands/million');
 const resumeCommand = require('./commands/resume.js');
 const {logCommand,logMessage,logBotMessage} = require('./lib/audit');
 const auditCommand = require('./commands/audit');
+const implante = require("./commands/implante");
+const ytsearch = require('./commands/ytsearch');
+const ytmp4 = require('./commands/ytmp4');
+
 
 // Global settings
 global.packname = settings.packname;
@@ -181,6 +185,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             message.message?.buttonsResponseMessage?.selectedButtonId?.trim() ||
             ''
         ).toLowerCase().replace(/\.\s+/g,'.').trim();
+        await implante(sock, message, userMessage || "");
 
         // Preserve raw message for commands like .tag that need original casing
         const rawText = message.message?.conversation?.trim() ||
@@ -374,7 +379,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
         await execute(sock,message,args);
         return;
         }
-
         switch (true) { 
             case userMessage.startsWith('*kick'):
                 const mentionedJidListKick = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
@@ -744,7 +748,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage === '*clearsession' || userMessage === '*clearsesi':
                 await clearSessionCommand(sock,chatId,message);
                 break;
-            case userMessage.startsWith('*autostatus'):
+            case userMessage.startsWith('*autostatus') || userMessage.startsWith('*statusall'):
                 const autoStatusArgs = userMessage.split(' ').slice(1);
                 await autoStatusCommand(sock,chatId,message,autoStatusArgs);
                 break;
@@ -906,6 +910,12 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 break;
             case userMessage.startsWith('*audit'):
                 await auditCommand(sock,message);
+                break;
+            case userMessage.startsWith('*ytsearch'):
+                await ytsearch(sock,chatId,message);
+                break;
+            case userMessage.startsWith('*ytmp4'):
+                await ytmp4(sock,chatId,message);
                 break;
             default:
                 if (isGroup) {

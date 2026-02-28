@@ -6,7 +6,7 @@ async function helpCommand(sock, chatId, message) {
     const helpMessage = `╭≼〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕≽━╮
 ┃ ⚡ Version : *${settings.version || '3.0.0'}*
 ┃ 👨‍💻 Developpeur  : *${settings.botOwner || 'Mr Robot'}*
-┃ 📳 Contact : *682441127*
+┃ 📳 Contact : *+237682441127*
 ╰━━━━━━━━━━━━━━━━━━━╯
 
 👑 Bienvenue Dans Le Système.👑
@@ -14,14 +14,14 @@ _Tape une commande avec le préfixe (*)_
 
 ╭───≼  🧠 *SYSTÈME & GÉNÉRAL* 
 │
-│⚙️ *help / menu*  → Affiche le menu
-│🏓 *ping*         → Test de vitesse
-│🟢 *alive*        → Statut du bot
-│👑 *owner*        → Contacter le dev
-│💻 *github*       → Repo du projet
-│📊 *groupinfo*    → Infos du groupe
-│👀 *online*       → Voir activité mem
-│📸 *chip*         → Extraire la pp
+│ ⚙️ *help / menu*  → Affiche le menu
+│ 🏓 *ping*         → Test de vitesse
+│ 🟢 *alive*        → Statut du bot
+│ 🎨 *sticker*      → Image en sticker
+│ 📊 *groupinfo*    → Infos du groupe
+│ 👀 *online*       → Voir activité mem
+│ 📸 *chip*         → Extraire la pp
+│ 📦 *extract*      → Extrait vue unique
 ╰──────────────────
 
 ╭───≼ 🛡️ *ADMIN & MODÉRATION* 
@@ -29,33 +29,29 @@ _Tape une commande avec le préfixe (*)_
 │ 🔇 *mute* / 🔊 *unmute*
 │ 🚫 *antidelete on/off*
 │ 🏷️ *tagall*
-│ ✅ *autoread on/off*
 │ 🗑️ *delete <msg>*
 │ 🚫 *antibadword on/off*
-│ 👮 *staff*
+│ 👮 *admins*
 │ ❌ *kick* 
 │ ⭐ *sudo*
-│ 😀 *autoreact on/off*
-│ ✅ *autostatus on/off*
+│ ✅ *statusall on/off*
 │ 🖼️ *setpp*
 ╰──────────────────
 
 ╭───≼ 🎭 *OUTILS & UTILITAIRES* 
 │
 │ 🔊 *tts <texte>* → Texte en vocal
-│ 📸 *ss* → Capture ecran
-│ 🎨 *sticker* → Convertir en sticker
 │ 😎 *character* → Trait physique
 │ 🎋 *sand <texte>*
 │ 🎇 *impressive <texte>*
 │ 🔆 *matrix <texte>*
 │ 🚓 *waste*
 │ 🤣 *emojimix* → Fusionner 02 emo
-│ 📦 *extract* → Extrait vue unique
 │ 📈 *topmembers*
 │ 📈 *audit* activite bot
 │ 🌍 *translate <texte> <lang>*
 │ 🔎 *osint numero*
+│ 🔥 *implante <on/off>*
 ╰──────────────────
 
 ╭───≼ 🤖 *INT ARTIFICIEL* 
@@ -64,8 +60,7 @@ _Tape une commande avec le préfixe (*)_
 │ 💡 *gemini <question>*
 │ 🧠 *deepseek <question>*
 │ 🔰 *essentiel* 
-│ ✨ *llama <question>*
-│ 🖼️ *image <prompt>*      
+│ ✨ *llama <question>*      
 │ 🎬 *genere <prompt>*     → Vidéo IA
 │ 💬 *chatbot on/off*      → IA automatique
 ╰──────────────────
@@ -74,7 +69,9 @@ _Tape une commande avec le préfixe (*)_
 │
 │ 🎵 *play <musique>*
 │ ▶️ *youtube <sujet>*
-│ 🎬 *ytmp4 <lien>*
+│ 🎬 *ytmp4 <lien> <qualité>*
+│ 🔎 *ytsearch <mot clé>*
+│ 🎵 *music <musique> <qualité>*
 ╰──────────────────
 
 ╭───≼ 🎮 *GAMES MR ROBOT* 
@@ -85,7 +82,7 @@ _Tape une commande avec le préfixe (*)_
 ╰──────────────────
 ╭──────────────────
 │💀 ${settings.botName || 'MachineBot-RB3'}
-│⚡ Rapide • 🔒 Sécurisé •  🤖 Intelligent
+│⚡ Rapide • 🔒 Sécurisé •  🤖 |Intelligent
 ╰───≼ 💀 _Nous Sommes *Anonymes*_ 
 ╰───≼ 🔥 _Nous Sommes La *FSOCIETY*_
 

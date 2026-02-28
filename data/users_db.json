@@ -1,0 +1,43 @@
+{
+  "224524230492262@lid": {
+    "name": "Mr Robot",
+    "messages": [
+      "bonjour",
+      "je suis enthousiaste"
+    ],
+    "images": [],
+    "manualNotes": [],
+    "profilePic": "./data/media/224524230492262@lid/profile.jpg",
+    "stats": {
+      "messages": 2,
+      "hesitation": 0
+    }
+  },
+  "136966976892958@lid": {
+    "name": "Machine is #Mr.Robot#",
+    "messages": [
+      "*play ninao",
+      "*music ninao",
+      "*music ninao",
+      "*music ninao",
+      "*music ninao",
+      "*music ninao",
+      "*ping",
+      "*music ninao",
+      "*play léa",
+      "*play léa",
+      "*play parisien",
+      "*play léa",
+      "*play léa j'ai les 50 mil",
+      "*play léa j'ai les 50 mil",
+      "*help"
+    ],
+    "images": [],
+    "manualNotes": [],
+    "profilePic": "./data/media/136966976892958@lid/profile.jpg",
+    "stats": {
+      "messages": 15,
+      "hesitation": 0
+    }
+  }
+}

@@ -242,7 +242,7 @@ async function startXeonBotInc() {
                         `\nVeuillez saisir ce code dans WhatsApp :\n` +
                         `1. Ouvrez WhatsApp\n` +
                         `2. Paramètres > Appareils associés\n` +
-                        `3. Associer un appareil\n`))
+                        `3. Associer un appareil`))
  console.log(chalk.blue(`4. Entrez le code ci-dessus`)) 
                 } catch (error) {
                     console.error('Erreur lors de la génération du code :', error)

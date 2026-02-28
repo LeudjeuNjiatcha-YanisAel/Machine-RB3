@@ -1,112 +1,147 @@
-const axios = require('axios');
+process.env.YTDL_NO_UPDATE = '1';
+require('dns').setDefaultResultOrder('ipv4first');
+
+const { spawn } = require('child_process');
 const yts = require('yt-search');
 const fs = require('fs');
 const path = require('path');
-const ytdl = require('@distube/ytdl-core');
+const os = require('os');
 
-const AXIOS_DEFAULTS = {
-	timeout: 60000,
-	headers: {
-		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-		'Accept': 'application/json, text/plain, */*'
-	}
-};
-
-async function tryRequest(getter, attempts = 3) {
-	let lastError;
-	for (let attempt = 1; attempt <= attempts; attempt++) {
-		try {
-			return await getter();
-		} catch (err) {
-			lastError = err;
-			if (attempt < attempts) {
-				await new Promise(r => setTimeout(r, 1000 * attempt));
-			}
-		}
-	}
-	throw lastError;
+// =======================
+// CACHE CONFIG
+// =======================
+const CACHE_DIR = path.join(__dirname, '../cache/music');
+if (!fs.existsSync(CACHE_DIR)) {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-async function getIzumiDownloadByUrl(youtubeUrl) {
-	const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube?url=${encodeURIComponent(youtubeUrl)}&format=mp3`;
-	const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-	if (res?.data?.result?.download) return res.data.result;
-	throw new Error('Izumi youtube?url returned no download');
+// =======================
+// AUDIO QUALITY
+// =======================
+function getAudioQuality(arg) {
+    switch (arg) {
+        case '64':
+        case 'low':
+            return { bitrate: '64k', label: '64 kbps' };
+        case '192':
+        case 'high':
+            return { bitrate: '192 kbps' };
+        case '320':
+        case 'max':
+            return { bitrate: '320 kbps' };
+        case '128':
+        case 'medium':
+        default:
+            return { bitrate: '128 kbps' };
+    }
 }
 
-async function getIzumiDownloadByQuery(query) {
-	const apiUrl = `https://izumiiiiiiii.dpdns.org/downloader/youtube-play?query=${encodeURIComponent(query)}`;
-	const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-	if (res?.data?.result?.download) return res.data.result;
-	throw new Error('Izumi youtube-play returned no download');
+function formatDuration(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-async function getOkatsuDownloadByUrl(youtubeUrl) {
-	const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp3?url=${encodeURIComponent(youtubeUrl)}`;
-	const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS));
-	// Okatsu response shape: { status, creator, title, format, thumb, duration, cached, dl }
-	if (res?.data?.dl) {
-		return {
-			download: res.data.dl,
-			title: res.data.title,
-			thumbnail: res.data.thumb
-		};
-	}
-	throw new Error('Okatsu ytmp3 returned no download');
-}
-
+// =======================
+// PLAY COMMAND
+// =======================
 async function songCommand(sock, chatId, message) {
     try {
-        const text = message.message?.conversation || message.message?.extendedTextMessage?.text || '';
-        if (!text) {
-            await sock.sendMessage(chatId, { text: 'Usage: .song <song name or YouTube link>' }, { quoted: message });
-            return;
+        const text =
+            message.message?.conversation ||
+            message.message?.extendedTextMessage?.text ||
+            '';
+
+        const args = text.split(' ').slice(1);
+        if (!args.length) {
+            return sock.sendMessage(chatId, {
+                text: '🎵 Utilisation : *play titre [low|medium|high|max]*'
+            }, { quoted: message });
         }
 
-        let video;
-        if (text.includes('youtube.com') || text.includes('youtu.be')) {
-			video = { url: text };
-        } else {
-			const search = await yts(text);
-			if (!search || !search.videos.length) {
-                await sock.sendMessage(chatId, { text: 'No results found.' }, { quoted: message });
-                return;
-            }
-			video = search.videos[0];
+        const lastArg = args[args.length - 1].toLowerCase();
+        const quality = getAudioQuality(lastArg);
+
+        const query = ['low','medium','high','max','64','128','192','320'].includes(lastArg)
+            ? args.slice(0, -1).join(' ')
+            : args.join(' ');
+
+        // 🔎 Recherche YouTube
+        const search = await yts(query);
+        if (!search.videos?.length) {
+            return sock.sendMessage(chatId, {
+                text: '❌ Aucune musique trouvée.'
+            }, { quoted: message });
         }
 
-        // Inform user
+        const video = search.videos[0];
+        const cacheFile = path.join(CACHE_DIR, `${video.videoId}-${quality.bitrate}.mp3`);
+
+        // 📩 MESSAGE DÉTAILLÉ
         await sock.sendMessage(chatId, {
             image: { url: video.thumbnail },
-            caption: `🎵 Downloading: *${video.title}*\n⏱ Duration: ${video.timestamp}`
+            caption:
+                `🎵 *${video.title}*\n` +
+                `⏱ Durée : *${formatDuration(video.seconds)}*\n` +
+                `🎧 Qualité : *${quality.label}*\n` +
+                `⬇️ Téléchargement en cours...`
         }, { quoted: message });
 
-		// Try Izumi primary by URL, then by query, then Okatsu fallback
-		let audioData;
-		try {
-			// 1) Primary: Izumi by youtube url
-			audioData = await getIzumiDownloadByUrl(video.url);
-		} catch (e1) {
-			try {
-				// 2) Secondary: Izumi search by query/title
-				const query = video.title || text;
-				audioData = await getIzumiDownloadByQuery(query);
-			} catch (e2) {
-				// 3) Fallback: Okatsu by youtube url
-				audioData = await getOkatsuDownloadByUrl(video.url);
-			}
-		}
+        // =======================
+        // CACHE HIT
+        // =======================
+        if (fs.existsSync(cacheFile)) {
+            const audio = fs.readFileSync(cacheFile);
+            return sock.sendMessage(chatId, {
+                audio,
+                mimetype: 'audio/mpeg',
+                fileName: `${video.title}.mp3`
+            }, { quoted: message });
+        }
 
-		await sock.sendMessage(chatId, {
-			audio: { url: audioData.download || audioData.dl || audioData.url },
-			mimetype: 'audio/mpeg',
-			fileName: `${(audioData.title || video.title || 'song')}.mp3`,
-			ptt: false
-		}, { quoted: message });
+        // =======================
+        // DOWNLOAD WITH yt-dlp
+        // =======================
+        const tmpFile = path.join(os.tmpdir(), `yt-${Date.now()}.mp3`);
+
+        const yt = spawn('yt-dlp', [
+            '--js-runtimes', 'node',
+            '-f', 'ba',
+            '--extract-audio',
+            '--audio-format', 'mp3',
+            '--audio-quality', quality.bitrate,
+            '--user-agent', 'com.google.android.youtube/19.09.37 (Linux; Android 14)',
+            '--add-header', 'X-Youtube-Client-Name:3',
+            '--add-header', 'X-Youtube-Client-Version:19.09.37',
+            '--no-playlist',
+            '-o', tmpFile,
+            video.url
+        ]);
+
+        yt.stderr.on('data', d => console.log('[yt-dlp]', d.toString()));
+
+        yt.on('close', async (code) => {
+            if (code !== 0 || !fs.existsSync(tmpFile)) {
+                return sock.sendMessage(chatId, {
+                    text: '❌ Erreur lors du téléchargement.'
+                }, { quoted: message });
+            }
+
+            fs.renameSync(tmpFile, cacheFile);
+            const audio = fs.readFileSync(cacheFile);
+
+            await sock.sendMessage(chatId, {
+                audio,
+                mimetype: 'audio/mpeg',
+                fileName: `${video.title}.mp3`
+            }, { quoted: message });
+        });
 
     } catch (err) {
-        console.error('Song command error:', err);
-        await sock.sendMessage(chatId, { text: '❌ Failed to download song.' }, { quoted: message });
+        console.error('❌ playCommand error:', err);
+        await sock.sendMessage(chatId, {
+            text: '⚠️ Erreur système.'
+        }, { quoted: message });
     }
 }
 
