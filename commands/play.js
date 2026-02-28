@@ -6,7 +6,7 @@ const yts = require('yt-search');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-
+require('dotenv').config();
 // =======================
 // COOKIES SETUP
 // =======================
@@ -71,7 +71,7 @@ async function playCommand(sock, chatId, message) {
         const video = search.videos[0];
 
         await sock.sendMessage(chatId, {
-            text: `🎧 *${video.title}*\n📀 Qualité : *${quality.label}*\n⏳ Téléchargement...`
+            text: `🎧 *${video.title}*\n📀 Qualité : *${quality.label}*\n⏳ *Téléchargement...*`
         }, { quoted: message });
 
         const outputPath = path.join(os.tmpdir(), `music-${Date.now()}.mp3`);

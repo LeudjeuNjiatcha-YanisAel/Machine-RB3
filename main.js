@@ -242,10 +242,16 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // Check for bad words and antilink FIRST,before ANY other processing
         // Always run moderation in groups,regardless of mode
         if (isGroup) {
-            if (userMessage) {
-                await handleBadwordDetection(sock,chatId,message,userMessage,senderId);
+            const badwordText = rawText || '';
+            if (badwordText) {
+                await handleBadwordDetection(
+                    sock,
+                    chatId,
+                    message,
+                    badwordText,
+                    senderId
+                );
             }
-            // Antilink checks message text internally,so run it even if userMessage is empty
             await Antilink(message,sock);
         }
 

@@ -46,10 +46,10 @@ setInterval(() => store.writeToFile(), settings.storeWriteInterval || 10000)
 const express = require('express');
 const { reactToAllMessages } = require('./lib/reactions');
 const autoResponse = require('./autoResponse');
-const {logMessage} = require("./lib/audit");
 const unzipper = require('unzipper');
+const { handleBadwordDetection } = require('./lib/antibadword');
 
-
+let hasConnected = false;
 // ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
@@ -179,6 +179,7 @@ async function startXeonBotInc() {
         XeonBotInc.ev.on('messages.upsert', async chatUpdate => {
             try {
                 const mek = chatUpdate.messages[0]
+                
                 await reactToAllMessages(XeonBotInc, mek);
                 if (!mek.message) return;
                 await autoResponse(XeonBotInc, mek);
@@ -253,45 +254,48 @@ async function startXeonBotInc() {
             }, 3000)
         }
 
-        XeonBotInc.ev.on('connection.update', async (s) => {
-            const { connection, lastDisconnect, qr } = s
+        XeonBotInc.ev.on('connection.update', async (update) => {
+            const { connection, lastDisconnect, qr } = update;
 
-            if (qr) console.log(chalk.yellow('📱 QR Code généré. Scannez avec WhatsApp.'))
-            if (connection === 'connecting') console.log(chalk.yellow('🔄 Connexion à WhatsApp...'))
+            if (qr) {
+                console.log(chalk.yellow('📱 QR Code généré.'));
+            }
 
-            if (connection === "open") {
-                console.log(chalk.green('🤖 Bot connecté avec succès !'))
+            if (connection === 'connecting') {
+                console.log(chalk.yellow('🔄 Connexion à WhatsApp...'));
+            }
+
+            if (connection === 'open') {
+                console.log(chalk.green('🤖 Bot connecté avec succès !'));
 
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
-                await XeonBotInc.sendMessage(botNumber, {
-                    text:
-                        `🤖 *Bot connecté avec succès* !\n\n` +
-                        `⏰ *Heure* : ${new Date().toLocaleString()}\n` +
-                        `✅ *Statut* : En ligne et opérationnel\n` +
-                        `💫 *Botnumber* : ${botNumber}`
-                })
-                
+                try{
+                    await XeonBotInc.sendMessage(botNumber, {
+                        text:
+                            `🤖 *Bot connecté avec succès*🤖!\n\n` +
+                            `⏰ *Heure* : ${new Date().toLocaleString()}\n` +
+                            `✅ *Statut* : En ligne Et Operationnel\n`
 
-                console.log(chalk.blue(`Version du bot : ${settings.version}`))
+                    });
+                }catch(err){
+                    console.error('Erreur lors de l’envoi du message de bienvenue :', err);
+                }
             }
 
             if (connection === 'close') {
                 const reason = lastDisconnect?.error?.output?.statusCode;
 
+                console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);
+
                 if (reason === DisconnectReason.loggedOut) {
-                    console.log('🧹 Session invalide, suppression...');
-                    fs.rmSync(AUTH_FOLDER, { recursive: true, force: true });
+                    console.log('🧹 Session invalide. Supprime la session.');
                     process.exit(1);
                 }
-                if (reason !== DisconnectReason.loggedOut) {
-                    console.log(chalk.red('🔄 Reconnexion en cours...'));
-                    await delay(5000);
-                    startXeonBotInc();
-                } else {
-                    console.log(chalk.red('❌ Déconnecté (logout). Supprime SESSION_DATA.'));
-                }
+
+                // ⚠️ NE PAS relancer startXeonBotInc ici
+                console.log('⏳ Baileys va tenter une reconnexion automatique...');
             }
-        })
+            });
 
         return XeonBotInc
     } catch (error) {

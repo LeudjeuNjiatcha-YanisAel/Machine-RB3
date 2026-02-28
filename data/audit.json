@@ -41,6 +41,1920 @@
       "sender": "224524230492262@lid",
       "time": "2026-02-28T01:03:56.779Z",
       "messageType": "conversation"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T11:20:12.099Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "218524161163396@lid",
+      "time": "2026-02-28T11:20:39.576Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "218524161163396@lid",
+      "time": "2026-02-28T11:22:06.576Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "218524161163396@lid",
+      "time": "2026-02-28T11:23:23.777Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T11:23:56.726Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:24:23.900Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:24:28.612Z",
+      "messageType": "imageMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:24:30.983Z",
+      "messageType": "imageMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:24:32.026Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T11:24:46.682Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "218524161163396@lid",
+      "time": "2026-02-28T11:24:50.570Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T11:25:19.648Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:26:21.492Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:28:11.088Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:28:15.676Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "254979843592442@lid",
+      "time": "2026-02-28T11:30:15.724Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:33:52.248Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "257947766632665@lid",
+      "time": "2026-02-28T11:34:44.224Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:34:48.890Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:37:22.892Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:37:53.417Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "233286114787371@lid",
+      "time": "2026-02-28T11:40:07.915Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:40:39.717Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:42:32.437Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363326942887550@g.us",
+      "sender": "209667754078220@lid",
+      "time": "2026-02-28T11:42:59.897Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:16.308Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:43:29.065Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:43:31.115Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:37.571Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:39.840Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:41.061Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:41.973Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T11:43:42.917Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:43:52.073Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "277240306790480@lid",
+      "time": "2026-02-28T11:44:55.155Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:45:31.514Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T11:45:58.037Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:46:42.253Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:46:50.235Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:47:19.864Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "8160840528104@lid",
+      "time": "2026-02-28T11:47:32.901Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "15999441064007@lid",
+      "time": "2026-02-28T11:48:09.054Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "242515831718007@lid",
+      "time": "2026-02-28T11:48:48.528Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "242515831718007@lid",
+      "time": "2026-02-28T11:48:54.743Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "246089445863546@lid",
+      "time": "2026-02-28T11:50:59.076Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:51:27.020Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:51:43.570Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:52:07.376Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:52:16.745Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:52:30.821Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:52:44.769Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:52:58.097Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:52:58.494Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:53:46.414Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:53:53.786Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:54:23.783Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:54:35.444Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:54:39.893Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:54:50.321Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:55:02.410Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:55:05.716Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:55:08.941Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:55:14.793Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:55:23.695Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "155499760738398@lid",
+      "time": "2026-02-28T11:55:30.764Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T11:55:37.034Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:55:40.548Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:56:01.630Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:56:22.643Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:56:36.741Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:56:48.426Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T11:56:50.590Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T11:56:52.403Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:56:54.754Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:56:56.507Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:57:08.284Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T11:57:18.720Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:57:19.649Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:57:19.757Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:57:20.578Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "170914180280432@lid",
+      "time": "2026-02-28T11:57:22.211Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:57:32.292Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T11:57:47.356Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T11:58:18.150Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T11:59:42.975Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T11:59:54.525Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:00:16.459Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:00:42.847Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T12:00:44.352Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:01:21.346Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "95207127281706@lid",
+      "time": "2026-02-28T12:01:49.289Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:01:52.536Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "165584041934998@lid",
+      "time": "2026-02-28T12:02:21.146Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:02:23.664Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:02:41.879Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:03:03.684Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T12:03:24.536Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:03:26.708Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:03:26.861Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:03:27.445Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:03:44.094Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:03:51.070Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:04:26.855Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "95207127281706@lid",
+      "time": "2026-02-28T12:04:28.507Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:04:39.985Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:05:38.300Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:05:42.296Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:05:45.868Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:06:48.068Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "6769321455738@lid",
+      "time": "2026-02-28T12:06:48.334Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "95207127281706@lid",
+      "time": "2026-02-28T12:06:58.176Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:07:10.539Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:07:11.677Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:07:14.429Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:07:26.289Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "268444666740943@lid",
+      "time": "2026-02-28T12:07:36.528Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "146497442214053@lid",
+      "time": "2026-02-28T12:19:29.389Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:21:00.828Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:22:27.448Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:23:41.556Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:23:59.002Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "241394526478411@lid",
+      "time": "2026-02-28T12:24:23.801Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "241394526478411@lid",
+      "time": "2026-02-28T12:24:25.811Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:24:40.772Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:24:44.053Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "181136487612605@lid",
+      "time": "2026-02-28T12:24:44.720Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:47.741Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:49.157Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:50.050Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:51.413Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:52.328Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "240849501864152@lid",
+      "time": "2026-02-28T12:24:53.220Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:53.658Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "181136487612605@lid",
+      "time": "2026-02-28T12:24:54.083Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:55.508Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:56.685Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:58.165Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:24:59.395Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:00.531Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:01.887Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "249220258869463@lid",
+      "time": "2026-02-28T12:25:02.373Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:03.694Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:04.750Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:06.324Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:07.795Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:09.073Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:10.660Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "171434240385130@lid",
+      "time": "2026-02-28T12:25:10.684Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:12.095Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:13.529Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:15.054Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:16.602Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:17.946Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:19.285Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:20.691Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:22.032Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:23.149Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:24.297Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:25.099Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:26.530Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:27.961Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:29.294Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:30.681Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:32.165Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "140114953040055@lid",
+      "time": "2026-02-28T12:25:33.432Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "140114953040055@lid",
+      "time": "2026-02-28T12:25:33.704Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:25:33.719Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:26:34.619Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:26:34.643Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:26:34.661Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:26:34.679Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:26:34.705Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.006Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.030Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.056Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.082Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.104Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.125Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.148Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.175Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.201Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "67066518347847@lid",
+      "time": "2026-02-28T12:27:35.245Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.262Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.281Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.297Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "261108761940100@lid",
+      "time": "2026-02-28T12:27:35.315Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:27:35.330Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:35.606Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "261108761940100@lid",
+      "time": "2026-02-28T12:28:35.621Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:35.636Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:35.652Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:35.667Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:28:35.685Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "69737434341393@lid",
+      "time": "2026-02-28T12:28:35.714Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "261108761940100@lid",
+      "time": "2026-02-28T12:28:35.732Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "27049955737746@lid",
+      "time": "2026-02-28T12:28:35.766Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "191289287012414@lid",
+      "time": "2026-02-28T12:28:35.795Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:35.810Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:36.916Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "217772273438912@lid",
+      "time": "2026-02-28T12:28:36.941Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:28:36.954Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "249220258869463@lid",
+      "time": "2026-02-28T12:28:36.979Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "242515831718007@lid",
+      "time": "2026-02-28T12:28:37.000Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "205587669319840@lid",
+      "time": "2026-02-28T12:28:37.026Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "278739753672716@lid",
+      "time": "2026-02-28T12:28:37.053Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "205587669319840@lid",
+      "time": "2026-02-28T12:28:37.076Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "134767936798866@lid",
+      "time": "2026-02-28T12:28:37.103Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "2392816885966@lid",
+      "time": "2026-02-28T12:28:49.509Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363421904925623@g.us",
+      "sender": "241815768854751@lid",
+      "time": "2026-02-28T12:29:12.371Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "150096742191307@lid",
+      "time": "2026-02-28T12:29:15.663Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "150096742191307@lid",
+      "time": "2026-02-28T12:29:16.667Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "252677858545898@lid",
+      "time": "2026-02-28T12:29:25.788Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "77408598241291@lid",
+      "time": "2026-02-28T12:29:44.376Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "77408598241291@lid",
+      "time": "2026-02-28T12:29:45.406Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "77408598241291@lid",
+      "time": "2026-02-28T12:29:59.578Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:30:03.637Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:30:03.642Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:30:03.931Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "15999441064007@lid",
+      "time": "2026-02-28T12:30:07.791Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "218820597788736@lid",
+      "time": "2026-02-28T12:30:20.432Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "149727442129070@lid",
+      "time": "2026-02-28T12:30:25.772Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "7370717528184@lid",
+      "time": "2026-02-28T12:30:41.245Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "165249219035160@lid",
+      "time": "2026-02-28T12:30:43.569Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "7370717528184@lid",
+      "time": "2026-02-28T12:30:51.566Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "7370717528184@lid",
+      "time": "2026-02-28T12:30:52.746Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "242717795832061@lid",
+      "time": "2026-02-28T12:31:05.016Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "132474524950650@lid",
+      "time": "2026-02-28T12:31:18.034Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "218820597788736@lid",
+      "time": "2026-02-28T12:31:34.172Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:32:07.033Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:32:07.861Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363326942887550@g.us",
+      "sender": "102156250153210@lid",
+      "time": "2026-02-28T12:32:10.230Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:32:11.170Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363326942887550@g.us",
+      "sender": "202065880068177@lid",
+      "time": "2026-02-28T12:32:20.489Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:32:29.934Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:32:33.417Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "240849501864152@lid",
+      "time": "2026-02-28T12:32:50.031Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "6738988269813@lid",
+      "time": "2026-02-28T12:33:10.150Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:33:36.963Z",
+      "messageType": "messageContextInfo"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "168638132789471@lid",
+      "time": "2026-02-28T12:33:42.930Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "155409751007280@lid",
+      "time": "2026-02-28T12:35:22.797Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "155409751007280@lid",
+      "time": "2026-02-28T12:35:25.698Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "207683781148914@lid",
+      "time": "2026-02-28T12:35:59.283Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "109985958777067@lid",
+      "time": "2026-02-28T12:36:25.062Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "29811921707093@lid",
+      "time": "2026-02-28T12:36:36.933Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "242717795832061@lid",
+      "time": "2026-02-28T12:36:55.276Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "242515831718007@lid",
+      "time": "2026-02-28T12:37:03.903Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326942887550@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:37:23.111Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363404515350863@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T12:37:23.443Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "92634374787264@lid",
+      "time": "2026-02-28T12:38:16.276Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:39:48.284Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:39:53.813Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T12:40:21.616Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "15999441064007@lid",
+      "time": "2026-02-28T12:40:53.906Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:42:11.268Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:42:23.958Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:42:50.983Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "84693148037232@lid",
+      "time": "2026-02-28T12:43:02.610Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "66735587778680@lid",
+      "time": "2026-02-28T12:43:02.716Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:43:11.663Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "63166537064525@lid",
+      "time": "2026-02-28T12:43:12.200Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363355190455071@g.us",
+      "sender": "63166537064525@lid",
+      "time": "2026-02-28T12:43:13.518Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "66735587778680@lid",
+      "time": "2026-02-28T12:43:19.886Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "202967923880035@lid",
+      "time": "2026-02-28T12:43:27.082Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:43:36.464Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "202967923880035@lid",
+      "time": "2026-02-28T12:43:37.450Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:43:57.876Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T12:54:15.311Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T12:54:31.606Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:54:38.059Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "56328529686775@lid",
+      "time": "2026-02-28T12:54:42.551Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "15282248630392@lid",
+      "time": "2026-02-28T12:54:54.971Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "181918373048557@lid",
+      "time": "2026-02-28T12:55:06.421Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "15999441064007@lid",
+      "time": "2026-02-28T12:59:38.421Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:59:45.238Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "34347558133923@lid",
+      "time": "2026-02-28T12:59:55.280Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:00:11.253Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "222793526411515@lid",
+      "time": "2026-02-28T13:00:24.470Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:00:31.633Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "256032211251373@lid",
+      "time": "2026-02-28T13:01:16.173Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:01:41.941Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:06:17.852Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:06:51.163Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "274109527269425@lid",
+      "time": "2026-02-28T13:16:31.473Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "25409563431028@lid",
+      "time": "2026-02-28T13:16:35.148Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:16:51.678Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:16:51.970Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:16:53.612Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:16:54.145Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:17:07.011Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:17:08.866Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:17:10.147Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:17:10.520Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:17:11.318Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "84336581812398@lid",
+      "time": "2026-02-28T13:17:11.447Z",
+      "messageType": "reactionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "153725788229694@lid",
+      "time": "2026-02-28T13:20:18.138Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "155409751007280@lid",
+      "time": "2026-02-28T13:20:38.674Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "22755374313537@lid",
+      "time": "2026-02-28T13:21:57.199Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:22:33.670Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T13:22:34.981Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:29:23.993Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "130614736977950@lid",
+      "time": "2026-02-28T13:29:35.680Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:46:33.000Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "67878216798209@lid",
+      "time": "2026-02-28T13:47:18.563Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T13:47:32.913Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363343877752550@g.us",
+      "sender": "95207127281706@lid",
+      "time": "2026-02-28T13:47:51.066Z",
+      "messageType": "stickerMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T13:48:06.346Z",
+      "messageType": "contactMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T13:48:19.311Z",
+      "messageType": "extendedTextMessage"
+    },
+    {
+      "from": "120363354190283631@g.us",
+      "sender": "148743844323575@lid",
+      "time": "2026-02-28T13:48:39.536Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:51:42.466Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:56:29.495Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T13:57:40.545Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:11:04.667Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:11:22.985Z",
+      "messageType": "protocolMessage"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:11:31.254Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "221324261777563@lid",
+      "time": "2026-02-28T14:16:14.118Z",
+      "messageType": "senderKeyDistributionMessage"
+    },
+    {
+      "from": "120363326449082697@g.us",
+      "sender": "221324261777563@lid",
+      "time": "2026-02-28T14:16:15.225Z",
+      "messageType": "pollUpdateMessage"
+    },
+    {
+      "from": "120363424570211579@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:22:43.569Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:26:42.282Z",
+      "messageType": "conversation"
+    },
+    {
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:27:54.663Z",
+      "messageType": "conversation"
     }
   ],
   "commands": [
@@ -277,6 +2191,210 @@
       "from": "120363424570211579@g.us",
       "sender": "136966976892958@lid",
       "time": "2026-02-28T03:36:18.714Z"
+    },
+    {
+      "command": "*music",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:20:09.217Z"
+    },
+    {
+      "command": "*music",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:21:50.382Z"
+    },
+    {
+      "command": "*music",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:23:59.464Z"
+    },
+    {
+      "command": "*note",
+      "from": "120363354190283631@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:37:13.765Z"
+    },
+    {
+      "command": "*antidelete",
+      "from": "136966976892958@lid",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:37:50.341Z"
+    },
+    {
+      "command": "*ytsearch",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:44:40.775Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:45:26.078Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T11:45:41.075Z"
+    },
+    {
+      "command": "*antidelete",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:03:34.850Z"
+    },
+    {
+      "command": "*antidelete",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:03:46.838Z"
+    },
+    {
+      "command": "*antidelete",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:04:08.935Z"
+    },
+    {
+      "command": "*antidelete",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:05:35.107Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:06:54.983Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:07:05.309Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:20:11.037Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:20:34.461Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:23:42.447Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T12:24:00.200Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:24:18.022Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:24:27.482Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:39:22.789Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T12:39:36.774Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:06:32.511Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:06:43.593Z"
+    },
+    {
+      "command": "*admins",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:07:19.823Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:16:32.079Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:16:43.752Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:22:01.785Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:22:11.008Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:29:02.009Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363405867499629@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T13:29:13.818Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T14:07:40.151Z"
+    },
+    {
+      "command": "*antibadword",
+      "from": "120363424570211579@g.us",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T14:10:40.469Z"
+    },
+    {
+      "command": "*play",
+      "from": "120363405867499629@g.us",
+      "sender": "224524230492262@lid",
+      "time": "2026-02-28T14:27:55.782Z"
     }
   ],
   "botMessages": [
