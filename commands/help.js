@@ -5,15 +5,15 @@ const path = require('path');
 async function helpCommand(sock, chatId, message) {
     const helpMessage = `
 ╔══════════════════════╗
-║ 🤖 *${settings.botName || 'MachineBot-RB3'}  SYSTEM*║
-╠══════════════════════╣
+║ 🤖 *${settings.botName || 'MachineBot-RB3'}  SYSTEM*   ║
+╠═════════════════════╣
 ║ ⚡ *Version*     : *${settings.version || '3.0.0'}*
 ║ 👨‍💻 *Developpeur* : *${settings.botOwner || 'Mr Robot'}*
 ║ 📳 *Contact*     : +237682441127
 ╚════════════════════╝
 
 ┌────────────────────────┐
-│👑*BIENVENUE DANS LE SYSTÈME*👑│
+👑*BIENVENUE DANS LE SYSTÈME*👑
 └────────────────────────┘
 _Tape une commande avec le préfixe (*)_
 
