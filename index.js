@@ -294,6 +294,7 @@ async function startXeonBotInc() {
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
                 console.log('⏳ Baileys va tenter une reconnexion automatique...');
+                startXeonBotInc();
             }
             });
 

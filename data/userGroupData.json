@@ -3,6 +3,10 @@
     "120363405867499629@g.us": false
   },
   "antibadword": {
+    "120363403735163746@g.us": {
+      "enabled": false,
+      "action": "delete"
+    }
   },
   "autoReaction": false
 }

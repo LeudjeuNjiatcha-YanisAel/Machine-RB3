@@ -1955,6 +1955,12 @@
       "sender": "224524230492262@lid",
       "time": "2026-02-28T14:27:54.663Z",
       "messageType": "conversation"
+    },
+    {
+      "from": "120363403735163746@g.us",
+      "sender": "48623844880535@lid",
+      "time": "2026-02-28T17:02:19.934Z",
+      "messageType": "conversation"
     }
   ],
   "commands": [
@@ -2395,6 +2401,12 @@
       "from": "120363405867499629@g.us",
       "sender": "224524230492262@lid",
       "time": "2026-02-28T14:27:55.782Z"
+    },
+    {
+      "command": "*ping",
+      "from": "136966976892958@lid",
+      "sender": "136966976892958@lid",
+      "time": "2026-02-28T17:02:19.884Z"
     }
   ],
   "botMessages": [
