@@ -86,7 +86,6 @@ async function playCommand(sock, chatId, message) {
             '--audio-format', 'mp3',
             '--audio-quality', quality.bitrate,
             '--no-playlist',
-            '--js-runtimes', 'node',
             '-o', outputPath,
             video.url
         ];

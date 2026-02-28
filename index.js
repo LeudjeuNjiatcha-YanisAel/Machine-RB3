@@ -96,7 +96,6 @@ async function restoreSessionFromEnv() {
         console.error('❌ Erreur restauration session:', err);
     }
 }
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -305,7 +304,6 @@ async function startXeonBotInc() {
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
                 console.log('⏳ Baileys va tenter une reconnexion automatique...');
-                startXeonBotInc();
             }
             });
 
