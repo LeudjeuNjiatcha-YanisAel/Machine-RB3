@@ -89,7 +89,7 @@ async function ytmp4(sock, chatId, message) {
         yt.on('close', async (code) => {
             if (code !== 0 || !fs.existsSync(output)) {
                 return sock.sendMessage(chatId, {
-                    text: '❌ Erreur lors du téléchargement vidéo.'
+                    text: '❌ Erreur lors du téléchargement de la vidéo.'
                 }, { quoted: message });
             }
 
