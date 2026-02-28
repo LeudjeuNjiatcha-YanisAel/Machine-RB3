@@ -5,15 +5,15 @@ const path = require('path');
 async function helpCommand(sock, chatId, message) {
     const helpMessage = `
 ╔══════════════════════╗
-║        🤖  ${settings.botName || 'MachineBot-RB3'}  SYSTEM        ║
+║        🤖 *${settings.botName || 'MachineBot-RB3'}  SYSTEM*║
 ╠═══════════════════════╣
-║ ⚡ Version     : ${settings.version || '3.0.0'}
-║ 👨‍💻 Developpeur : ${settings.botOwner || 'Mr Robot'}
-║ 📳 Contact     : +237682441127
+║ ⚡ *Version*     : *${settings.version || '3.0.0'}*
+║ 👨‍💻 *Developpeur* : *${settings.botOwner || 'Mr Robot'}*
+║ 📳 *Contact*     : +237682441127
 ╚════════════════════╝
 
 ┌────────────────────────┐
-│ 👑  *BIENVENUE DANS LE SYSTÈME* 👑│
+│ 👑*BIENVENUE DANS LE SYSTÈME*👑│
 └────────────────────────┘
 _Tape une commande avec le préfixe (*)_
 
@@ -48,7 +48,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🎇  *impressive <texte>*
 │ 🔆  *matrix <texte>*
 │ 🚓  *waste*
-│ 🤣  *emojimix*            → Fusionner 02 emo
+│ 🤣  *emojimix*          → Fusionner 02 emo
 │ 📈  *topmembers*
 │ 📊  *audit*               → Activité bot
 │ 🌍  *translate <texte> <lang>*
@@ -63,7 +63,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🔰  *essentiel*
 │ ✨  *llama <question>*
 │ 🎬  *genere <prompt>*      → Vidéo IA
-│ 💬  *chatbot on/off*       → IA automatique
+│ 💬  *chatbot on/off*    → IA automatique
 ╰─────────────────
 
 ╭───≼  📥 *DOWNLOAD & MÉDIAS*
@@ -80,12 +80,12 @@ _Tape une commande avec le préfixe (*)_
 │ 🌍  *capital*
 ╰───────────────────
 
-╔═══════════════════════════╗
+╔═══════════════════════╗
 ║ 💀 ${settings.botName || 'MachineBot-RB3'}
 ║ ⚡ Rapide • 🔒 Sécurisé • Intelligent
-║ 💀 Nous Sommes *Anonymes*
-║ 🔥 Nous Sommes La *FSOCIETY*
-╚══════════════════════════╝
+║ 💀 Nous Sommes _*Anonymes*_
+║ 🔥 Nous Sommes La _*FSOCIETY*_
+╚════════════════════════╝
 `;
 
     try {
