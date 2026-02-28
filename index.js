@@ -55,34 +55,45 @@ const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
 
 async function restoreSessionFromEnv() {
-    if (!process.env.SESSION_DATA) {
-        console.log('ℹ️ Aucune SESSION_DATA trouvée');
-        return;
-    }
-
-    if (fs.existsSync(SESSION_DIR)) {
-        console.log('ℹ️ Dossier session déjà présent, restauration ignorée');
-        return;
-    }
-
     try {
+        if (!process.env.SESSION_DATA) {
+            console.log('ℹ️ Aucune SESSION_DATA trouvée');
+            return;
+        }
+
+        console.log('🔄 Restauration SESSION_DATA...');
+
+        // 🔥 Toujours supprimer ancienne session
+        if (fs.existsSync(SESSION_DIR)) {
+            fs.rmSync(SESSION_DIR, { recursive: true, force: true });
+        }
+
         fs.mkdirSync(SESSION_DIR, { recursive: true });
 
-        fs.writeFileSync(
-            SESSION_ZIP,
-            Buffer.from(process.env.SESSION_DATA, 'base64')
-        );
+        // 🔥 Nettoyage base64
+        const base64Data = process.env.SESSION_DATA.trim();
+        const zipBuffer = Buffer.from(base64Data, 'base64');
 
+        fs.writeFileSync(SESSION_ZIP, zipBuffer);
+
+        // 🔥 Extraction propre
         await fs.createReadStream(SESSION_ZIP)
             .pipe(unzipper.Extract({ path: SESSION_DIR }))
             .promise();
 
         fs.unlinkSync(SESSION_ZIP);
 
-        console.log('✅ Session restaurée depuis SESSION_DATA (multi-fichiers)');
-        console.log('📂 Fichiers session :', fs.readdirSync(SESSION_DIR));
+        const files = fs.readdirSync(SESSION_DIR);
+
+        if (files.length === 0) {
+            console.log('❌ ERREUR : session vide après extraction');
+        } else {
+            console.log('✅ Session restaurée avec succès');
+            console.log('📂 Fichiers restaurés :', files);
+        }
+
     } catch (err) {
-        console.error('❌ Erreur restauration session multi-fichiers:', err);
+        console.error('❌ Erreur restauration session:', err);
     }
 }
 

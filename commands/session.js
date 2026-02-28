@@ -16,34 +16,46 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
             );
         }
 
-        // ZIP du dossier session
+        // Supprime ancien zip si existe
+        if (fs.existsSync(ZIP_PATH)) {
+            fs.removeSync(ZIP_PATH);
+        }
+
+        // ZIP propre du CONTENU du dossier session
         await new Promise((resolve, reject) => {
             const output = fs.createWriteStream(ZIP_PATH);
             const archive = archiver('zip', { zlib: { level: 9 } });
 
-            archive.pipe(output);
-            archive.directory(SESSION_DIR, false);
-            archive.finalize();
-
             output.on('close', resolve);
             archive.on('error', reject);
+
+            archive.pipe(output);
+
+            // ⚠️ IMPORTANT → false pour ne PAS recréer "session/" dedans
+            archive.directory(SESSION_DIR, false);
+
+            archive.finalize();
         });
 
         const zipBuffer = fs.readFileSync(ZIP_PATH);
         const sessionBase64 = zipBuffer.toString('base64');
 
-        const message =
-            `🤫 *SESSION DATA — CONFIDENTIEL*\n\n` +
-            `Ajoute ceci dans Render :\n\n` +
-            `🧩 *Nom* : SESSION_DATA\n` +
-            `📦 *Valeur* :\n` +
-            `\`\`\`${sessionBase64}\`\`\`\n\n` +
-            `⚠️ *Ne partage jamais cette clé*\n` +
-            `🔁 Redéploie après l’ajout`;
-
         await sock.sendMessage(
             msg.key.remoteJid,
-            { text: message },
+            {
+                text:
+`🤫 *SESSION DATA — CONFIDENTIEL*
+
+Ajoute ceci dans Render :
+
+🧩 Nom : SESSION_DATA
+📦 Valeur :
+
+${sessionBase64}
+
+⚠️ Ne partage jamais cette clé
+🔁 Redéploie après l’ajout`
+            },
             { quoted: msg }
         );
 
