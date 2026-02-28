@@ -7,6 +7,18 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// =======================
+// COOKIES SETUP
+// =======================
+const cookiesPath = path.join(os.tmpdir(), 'yt-cookies.txt');
+
+if (process.env.YT_COOKIES) {
+    fs.writeFileSync(cookiesPath, process.env.YT_COOKIES);
+}
+
+// =======================
+// AUDIO QUALITY
+// =======================
 function getAudioQuality(arg) {
     switch (arg) {
         case '64':
@@ -25,6 +37,9 @@ function getAudioQuality(arg) {
     }
 }
 
+// =======================
+// PLAY COMMAND
+// =======================
 async function playCommand(sock, chatId, message) {
     try {
         const text =
@@ -61,19 +76,21 @@ async function playCommand(sock, chatId, message) {
 
         const outputPath = path.join(os.tmpdir(), `music-${Date.now()}.mp3`);
 
-        const yt = spawn('yt-dlp', [
-            '--js-runtimes', 'node',
+        const ytArgs = [
+            '--cookies', cookiesPath,
+            '--sleep-interval', '2',
+            '--max-sleep-interval', '5',
+            '--concurrent-fragments', '1',
             '-f', 'ba',
             '--extract-audio',
             '--audio-format', 'mp3',
             '--audio-quality', quality.bitrate,
-            '--user-agent', 'com.google.android.youtube/19.09.37 (Linux; U; Android 14)',
-            '--add-header', 'X-Youtube-Client-Name:3',
-            '--add-header', 'X-Youtube-Client-Version:19.09.37',
             '--no-playlist',
             '-o', outputPath,
             video.url
-        ]);
+        ];
+
+        const yt = spawn('yt-dlp', ytArgs);
 
         yt.stderr.on('data', d => console.log('[yt-dlp]', d.toString()));
 
