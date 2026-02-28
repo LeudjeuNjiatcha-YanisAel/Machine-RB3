@@ -3,89 +3,89 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    const helpMessage = `╭≼〔 🤖 *${settings.botName || 'MachineBot-RB3'}* 〕≽━╮
-┃ ⚡ Version : *${settings.version || '3.0.0'}*
-┃ 👨‍💻 Developpeur  : *${settings.botOwner || 'Mr Robot'}*
-┃ 📳 Contact : *+237682441127*
-╰━━━━━━━━━━━━━━━━━━━╯
+    const helpMessage = `
+╔════════════════════════════════════╗
+║        🤖  ${settings.botName || 'MachineBot-RB3'}  SYSTEM        ║
+╠════════════════════════════════════╣
+║ ⚡ Version     : ${settings.version || '3.0.0'}
+║ 👨‍💻 Developpeur : ${settings.botOwner || 'Mr Robot'}
+║ 📳 Contact     : +237682441127
+╚════════════════════════════════════╝
 
-👑 Bienvenue Dans Le Système.👑
+┌──────────────────────────────────┐
+│ 👑  BIENVENUE DANS LE SYSTÈME  👑 │
+└──────────────────────────────────┘
 _Tape une commande avec le préfixe (*)_
 
-╭───≼  🧠 *SYSTÈME & GÉNÉRAL* 
-│
-│ ⚙️ *help / menu*  → Affiche le menu
-│ 🏓 *ping*         → Test de vitesse
-│ 🟢 *alive*        → Statut du bot
-│ 🎨 *sticker*      → Image en sticker
-│ 📊 *groupinfo*    → Infos du groupe
-│ 👀 *online*       → Voir activité mem
-│ 📸 *chip*         → Extraire la pp
-│ 📦 *extract*      → Extrait vue unique
-╰──────────────────
+╭───≼  🧠 *SYSTÈME & GÉNÉRAL*  ≽───╮
+│ ⚙️  *help / menu*   → Affiche le menu
+│ 🏓  *ping*          → Test de vitesse
+│ 🟢  *alive*         → Statut du bot
+│ 🎨  *sticker*       → Image en sticker
+│ 📊  *groupinfo*     → Infos du groupe
+│ 👀  *online*        → Voir activité mem
+│ 📸  *chip*          → Extraire la pp
+│ 📦  *extract*       → Extrait vue unique
+╰──────────────────────────────────╯
 
-╭───≼ 🛡️ *ADMIN & MODÉRATION* 
-│
-│ 🔇 *mute* / 🔊 *unmute*
-│ 🚫 *antidelete on/off*
-│ 🏷️ *tagall*
-│ 🗑️ *delete <msg>*
-│ 🚫 *antibadword on/off*
-│ 👮 *admins*
-│ ❌ *kick* 
-│ ⭐ *sudo*
-│ ✅ *statusall on/off*
-│ 🖼️ *setpp*
-╰──────────────────
+╭───≼  🛡️ *ADMIN & MODÉRATION*  ≽───╮
+│ 🔇  *mute* / 🔊 *unmute*
+│ 🚫  *antidelete on/off*
+│ 🏷️  *tagall*
+│ 🗑️  *delete <msg>*
+│ 🚫  *antibadword on/off*
+│ 👮  *admins*
+│ ❌  *kick*
+│ ⭐  *sudo*
+│ ✅  *statusall on/off*
+│ 🖼️  *setpp*
+╰──────────────────────────────────╯
 
-╭───≼ 🎭 *OUTILS & UTILITAIRES* 
-│
-│ 🔊 *tts <texte>* → Texte en vocal
-│ 😎 *character* → Trait physique
-│ 🎋 *sand <texte>*
-│ 🎇 *impressive <texte>*
-│ 🔆 *matrix <texte>*
-│ 🚓 *waste*
-│ 🤣 *emojimix* → Fusionner 02 emo
-│ 📈 *topmembers*
-│ 📈 *audit* activite bot
-│ 🌍 *translate <texte> <lang>*
-│ 🔎 *osint numero*
-│ 🔥 *implante <on/off>*
-╰──────────────────
+╭───≼  🎭 *OUTILS & UTILITAIRES*  ≽───╮
+│ 🔊  *tts <texte>*        → Texte en vocal
+│ 😎  *character*           → Trait physique
+│ 🎋  *sand <texte>*
+│ 🎇  *impressive <texte>*
+│ 🔆  *matrix <texte>*
+│ 🚓  *waste*
+│ 🤣  *emojimix*            → Fusionner 02 emo
+│ 📈  *topmembers*
+│ 📊  *audit*               → Activité bot
+│ 🌍  *translate <texte> <lang>*
+│ 🔎  *osint numero*
+│ 🔥  *implante <on/off>*
+╰──────────────────────────────────╯
 
-╭───≼ 🤖 *INT ARTIFICIEL* 
-│
-│ 🧠 *gpt <question>*
-│ 💡 *gemini <question>*
-│ 🧠 *deepseek <question>*
-│ 🔰 *essentiel* 
-│ ✨ *llama <question>*      
-│ 🎬 *genere <prompt>*     → Vidéo IA
-│ 💬 *chatbot on/off*      → IA automatique
-╰──────────────────
+╭───≼  🤖 *INT ARTIFICIEL*  ≽───╮
+│ 🧠  *gpt <question>*
+│ 💡  *gemini <question>*
+│ 🧠  *deepseek <question>*
+│ 🔰  *essentiel*
+│ ✨  *llama <question>*
+│ 🎬  *genere <prompt>*      → Vidéo IA
+│ 💬  *chatbot on/off*       → IA automatique
+╰──────────────────────────────────╯
 
-╭───≼ 📥 *DOWNLOAD & MÉDIAS* 
-│
-│ 🎵 *play <musique>*
-│ ▶️ *youtube <sujet>*
-│ 🎬 *ytmp4 <lien> <qualité>*
-│ 🔎 *ytsearch <mot clé>*
-│ 🎵 *music <musique> <qualité>*
-╰──────────────────
+╭───≼  📥 *DOWNLOAD & MÉDIAS*  ≽───╮
+│ 🎵  *play <musique>*
+│ ▶️  *youtube <sujet>*
+│ 🎬  *ytmp4 <lien> <qualité>*
+│ 🔎  *ytsearch <mot clé>*
+│ 🎵  *music <musique> <qualité>*
+╰──────────────────────────────────╯
 
-╭───≼ 🎮 *GAMES MR ROBOT* 
-│
-│ ❌*tictactoe @user*
-│ 💰 *million*
-│ 🌍 *capital*
-╰──────────────────
-╭──────────────────
-│💀 ${settings.botName || 'MachineBot-RB3'}
-│⚡ Rapide • 🔒 Sécurisé •  🤖 |Intelligent
-╰───≼ 💀 _Nous Sommes *Anonymes*_ 
-╰───≼ 🔥 _Nous Sommes La *FSOCIETY*_
+╭───≼  🎮 *GAMES MR ROBOT*  ≽───╮
+│ ❌  *tictactoe @user*
+│ 💰  *million*
+│ 🌍  *capital*
+╰──────────────────────────────────╯
 
+╔════════════════════════════════════╗
+║ 💀 ${settings.botName || 'MachineBot-RB3'}
+║ ⚡ Rapide • 🔒 Sécurisé • Intelligent
+║ 💀 Nous Sommes *Anonymes*
+║ 🔥 Nous Sommes La *FSOCIETY*
+╚════════════════════════════════════╝
 `;
 
     try {

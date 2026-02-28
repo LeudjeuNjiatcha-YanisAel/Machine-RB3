@@ -59,18 +59,18 @@ function getHistory(userId) {
 function getQuickReply(text) {
     const lower = text.toLowerCase();
 
-    if (/(bonjour|salut|bjr|yo|cc)/i.test(lower)) return "Salut 👋 comment tu vas ?";
-    if (/(ça va|comment ça va)/i.test(lower)) return "Je vais bien 😌 et toi ?";
-    if (/(merci|thanks|thx)/i.test(lower)) return "Avec plaisir 😄";
-    if (/(bye|au revoir|à plus)/i.test(lower)) return "À bientôt 👋";
+    if (/(bonjour|salut|bjr|yo|cc)/i.test(lower)) return random(["Salut 👋 comment tu vas ?","Hey ! 😄comment tu te porte","Salut 😄 comment tu as passer ta journee"]);
+    if (/(ça va|comment ça va)/i.test(lower)) return random(["Je vais bien 😌 et toi ?","Je vais bien merci 😄"]);
+    if (/(merci|thanks|thx)/i.test(lower)) return random(["Avec plaisir 😄","De rien 😄"]);
+    if (/(bye|au revoir|à plus)/i.test(lower)) return random(["À bientôt 👋","Au revoir 😄"]);
     if (/(ton nom|tu t'appelles)/i.test(lower)) return "Je suis ton bot WhatsApp 🤖";
     if (/(qui t'a créé|créateur)/i.test(lower)) return "J’ai été créé par mon développeur 😎";
     if (/(tu fais quoi|fonction)/i.test(lower)) return "Je peux discuter, répondre et aider 😌";
-    if (/(mdr|lol|😂)/i.test(lower)) return "😂😂 tu es en forme toi";
+    if (/(mdr|lol|😂)/i.test(lower)) return random(["😂😂 tu es en forme toi","Haha 😂"]);
     if (/(bonne nuit)/i.test(lower)) return "Bonne nuit 😴 dors bien";
-    if (/(bonne journée)/i.test(lower)) return "Bonne journée ☀️";
-    if (/(je m'ennuie)/i.test(lower)) return "On peut discuter 😄 raconte-moi quelque chose";
-    if (/(aide|help)/i.test(lower)) return "Tu peux me parler normalement ou utiliser les commandes fais *menu 😌";
+    if (/(bonne journée)/i.test(lower)) return random(["Bonne journée ☀️","Bonne journée 😊"]);
+    if (/(je m'ennuie)/i.test(lower)) return random(["On peut discuter 😄 raconte-moi quelque chose","Tu peux me parler de ce qui te préoccupe 😊"]);
+    if (/(aide|help)/i.test(lower)) return random(["Tu peux me parler normalement ou utiliser les commandes fais *menu 😌","Je peux t'aider à utiliser les commandes du bot"]);
     if (/(comment tu t'appelles|ton nom)/i.test(lower)) return "Je suis ton assistant WhatsApp 🤖";
     
     return null;
