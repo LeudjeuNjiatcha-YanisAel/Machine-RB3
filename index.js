@@ -248,7 +248,7 @@ async function startXeonBotInc() {
                 try {
                     let code = await XeonBotInc.requestPairingCode(phoneNumber)
                     code = code?.match(/.{1,4}/g)?.join("-") || code
-                    console.log(chalk.black(chalk.bgGreen(`Votre code d’association : `)), chalk.black(chalk.white(code)))
+                    console.log(chalk.black(chalk.bgGreen(`Votre code d’association : `)), chalk.black(chalk.blueBright(code)))
                     console.log(chalk.yellow(
                         `\nVeuillez saisir ce code dans WhatsApp :\n` +
                         `1. Ouvrez WhatsApp\n` +
@@ -304,6 +304,7 @@ async function startXeonBotInc() {
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
                 console.log('⏳ Baileys va tenter une reconnexion automatique...');
+                startXeonBotInc();
             }
             });
 
