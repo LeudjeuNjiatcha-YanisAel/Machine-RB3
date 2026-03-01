@@ -3,6 +3,7 @@ const OpenAI = require("openai");
 const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
+const Cerebras = require('@cerebras/cerebras_cloud_sdk').default;
 
 async function callMetaAI(prompt) {
 
@@ -114,19 +115,18 @@ async function callDeepSeek(prompt) {
     }
 }
 
-// === Cerebras AI ===
 async function callCerebras(prompt) {
+
     try {
-        const apiKey = process.env.CEREBRAS_API_KEY;
-        if (!apiKey) throw new Error("CEREBRAS_API_KEY manquante");
-
-        const client = new OpenAI({
-            apiKey,
-            baseURL: "https://api.cerebras.ai/v1"
+        if (!process.env.CEREBRAS_API_KEY)
+            throw new Error("CEREBRAS_API_KEY manquante");
+        
+        const cerebras = new Cerebras({
+            apiKey: process.env.CEREBRAS_API_KEY
         });
-
-        const response = await client.chat.completions.create({
-            model: "llama3.1-70b", // modèle rapide Cerebras
+        
+        const completion = await cerebras.chat.completions.create({
+            model: "gpt-oss-120b", // OU llama-3.1-70b si dispo
             messages: [
                 {
                     role: "system",
@@ -140,14 +140,13 @@ async function callCerebras(prompt) {
             temperature: 0.7
         });
 
-        return response.choices[0].message.content;
+        return completion.choices[0].message.content;
 
     } catch (err) {
         console.error("Cerebras error:", err.message);
         throw err;
     }
 }
-
 
 // === OpenAI ===
 async function callOpenAI(prompt) {
@@ -332,7 +331,7 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
-        else if (command === '*llama') {
+        else if (command === '*llama' || command === '*ai') {
             try {
                 const answer = await callMetaAI(query);
                 if (answer)

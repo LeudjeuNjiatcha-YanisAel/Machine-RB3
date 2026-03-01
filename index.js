@@ -298,13 +298,13 @@ async function startXeonBotInc() {
                 console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);
 
                 if (reason === DisconnectReason.loggedOut) {
-                    console.log('🧹 Session invalide. Supprime la session.');
+                    console.log(chalk.purple('🧹 Session invalide. Supprime la session.'));
                     process.exit(1);
                 }
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
-                console.log('⏳ Baileys va tenter une reconnexion automatique...');
-                startXeonBotInc();
+                console.log(chalk.blueBright('⏳ Baileys va tenter une reconnexion automatique...'));
+                startXeonBotInc()
             }
             });
 

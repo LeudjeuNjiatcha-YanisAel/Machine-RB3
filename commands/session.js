@@ -16,12 +16,11 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
             );
         }
 
-        // Supprime ancien zip si existe
+        // Supprime ancien zip
         if (fs.existsSync(ZIP_PATH)) {
             fs.removeSync(ZIP_PATH);
         }
 
-        // ZIP propre du CONTENU du dossier session
         await new Promise((resolve, reject) => {
             const output = fs.createWriteStream(ZIP_PATH);
             const archive = archiver('zip', { zlib: { level: 9 } });
@@ -31,8 +30,21 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
 
             archive.pipe(output);
 
-            // ⚠️ IMPORTANT → false pour ne PAS recréer "session/" dedans
-            archive.directory(SESSION_DIR, false);
+            const files = fs.readdirSync(SESSION_DIR);
+
+            // 🔥 FILTRAGE MINIMAL INTELLIGENT
+            const essentialFiles = files.filter(file =>
+                file === 'creds.json' ||
+                file.startsWith('session-') ||
+                file.startsWith('app-state-sync-key-')
+            );
+
+            for (const file of essentialFiles) {
+                archive.file(
+                    path.join(SESSION_DIR, file),
+                    { name: file }
+                );
+            }
 
             archive.finalize();
         });
@@ -40,13 +52,13 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
         const zipBuffer = fs.readFileSync(ZIP_PATH);
         const sessionBase64 = zipBuffer.toString('base64');
 
+        console.log("📦 Taille session minimale (base64):", sessionBase64.length);
+
         await sock.sendMessage(
             msg.key.remoteJid,
             {
                 text:
-`🤫 *SESSION DATA — CONFIDENTIEL*
-
-Ajoute ceci dans Render :
+`🤫 *SESSION DATA MINIMAL*
 
 🧩 Nom : SESSION_DATA
 📦 Valeur :
@@ -54,7 +66,7 @@ Ajoute ceci dans Render :
 ${sessionBase64}
 
 ⚠️ Ne partage jamais cette clé
-🔁 Redéploie après l’ajout`
+🔁 Redéploie après ajout`
             },
             { quoted: msg }
         );
