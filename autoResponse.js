@@ -55,6 +55,9 @@ function getHistory(userId) {
         ? conversationMemory[userId].join('\n')
         : '';
 }
+function random(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
 
 function getQuickReply(text) {
     const lower = text.toLowerCase();
