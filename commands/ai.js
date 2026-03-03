@@ -115,6 +115,39 @@ async function callDeepSeek(prompt) {
     }
 }
 
+// === DeepSeek R1 via OpenRouter ===
+async function callDeepSeekR1(prompt) {
+    try {
+        const apiKey = process.env.DEEPSEEK_API_KEY;
+        if (!apiKey) throw new Error("DEEPSEEK_API_KEY manquante");
+
+        const openrouter = new OpenRouter({
+            apiKey
+        });
+
+        const response = await openrouter.chat.send({
+            model: "deepseek/deepseek-r1-0528",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are an advanced AI inside a hacker-style WhatsApp bot created by Mr Robot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ]
+        });
+
+        return response.choices[0].message.content;
+
+    } catch (err) {
+        console.error("DeepSeek R1 error:", err.message);
+        throw err;
+    }
+}
+
+
 async function callCerebras(prompt) {
 
     try {
@@ -331,6 +364,20 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
+                // DeepSeek R1 (OpenRouter)
+        else if (command === '*deepseek2') {
+            try {
+                const answer = await callDeepSeekR1(query);
+                if (answer)
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+
+            } catch (e) {
+                console.error('DeepSeek R1 failed:', e.message);
+                return sock.sendMessage(chatId, {
+                    text: '❌ DeepSeek R1 indisponible.'
+                }, { quoted: message });
+            }
+        }
         else if (command === '*llama' || command === '*ai') {
             try {
                 const answer = await callMetaAI(query);
@@ -365,4 +412,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek , Image , callMetaAI};
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1 , Image , callMetaAI};
