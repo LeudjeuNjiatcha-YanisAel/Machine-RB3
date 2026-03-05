@@ -298,7 +298,7 @@ async function startXeonBotInc() {
                 console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);
 
                 if (reason === DisconnectReason.loggedOut) {
-                    console.log(chalk.purple('🧹 Session invalide. Supprime la session.'));
+                    console.log(chalk.bgCyan('🧹 Session invalide. Supprime la session.'));
                     process.exit(1);
                 }
 
