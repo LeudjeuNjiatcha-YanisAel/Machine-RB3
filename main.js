@@ -373,7 +373,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
         return; // Stop le reste
 }
 
-        // 🎮 Slam (réponse aux questions)
         if (userMessage.startsWith('*slam ')) {
         await handleSlam(sock,message,userMessage);
         return;
@@ -852,7 +851,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*play') || userMessage.startsWith('*mp3') || userMessage.startsWith('*ytmp3') || userMessage.startsWith('*song'):
                 await songCommand(sock,chatId,message);
                 break;
-            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek') || userMessage.startsWith('*deepseek2') || userMessage.startsWith('*llama') || userMessage.startsWith('*cerebras') || userMessage.startsWith('*ai'):
+            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek') || userMessage.startsWith('*deepseek2') || userMessage.startsWith('*llama') || userMessage.startsWith('*cerebras') || userMessage.startsWith('*ai') || userMessage.startsWith('*hacker') || userMessage.startsWith('*r1'):
                 await aiCommand(sock,chatId,message);
                 break;
             case userMessage.startsWith('*translate') || userMessage.startsWith('*trt'):

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('./lib/isOwner');
-const { callGeminiOfficial,callMetaAI } = require('./commands/ai');
+const { callGeminiOfficial,callMetaAI,callOpenAI } = require('./commands/ai');
 
 const CONFIG_PATH = path.join(__dirname, './data/autoresponse.json');
 
@@ -188,8 +188,19 @@ Message:
                 } 
                 catch (llamaErr) 
                 {
-                    console.error("Fallback Llama failed:", llamaErr);
-                    reply = "😅 Petit bug IA… réessaie.";
+                    try {
+                        reply = await callOpenAI(`Tu es un chatbot Whatsapp humain Reponses naturelle,courtes,emojis legers 
+                            Historique:
+                    ${history}
+
+                    Message:
+                    "${rawText}" `);
+                    }
+                   catch
+                   {
+                    console.error("OpenAI Error:", llamaErr);
+                    reply = "🤖 Oups, j'ai du mal à répondre en ce moment 😅";
+                   }
                 }
             }
         }

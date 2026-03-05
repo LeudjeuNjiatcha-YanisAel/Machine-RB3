@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 require('dotenv').config();
 const Cerebras = require('@cerebras/cerebras_cloud_sdk').default;
+const {Mistral} = require('@mistralai/mistralai');
 
 async function callMetaAI(prompt) {
 
@@ -81,10 +82,40 @@ async function generateImage(prompt) {
     return Buffer.from(part.inlineData.data, "base64");
 }
 
-// === DeepSeek ===
+async function callDeepSeekR1Wisdom(prompt) {
+    try {
+
+        const client = new OpenAI({
+            apiKey: process.env.WISDOM_API_KEY,
+            baseURL: "https://api.wisdom.ai/v1" // endpoint Wisdom
+        });
+
+        const completion = await client.chat.completions.create({
+            model: "deepseek-r1",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a powerful AI assistant inside a WhatsApp bot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7
+        });
+
+        return completion.choices[0].message.content;
+
+    } catch (err) {
+        console.error("Wisdom DeepSeek R1 error:", err.message);
+        throw err;
+    }
+}
+
 async function callDeepSeek(prompt) {
     try {
-        const apiKey = process.env.DEEPSEEK_API_KEY;
+        const apiKey = process.env.DEEPSEEK;
         if (!apiKey) throw new Error("DEEPSEEK_API_KEY manquante");
 
         const client = new OpenAI({
@@ -115,7 +146,6 @@ async function callDeepSeek(prompt) {
     }
 }
 
-// === DeepSeek R1 via OpenRouter ===
 async function callDeepSeekR1(prompt) {
     try {
         const apiKey = process.env.DEEPSEEK_API_KEY;
@@ -181,7 +211,6 @@ async function callCerebras(prompt) {
     }
 }
 
-// === OpenAI ===
 async function callOpenAI(prompt) {
     try {
         const apiKey = process.env.GEMINI;
@@ -205,7 +234,6 @@ async function callOpenAI(prompt) {
     }
 }
 
-// === Gemini OFFICIEL ===
 async function callGeminiOfficial(prompt) {
     try {
         const apiKey = process.env.GEMINI_API;
@@ -229,7 +257,41 @@ async function callGeminiOfficial(prompt) {
     }
 }
 
-// === Command handler ===
+async function callMistral(prompt) {
+    try {
+
+        const apiKey = process.env.MISTRAL_API_KEY;
+        if (!apiKey) throw new Error("MISTRAL_API_KEY manquante");
+
+        const client = new Mistral({
+            apiKey: apiKey
+        });
+
+        const response = await client.chat.complete({
+            model: "mistral-medium-latest",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a powerful AI assistant inside a hacker-style WhatsApp bot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7,
+            max_tokens: 2048
+        });
+
+        return response.choices[0].message.content;
+
+    } catch (err) {
+        console.error("Mistral error:", err.message);
+        throw err;
+    }
+}
+
+
 async function aiCommand(sock, chatId, message) {
     try {
         let text = '';
@@ -248,7 +310,7 @@ async function aiCommand(sock, chatId, message) {
             }
 
         const parts = text.trim().split(' ');
-        const command = parts[0].toLowerCase(); // .gpt / .gemini
+        const command = parts[0].toLowerCase(); 
         const query = parts.slice(1).join(' ').trim();
 
         if (!query) {
@@ -350,7 +412,6 @@ async function aiCommand(sock, chatId, message) {
             }, { quoted: message });
                
         }
-                    // DeepSeek
         else if (command === '*deepseek') {
             try {
                 const answer = await callDeepSeek(query);
@@ -364,7 +425,6 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
-                // DeepSeek R1 (OpenRouter)
         else if (command === '*deepseek2') {
             try {
                 const answer = await callDeepSeekR1(query);
@@ -405,6 +465,35 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
+        else if (command === '*hacker') {
+            try {
+                const answer = await callMistral(query);
+                if (answer)
+                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+
+            } catch (e) {
+                console.error('Mistral failed:', e.message);
+                return sock.sendMessage(chatId, {
+                    text: '❌ Mistral indisponible.'
+                }, { quoted: message });
+            }
+        }
+    else if (command === '*r1') {
+    try {
+
+        const answer = await callDeepSeekR1Wisdom(query);
+
+        if (answer)
+            return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+
+    } catch (e) {
+        console.error('DeepSeek R1 Wisdom failed:', e.message);
+
+        return sock.sendMessage(chatId, {
+            text: '❌ DeepSeek R1 indisponible.'
+        }, { quoted: message });
+    }
+}
     } catch (err) {
         console.error('AI ERROR:', err.message);
         await sock.sendMessage(chatId, { text: '❌ Erreur IA, réessaie plus tard.' }, { quoted: message });
@@ -412,4 +501,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1 , Image , callMetaAI};
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1 , callMistral , Image , callMetaAI};

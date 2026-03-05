@@ -23,7 +23,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🟢  *alive*         → Statut du bot
 │ 🎨  *sticker*       → Image en sticker
 │ 📊  *groupinfo*     → Infos du groupe
-│ 👀  *online*        → Voir activité mem
+│ 💬  *chatbot on/off*    → IA auto
 │ 📸  *chip*          → Extraire la pp
 │ 📦  *extract*       → Extrait vue unique
 ╰───────────────────
@@ -60,10 +60,10 @@ _Tape une commande avec le préfixe (*)_
 │ 🧠  *gpt <question>*
 │ 💡  *gemini <question>*
 │ 🧠  *deepseek <question>*
-│ 🔰  *essentiel*
+│ 🔰  *essentiel* 
 │ ✨  *llama <question>*
+│ 💡  *hacker <question>*
 │ 🎬  *genere <prompt>*      → Vidéo IA
-│ 💬  *chatbot on/off*    → IA automatique
 ╰─────────────────
 
 ╭───≼  📥 *DOWNLOAD & MÉDIAS*
