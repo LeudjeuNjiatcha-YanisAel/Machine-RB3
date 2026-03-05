@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Pair MACHINE VB3</title>
+
+<style>
+
+body{
+background:#050507;
+color:white;
+font-family:Outfit, sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:40px;
+border-radius:20px;
+text-align:center;
+width:350px;
+}
+
+input{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:none;
+margin-bottom:15px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#5865F2;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+#code{
+font-size:28px;
+margin-top:20px;
+letter-spacing:3px;
+color:#00d4ff;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Pair WhatsApp</h2>
+
+<input id="number" placeholder="2376XXXXXXXX">
+
+<button onclick="getCode()">Generate Code</button>
+
+<div id="code"></div>
+
+</div>
+
+<script>
+
+async function getCode(){
+
+const number = document.getElementById("number").value
+
+const res = await fetch(`/get-pair?number=${number}`)
+const data = await res.json()
+
+if(data.status){
+
+document.getElementById("code").innerText = data.code
+
+}else{
+
+alert(data.message)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

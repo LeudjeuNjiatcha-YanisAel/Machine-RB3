@@ -35,6 +35,8 @@ const { PHONENUMBER_MCC } = require('@whiskeysockets/baileys/lib/Utils/generics'
 const { rmSync, existsSync } = require('fs')
 const { join } = require('path')
 
+let PAIRING_CODE = null
+let BOT_CONNECTED = false
 const store = require('./lib/lightweight_store')
 
 store.readFromFile()
@@ -101,9 +103,11 @@ const PORT = process.env.PORT || 3000;
 
 // Route de ping
 app.get('/', (req, res) => {
-    res.status(200).send('🤖 Bot MACHINE VB3 est actif');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
-
+app.get('/pair', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pair.html'))
+})
 // Démarrage du serveur web
 app.listen(PORT, () => {
     console.log(`🌍 Serveur HTTP actif sur le port ${PORT}`);
@@ -298,13 +302,13 @@ async function startXeonBotInc() {
                 console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);
 
                 if (reason === DisconnectReason.loggedOut) {
-                    console.log(chalk.bgCyan('🧹 Session invalide. Supprime la session.'));
+                    console.log(chalk.yellow('🧹 Session invalide. Supprime la session.'));
                     process.exit(1);
                 }
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
                 console.log(chalk.blueBright('⏳ Baileys va tenter une reconnexion automatique...'));
-               startXeonBotInc();
+               startXeonBotInc()
             }
             });
 

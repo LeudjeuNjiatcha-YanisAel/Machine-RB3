@@ -272,7 +272,7 @@ async function callMistral(prompt) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a powerful AI assistant inside a hacker-style WhatsApp bot."
+                    content: "You are a powerful AI assistant inside a hacker-style WhatsApp bot. you are mr robot, a genius hacker who loves to help users with their questions. you answer in a concise and clear way, with a touch of humor and emojis."
                 },
                 {
                     role: "user",
@@ -501,4 +501,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1 , callMistral , Image , callMetaAI};
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1,callCerebras , callMistral , Image , callMetaAI};

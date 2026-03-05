@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const {callMetaAI} = require('./ai');
+const {callMetaAI,callCerebras} = require('./ai');
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const OpenAI = require('openai');
@@ -197,8 +197,14 @@ Réponds naturellement :
         return llamaReply || "Hmm 🤔 reformule un peu.";
         } 
         catch (llamaErr) {
-        console.error("Fallback Llama failed:", llamaErr);
-        return "😅 Petit bug IA… réessaie.";
+            try{
+                const cerebras = await callCerebras(prompt);
+                return cerebras || "Patiente un peu... 🤖";
+            }
+            catch(cerebrasErr){
+                console.error("Fallback Llama failed:", llamaErr);
+                return "😅 Petit bug IA… réessaie.";
+            }
         }
     }
 }
