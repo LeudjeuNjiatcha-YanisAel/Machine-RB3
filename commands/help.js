@@ -43,7 +43,7 @@ _Tape une commande avec le préfixe (*)_
 
 ╭───≼  🎭 *OUTILS & UTILITAIRES*
 │ 🔊  *tts <texte>*        → Texte en vocal
-│ 😎  *character*           → Trait physique
+│ 🔮  *character*           → Trait physique
 │ 🎋  *sand <texte>*
 │ 🎇  *impressive <texte>*
 │ 🔆  *matrix <texte>*
@@ -62,7 +62,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🧠  *deepseek <question>*
 │ 🔰  *essentiel* 
 │ ✨  *llama <question>*
-│ 💡  *hacker <question>*
+│ 👾  *hackbox <question>*
 │ 🎬  *genere <prompt>*      → Vidéo IA
 ╰─────────────────
 

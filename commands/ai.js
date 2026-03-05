@@ -465,7 +465,7 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
-        else if (command === '*hacker') {
+        else if (command === '*hackbox') {
             try {
                 const answer = await callMistral(query);
                 if (answer)
