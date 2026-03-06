@@ -34,9 +34,6 @@ const { parsePhoneNumber } = require("libphonenumber-js")
 const { PHONENUMBER_MCC } = require('@whiskeysockets/baileys/lib/Utils/generics')
 const { rmSync, existsSync } = require('fs')
 const { join } = require('path')
-
-let PAIRING_CODE = null
-let BOT_CONNECTED = false
 const store = require('./lib/lightweight_store')
 
 store.readFromFile()
@@ -101,12 +98,80 @@ async function restoreSessionFromEnv() {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
 // Route de ping
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'))
+})
+
+let BOT_CONNECTED = false
+let PAIRING_CODE = null
+
+app.get("/status",(req,res)=>{
+res.json({connected:BOT_CONNECTED})
+})
+
+app.use(express.json())
+
+app.post("/connect", async (req,res)=>{
+
+const number = req.body.number
+
+if(!number){
+return res.json({error:true})
+}
+
+try{
+
+let code = await XeonBotInc.requestPairingCode(number)
+
+PAIRING_CODE = code
+
+code = code.match(/.{1,4}/g).join("-")
+
+res.json({code})
+
+}catch(err){
+
+res.json({error:true})
+
+}
+
+})
+
+
+let WEB_LOGS = []
+
+function addLog(message){
+
+const log = {
+time: new Date().toLocaleTimeString(),
+msg: message
+}
+
+WEB_LOGS.push(log)
+
+if(WEB_LOGS.length > 200){
+WEB_LOGS.shift()
+}
+
+console.log(message)
+
+}
+
+app.get("/logs",(req,res)=>{
+res.json(WEB_LOGS)
+})
+
+app.get("/paircode",(req,res)=>{
+res.json({code:PAIRING_CODE})
+})
+
+app.post("/disconnect",(req,res)=>{
+process.exit(0)
 })
 // Démarrage du serveur web
 app.listen(PORT, () => {
@@ -251,6 +316,7 @@ async function startXeonBotInc() {
             setTimeout(async () => {
                 try {
                     let code = await XeonBotInc.requestPairingCode(phoneNumber)
+                    PAIRING_CODE = code
                     code = code?.match(/.{1,4}/g)?.join("-") || code
                     console.log(chalk.black(chalk.bgGreen(`Votre code d’association : `)), chalk.black(chalk.blueBright(code)))
                     console.log(chalk.yellow(
@@ -280,6 +346,7 @@ async function startXeonBotInc() {
             }
 
             if (connection === 'open') {
+                BOT_CONNECTED = true
                 console.log(chalk.green('🤖 Bot connecté avec succès !'));
 
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
@@ -297,6 +364,7 @@ async function startXeonBotInc() {
             }
 
             if (connection === 'close') {
+                BOT_CONNECTED = false
                 const reason = lastDisconnect?.error?.output?.statusCode;
 
                 console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);

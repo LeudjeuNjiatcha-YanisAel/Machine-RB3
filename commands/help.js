@@ -85,7 +85,7 @@ _Tape une commande avec le préfixe (*)_
 ║ ⚡ Rapide • 🔒 Sécurisé • Intelligent
 ║ 💀 Nous Sommes _*Anonymes*_
 ║ 🔥 Nous Sommes La _*FSOCIETY*_
-╚════════════════════════╝
+╚═══════════════════════╝
 `;
 
     try {

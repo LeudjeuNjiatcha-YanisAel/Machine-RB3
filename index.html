@@ -170,26 +170,6 @@ color:var(--text-dim);
 </style>
 </head>
 
-<script>
-
-async function checkBot(){
-
-const res = await fetch("/status")
-const data = await res.json()
-
-if(data.connected){
-
-document.querySelector(".subtitle").innerText =
-"✅ Bot connecté et opérationnel"
-
-}
-
-}
-
-setInterval(checkBot,3000)
-
-</script>
-
 <body>
 
 <div class="container">
@@ -199,39 +179,43 @@ setInterval(checkBot,3000)
 <h1>MACHINE VB3</h1>
 
 <p class="subtitle">
-Next generation WhatsApp automation bot powered by AI.
-Automate chats, reactions, media tools and smart responses.
+Bot WhatsApp nouvelle génération propulsé par l'IA.
+Automatisation des discussions, réactions et outils média.
 </p>
 
 <div class="buttons">
 
 <a href="/pair" class="btn primary">
-Pair With Code
+Associer avec un code
 </a>
 
 <a href="/qr" class="btn secondary">
-Scan QR Code
+Scanner QR Code
 </a>
 
 </div>
-
+<div style="margin-top:20px">
+<span id="botStatus" style="font-weight:600;color:#ff3b3b">
+● Bot hors ligne
+</span>
+</div>
 <div class="features">
 
 <div class="feature">
 <span>⚡</span>
-<h3>Ultra Fast</h3>
+<h3>Ultra rapide</h3>
 <p>Powered by Baileys for instant WhatsApp automation.</p>
 </div>
 
 <div class="feature">
 <span>🤖</span>
-<h3>AI Responses</h3>
+<h3>Réponses IA</h3>
 <p>Automatic AI replies and smart conversations.</p>
 </div>
 
 <div class="feature">
 <span>📥</span>
-<h3>Media Tools</h3>
+<h3>Outils Media</h3>
 <p>Download view-once media and convert files.</p>
 </div>
 
@@ -242,6 +226,19 @@ Scan QR Code
 </div>
 
 </div>
+
+<h2 style="margin-top:40px">Console du bot</h2>
+
+<div id="console" style="
+background:#000;
+padding:15px;
+height:200px;
+overflow-y:auto;
+border-radius:10px;
+margin-top:10px;
+font-size:13px;
+font-family:monospace;
+"></div>
 
 <div class="footer">
 MACHINE VB3 • Hosted on Render
@@ -257,16 +254,48 @@ async function checkBot(){
 const res = await fetch("/status")
 const data = await res.json()
 
+const status = document.getElementById("botStatus")
+
 if(data.connected){
 
-document.querySelector(".subtitle").innerText =
-"✅ Bot connecté et opérationnel"
+status.innerText="● Bot connecté"
+status.style.color="#00ff88"
+
+}else{
+
+status.innerText="● Bot hors ligne"
+status.style.color="#ff3b3b"
 
 }
 
 }
 
 setInterval(checkBot,3000)
+
+async function updateLogs(){
+
+const res = await fetch("/logs")
+const logs = await res.json()
+
+const consoleBox = document.getElementById("console")
+
+consoleBox.innerHTML=""
+
+logs.forEach(l=>{
+
+const line = document.createElement("div")
+
+line.innerText = "["+l.time+"] "+l.msg
+
+consoleBox.appendChild(line)
+
+})
+
+consoleBox.scrollTop = consoleBox.scrollHeight
+
+}
+
+setInterval(updateLogs,2000)
 
 </script>
 </html>
