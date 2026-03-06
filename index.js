@@ -342,12 +342,13 @@ async function startXeonBotInc() {
             }
 
             if (connection === 'connecting') {
+                addLog('🔄 Connexion à WhatsApp en cours...');
                 console.log(chalk.yellow('🔄 Connexion à WhatsApp...'));
             }
 
             if (connection === 'open') {
                 BOT_CONNECTED = true
-                console.log(chalk.green('🤖 Bot connecté avec succès !'));
+                addLog('🤖 Bot connecté avec succès !');
 
                 const botNumber = XeonBotInc.user.id.split(':')[0] + '@s.whatsapp.net';
                 try{
