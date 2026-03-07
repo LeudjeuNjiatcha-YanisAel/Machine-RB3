@@ -240,7 +240,7 @@ async function startXeonBotInc() {
             },
             markOnlineOnConnect: true,
             generateHighQualityLinkPreview: true,
-            syncFullHistory: true,
+            syncFullHistory: false,
             getMessage: async (key) => {
                 let jid = jidNormalizedUser(key.remoteJid)
                 let msg = await store.loadMessage(jid, key.id)
