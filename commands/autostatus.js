@@ -13,6 +13,15 @@ if (!fs.existsSync(configPath)) {
     }));
 }
 
+function getRealJid(msg) {
+    return (
+        msg.key?.remoteJidAlt ||
+        msg.key?.participantAlt ||
+        msg.key?.participant ||
+        msg.key?.remoteJid
+    );
+}
+
 async function autoStatusCommand(sock, chatId, msg, args) {
     try {
         const senderId = msg.key.participant || msg.key.remoteJid;
@@ -164,7 +173,16 @@ async function handleStatusUpdate(sock, status) {
             const msg = status.messages[0];
             if (msg.key && msg.key.remoteJid === 'status@broadcast') {
                 try {
-                    await sock.readMessages([msg.key]);
+                   const participant = getRealJid(msg)
+
+                    await new Promise(resolve => setTimeout(resolve, 2000))
+
+                    await sock.sendReceipt(
+                    'status@broadcast',
+                    participant,
+                    [msg.key.id],
+                    'read'
+                    )
                     
                     // Réagir au statut si activé
                     await reactToStatus(sock, msg.key);
@@ -172,7 +190,14 @@ async function handleStatusUpdate(sock, status) {
                     if (err.message?.includes('rate-overlimit')) {
                         console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
                         await new Promise(resolve => setTimeout(resolve, 2000));
-                        await sock.readMessages([msg.key]);
+                            const participant = getRealJid(msg)
+
+                            await sock.sendReceipt(
+                            'status@broadcast',
+                            participant,
+                            [msg.key.id],
+                            'read'
+)
                     } else {
                         throw err;
                     }
@@ -184,15 +209,34 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les mises à jour directes de statut
         if (status.key && status.key.remoteJid === 'status@broadcast') {
             try {
-                await sock.readMessages([status.key]);
-                
+
+                const participant = getRealJid(msg)
+
+                await new Promise(resolve => setTimeout(resolve, 2000))
+
+                await sock.sendReceipt(
+                'status@broadcast',
+                participant,
+                [msg.key.id],
+                'read'
+                )
+
                 // Réagir au statut si activé
                 await reactToStatus(sock, status.key);
             } catch (err) {
                 if (err.message?.includes('rate-overlimit')) {
                     console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    await sock.readMessages([status.key]);
+                    
+                    const participant = getRealJid(msg)
+
+                    await new Promise(resolve => setTimeout(resolve, 2000))
+
+                    await sock.sendReceipt(
+                    'status@broadcast',
+                    participant,
+                    [msg.key.id],
+                    'read'
+)
                 } else {
                     throw err;
                 }
@@ -203,7 +247,16 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les statuts dans les réactions
         if (status.reaction && status.reaction.key.remoteJid === 'status@broadcast') {
             try {
-                await sock.readMessages([status.reaction.key]);
+                    const participant = getRealJid(msg)
+
+                    await new Promise(resolve => setTimeout(resolve, 2000))
+
+                    await sock.sendReceipt(
+                    'status@broadcast',
+                    participant,
+                    [msg.key.id],
+                    'read'
+                    )
                 
                 // Réagir au statut si activé
                 await reactToStatus(sock, status.reaction.key);

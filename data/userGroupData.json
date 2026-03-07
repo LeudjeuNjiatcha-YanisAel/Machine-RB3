@@ -46,6 +46,10 @@
     "120363326942887550@g.us": {
       "enabled": false,
       "action": "delete"
+    },
+    "120363187607391826@g.us": {
+      "enabled": false,
+      "action": "delete"
     }
   },
   "autoReaction": false
