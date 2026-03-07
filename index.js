@@ -47,7 +47,7 @@ const { reactToAllMessages } = require('./lib/reactions');
 const autoResponse = require('./autoResponse');
 const unzipper = require('unzipper');
 const { handleBadwordDetection } = require('./lib/antibadword');
-
+const {autoDeleteHandler} = require('./commands/autodelete');
 let hasConnected = false;
 // ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
@@ -262,6 +262,7 @@ async function startXeonBotInc() {
                 await reactToAllMessages(XeonBotInc, mek);
                 if (!mek.message) return;
                 await autoResponse(XeonBotInc, mek);
+                autoDeleteHandler(XeonBotInc, mek);
                 mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
                 if (mek.key && mek.key.remoteJid === 'status@broadcast') {
                     await handleStatus(XeonBotInc, chatUpdate);

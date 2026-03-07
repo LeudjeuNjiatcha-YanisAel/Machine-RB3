@@ -41,7 +41,7 @@ const { autotypingCommand,isAutotypingEnabled,handleAutotypingForMessage,handleA
 const { autoreadCommand,isAutoreadEnabled,handleAutoread } = require('./commands/autoread');
 
 // Command imports
-const tagAllCommand = require('./commands/tagall');
+const { tagAll, tagAdmins, tagNonAdmins, hideTag, tagAllAudio } = require('./commands/tagall');
 const helpCommand = require('./commands/help');
 const banCommand = require('./commands/ban');
 const { promoteCommand } = require('./commands/promote');
@@ -60,8 +60,6 @@ const deleteCommand = require('./commands/delete');
 const { handleAntitagCommand,handleTagDetection } = require('./commands/antitag');
 const { Antilink } = require('./lib/antilink');
 const { handleMentionDetection,mentionToggleCommand,setMentionCommand } = require('./commands/mention');
-const tagNotAdminCommand = require('./commands/tagnotadmin');
-const hideTagCommand = require('./commands/hidetag');
 const kickCommand = require('./commands/kick');
 const { complimentCommand } = require('./commands/compliment');
 const { insultCommand } = require('./commands/insult');
@@ -118,7 +116,7 @@ const auditCommand = require('./commands/audit');
 const implante = require("./commands/implante");
 const ytsearch = require('./commands/ytsearch');
 const ytmp4 = require('./commands/ytmp4');
-
+const {handleAutoDeleteCommand , autoDeleteHandler} = require('./commands/autodelete');
 
 // Global settings
 global.packname = settings.packname;
@@ -384,6 +382,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
         await execute(sock,message,args);
         return;
         }
+        const args = userMessage.split(/\s+/).slice(1);
         switch (true) { 
             case userMessage.startsWith('*kick'):
                 const mentionedJidListKick = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
@@ -513,19 +512,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage === '*owner':
                 await ownerCommand(sock,chatId);
                 break;
-             case userMessage === '*tagall':
-                await tagAllCommand(sock,chatId,senderId,message);
-                break;
-            case userMessage === '*tagnotadmin':
-                await tagNotAdminCommand(sock,chatId,senderId,message);
-                break;
-            case userMessage.startsWith('*hidetag'):
-                {
-                    const messageText = rawText.slice(8).trim();
-                    const replyMessage = message.message?.extendedTextMessage?.contextInfo?.quotedMessage || null;
-                    await hideTagCommand(sock,chatId,senderId,messageText,replyMessage,message);
-                }
-                break;
             
             case userMessage.startsWith('*antitag'):
                 if (!isGroup) {
@@ -602,9 +588,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 await viewPhotoCommand(sock,chatId,message);
             break;
 
-            case userMessage === '*online':
-                await onlineCommand(sock,chatId,message);
-                break;
             case userMessage === '*topmembers':
                 topMembers(sock,chatId,isGroup);
                 break;
@@ -922,6 +905,21 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*ytmp4'):
                 await ytmp4(sock,chatId,message);
                 break;
+            case userMessage.startsWith('*autodelete'):
+                await handleAutoDeleteCommand(sock,message,args);
+            case userMessage.startsWith('*tagall'):
+                await tagAll(sock,chatId,senderId,message,args);
+                break;
+            case userMessage.startsWith('*tagadmins'):
+                await tagAdmins(sock,chatId,senderId,message,args)
+            case userMessage.startsWith('*tagnotadmin'):
+                await tagNonAdmins(sock,chatId,senderId,message,args);
+                break;
+            case userMessage.startsWith('*hidetag'):    
+                await hideTag(sock,chatId,senderId,message,args);
+                break;
+            case userMessage.startsWith('*tagaudio'):
+                await tagAllAudio(sock,chatId,senderId,message,args);
             default:
                 if (isGroup) {
                     // Handle non-command group messages
