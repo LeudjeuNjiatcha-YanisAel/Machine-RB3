@@ -36,6 +36,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🚫  *antibadword on/off*
 │ 👮  *admins*
 │ ❌  *kick*
+│ 🗑️  *autodelete on/off*
 │ ⭐  *sudo*
 │ ✅  *statusall on/off*
 │ 🖼️  *setpp*
