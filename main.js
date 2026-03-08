@@ -57,7 +57,6 @@ const { tictactoeCommand,handleTicTacToeMove } = require('./commands/tictactoe')
 const { incrementMessageCount,topMembers } = require('./commands/topmembers');
 const ownerCommand = require('./commands/owner');
 const deleteCommand = require('./commands/delete');
-const { handleAntitagCommand,handleTagDetection } = require('./commands/antitag');
 const { Antilink } = require('./lib/antilink');
 const { handleMentionDetection,mentionToggleCommand,setMentionCommand } = require('./commands/mention');
 const kickCommand = require('./commands/kick');
@@ -67,7 +66,6 @@ const { clearCommand } = require('./commands/clear');
 const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
 const { welcomeCommand,handleJoinEvent } = require('./commands/welcome');
-const { goodbyeCommand,handleLeaveEvent } = require('./commands/goodbye');
 const githubCommand = require('./commands/github');
 const { handleAntiBadwordCommand,handleBadwordDetection } = require('./lib/antibadword');
 const antibadwordCommand = require('./commands/antibadword');
@@ -99,11 +97,9 @@ const { handleTranslateCommand } = require('./commands/translate');
 const { reactToAllMessages,handleAreactCommand } = require('./lib/reactions');
 const sudoCommand = require('./commands/sudo');
 const updateCommand = require('./commands/update');
-const removebgCommand = require('./commands/removebg');
 const { pmblockerCommand,readState: readPmBlockerState } = require('./commands/pmblocker');
 const settingsCommand = require('./commands/settings');
 const viewPhotoCommand = require('./commands/pp');
-const onlineCommand = require('./commands/online');
 require('dotenv').config();
 const {capitalCommand,handleCapitalAnswer,stopCapitalGame,quitCapitalGame} = require('./commands/capital'); 
 const { games } = require('./commands/capital');
@@ -116,6 +112,7 @@ const auditCommand = require('./commands/audit');
 const implante = require("./commands/implante");
 const ytsearch = require('./commands/ytsearch');
 const ytmp4 = require('./commands/ytmp4');
+const {handleAntitagCommand,handleTagDetection} = require('./commands/antitag');
 const {handleAutoDeleteCommand , autoDeleteHandler} = require('./commands/autodelete');
 
 // Global settings
@@ -512,24 +509,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage === '*owner':
                 await ownerCommand(sock,chatId);
                 break;
-            
-            case userMessage.startsWith('*antitag'):
-                if (!isGroup) {
-                    await sock.sendMessage(chatId,{
-                        text: 'Cet commande peut etre seulement  utiliser dans un groupes.',
-                        
-                    },{ quoted: message });
-                    return;
-                }
-                if (!isBotAdmin) {
-                    await sock.sendMessage(chatId,{
-                        text: 'Please je dois etre admin.',
-                        
-                    },{ quoted: message });
-                    return;
-                }
-                await handleAntitagCommand(sock,chatId,userMessage,senderId,isSenderAdmin,message);
-                break;
             case userMessage.startsWith('*genere'):
                 const prompt = userMessage.replace("*genere ","").trim();
 
@@ -628,23 +607,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
 
                     if (isSenderAdmin || message.key.fromMe) {
                         await welcomeCommand(sock,chatId,message);
-                    } else {
-                        await sock.sendMessage(chatId,{ text: '*Seul administrateurs peut utiliser cette commande*', },{ quoted: message });
-                    }
-                } else {
-                    await sock.sendMessage(chatId,{ text: 'Cet commande peut etre seulement  utiliser dans un groups.', },{ quoted: message });
-                }
-                break;
-            case userMessage.startsWith('*goodbye'):
-                if (isGroup) {
-                    // Check admin status if not already checked
-                    if (!isSenderAdmin) {
-                        const adminStatus = await isAdmin(sock,chatId,senderId);
-                        isSenderAdmin = adminStatus.isSenderAdmin;
-                    }
-
-                    if (isSenderAdmin || message.key.fromMe) {
-                        await goodbyeCommand(sock,chatId,message);
                     } else {
                         await sock.sendMessage(chatId,{ text: '*Seul administrateurs peut utiliser cette commande*', },{ quoted: message });
                     }
@@ -756,7 +718,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*osint'):
                 await infoCommand(sock,chatId,message);
                 break;
-
             case userMessage.startsWith('*impressive'):
                 await textmakerCommand(sock,chatId,message,userMessage,'impressive');
                 break;
@@ -887,9 +848,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
                     await updateCommand(sock,chatId,message,zipArg);
                 }
                 commandExecuted = true;
-                break;
-            case userMessage.startsWith('*removebg') || userMessage.startsWith('*rmbg') || userMessage.startsWith('*nobg'):
-                await removebgCommand.exec(sock,message,userMessage.split(' ').slice(1));
                 break;
             case userMessage.startsWith('*essentiel'):
                 {

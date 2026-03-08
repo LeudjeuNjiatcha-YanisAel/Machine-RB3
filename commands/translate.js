@@ -30,15 +30,15 @@ async function handleTranslateCommand(sock, chatId, message, match) {
                     text: `*TRADUCTEUR*\n
 Utilisation :
 1️⃣ Répondez à un message avec :
-   .translate <langue> ou .trt <langue>
+   *translate <langue> ou *trt <langue>
 
 2️⃣ Ou tapez directement :
-   .translate <texte> <langue>
-   .trt <texte> <langue>
+   *translate <texte> <langue>
+   *trt <texte> <langue>
 
 Exemples :
-.translate hello fr
-.trt hello fr
+*translate hello fr
+*trt hello fr
 
 Codes de langue :
 fr - Français
@@ -138,11 +138,11 @@ hi - Hindi`,
 
 Utilisation :
 1️⃣ Répondez à un message avec :
-   .translate <langue> ou .trt <langue>
+   *translate <langue> ou .trt <langue>
 
 2️⃣ Ou tapez :
-   .translate <texte> <langue>
-   .trt <texte> <langue>`,
+   *translate <texte> <langue>
+   *trt <texte> <langue>`,
             quoted: message
         });
     }

@@ -7,7 +7,7 @@ async function helpCommand(sock, chatId, message) {
 ╔═══════════════════╗
 ║ 🤖 *${settings.botName || 'MachineBot-RB3'}  SYSTEM*   ║
 ╠═══════════════════╣
-║ ⚡ *Version*     : *${settings.version || '3.0.0'}*
+║ ⚡ *Version*     : *${settings.version || '4.0.0'}*
 ║ 👨‍💻 *Developpeur* : *${settings.botOwner || 'Mr Robot'}*
 ║ 📳 *Contact*     : +237682441127
 ╚═══════════════════╝
@@ -20,12 +20,13 @@ _Tape une commande avec le préfixe (*)_
 ╭───≼  🧠 *SYSTÈME & GÉNÉRAL*
 │ ⚙️  *help / menu*   → Affiche le menu
 │ 🏓  *ping*          → Test de vitesse
-│ 🟢  *alive*         → Statut du bot
 │ 🎨  *sticker*       → Image en sticker
-│ 📊  *groupinfo*     → Infos du groupe
+│ 🟢  *groupinfo*     → Infos du groupe
+│ 🔥  *implante <on/off>*
 │ 💬  *chatbot on/off*    → IA auto
 │ 📸  *chip*          → Extraire la pp
 │ 📦  *extract*       → Extrait vue unique
+│ 🔎  *info*
 ╰───────────────────
 
 ╭───≼  🛡️ *ADMIN & MODÉRATION*
@@ -54,7 +55,6 @@ _Tape une commande avec le préfixe (*)_
 │ 📊  *audit*               → Activité bot
 │ 🌍  *translate <texte> <lang>*
 │ 🔎  *osint numero*
-│ 🔥  *implante <on/off>*
 ╰──────────────────
 
 ╭───≼  🤖 *INT ARTIFICIEL*
