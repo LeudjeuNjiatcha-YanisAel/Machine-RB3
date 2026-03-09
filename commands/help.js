@@ -18,7 +18,7 @@ async function helpCommand(sock, chatId, message) {
 ┌════════════════════════╮
 👑    *COMMANDES DE MACHINE* 👑
 ╰════════════════════════╯
-_Tape une commande avec le préfixe (*)_
+_Tape une commande sans oublier le préfixe (*)_
 ✦ • ────── ✾ ────── • ✦
 
 ╭══〔 📂 *SYSTÈME & GÉNÉRAL* 〕═╮
@@ -35,7 +35,7 @@ _Tape une commande avec le préfixe (*)_
 ╰════════════════════
 
 ╭══〔 🛡️ *ADMINISTRATION* 〕═╮
-│ 🔇  *mute* / 🔊 *unmute
+│ 🔇  *mute / 🔊 *unmute
 │ 🚫  *antidelete on/off
 │ 🏷️  *tagall
 │ 🗑️  *delete <msg>
