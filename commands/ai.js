@@ -5,6 +5,22 @@ const axios = require('axios');
 require('dotenv').config();
 const Cerebras = require('@cerebras/cerebras_cloud_sdk').default;
 const {Mistral} = require('@mistralai/mistralai');
+const { downloadContentFromMessage } = require("@whiskeysockets/baileys")
+const fs = require('fs');
+const path = require('path');
+
+async function downloadAudioMessage(message) {
+
+    const stream = await downloadContentFromMessage(message.audioMessage, "audio")
+
+    let buffer = Buffer.from([])
+
+    for await (const chunk of stream) {
+        buffer = Buffer.concat([buffer, chunk])
+    }
+
+    return buffer
+}
 
 async function callMetaAI(prompt) {
 
@@ -21,77 +37,41 @@ async function callMetaAI(prompt) {
     return completion.choices[0].message.content;
 }
 
-async function Image(prompt) {
+async function transcribeAudio(buffer) {
     try {
 
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
-
-        const response = await axios.get(url, {
-            responseType: "arraybuffer",
-            timeout: 120000
-        });
-
-        return Buffer.from(response.data);
-
-    } catch (err) {
-        console.error("IMAGE ERROR:", err.message);
-        throw err;
-    }
-}
-
-
-async function freeImage(prompt) {
-    try {
-        const response = await axios.post(
-            "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1",
-            { inputs: prompt, options: { wait_for_model: true } },
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.HF_API_KEY}`, // clé HuggingFace gratuite
-                    "Content-Type": "application/json"
-                },
-                responseType: "arraybuffer",
-                timeout: 180000
-            }
-        );
-        return Buffer.from(response.data);
-    } catch (err) {
-        console.error("HF IMAGE ERROR:", err.response?.status, err.response?.data || err.message);
-        throw err;
-    }
-}
-
-
-
-async function generateImage(prompt) {
-    const ai = new GoogleGenAI({
-        apiKey: process.env.IMAGE
-    });
-
-    const result = await ai.models.generateContent({
-        model: "gemini-2.0-flash-exp-image-generation",
-        contents: prompt,
-        config: {
-            responseModalities: ["TEXT", "IMAGE"]
-        }
-    });
-
-    const part = result.candidates[0].content.parts
-        .find(p => p.inlineData);
-
-    return Buffer.from(part.inlineData.data, "base64");
-}
-
-async function callDeepSeekR1Wisdom(prompt) {
-    try {
+        const tempPath = path.join(__dirname, "temp_audio.ogg");
+        fs.writeFileSync(tempPath, buffer);
 
         const client = new OpenAI({
+            apiKey: process.env.GROQ,
+            baseURL: "https://api.groq.com/openai/v1"
+        });
+
+        const transcription = await client.audio.transcriptions.create({
+            file: fs.createReadStream(tempPath),
+            model: "whisper-large-v3"
+        });
+
+        fs.unlinkSync(tempPath); // supprime fichier temporaire
+
+        return transcription.text;
+
+    } catch (err) {
+        console.error("Transcription error:", err.message);
+        throw err;
+    }
+}
+
+async function callDeepSeek(prompt) {
+    try {
+        const client = new OpenAI({
             apiKey: process.env.WISDOM_API_KEY,
-            baseURL: "https://api.wisdom.ai/v1" // endpoint Wisdom
+            baseURL: "https://wisdom-gate.juheapi.com/v1" // endpoint correct
         });
 
         const completion = await client.chat.completions.create({
-            model: "deepseek-r1",
+            model: "deepseek-r1", // nom exact du modèle
             messages: [
                 {
                     role: "system",
@@ -108,75 +88,34 @@ async function callDeepSeekR1Wisdom(prompt) {
         return completion.choices[0].message.content;
 
     } catch (err) {
-        console.error("Wisdom DeepSeek R1 error:", err.message);
+        console.error("DeepSeek R1 Wisdom error:", err.message);
         throw err;
     }
 }
 
-async function callDeepSeek(prompt) {
+async function generateNanoBanana(prompt) {
     try {
-        const apiKey = process.env.DEEPSEEK;
-        if (!apiKey) throw new Error("DEEPSEEK_API_KEY manquante");
 
         const client = new OpenAI({
-            apiKey,
-            baseURL: "https://api.deepseek.com"
+            apiKey: process.env.WISDOM_API_KEY,
+            baseURL: "https://wisdom-gate.juheapi.com/v1"
         });
 
-        const response = await client.chat.completions.create({
-            model: "deepseek-chat",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a helpful AI assistant inside a hacker-style WhatsApp bot created by Mr Robot."
-                },
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ],
-            temperature: 0.7
+        const response = await client.images.generate({
+            model: "gemini-2.5-flash-image",
+            prompt: prompt,
+            size: "1024x1024"
         });
 
-        return response.choices[0].message.content;
+        const image_base64 = response.data[0].b64_json;
+
+        return Buffer.from(image_base64, "base64");
 
     } catch (err) {
-        console.error("DeepSeek error:", err.message);
+        console.error("Nano Banana error:", err.message);
         throw err;
     }
 }
-
-async function callDeepSeekR1(prompt) {
-    try {
-        const apiKey = process.env.DEEPSEEK_API_KEY;
-        if (!apiKey) throw new Error("DEEPSEEK_API_KEY manquante");
-
-        const openrouter = new OpenRouter({
-            apiKey
-        });
-
-        const response = await openrouter.chat.send({
-            model: "deepseek/deepseek-r1-0528",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are an advanced AI inside a hacker-style WhatsApp bot created by Mr Robot."
-                },
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ]
-        });
-
-        return response.choices[0].message.content;
-
-    } catch (err) {
-        console.error("DeepSeek R1 error:", err.message);
-        throw err;
-    }
-}
-
 
 async function callCerebras(prompt) {
 
@@ -230,6 +169,37 @@ async function callOpenAI(prompt) {
 
     } catch (err) {
         console.error("Gemini error:", err.response?.data || err.message);
+        throw err;
+    }
+}
+
+async function callGPT5Nano(prompt) {
+    try {
+
+        const client = new OpenAI({
+            apiKey: process.env.WISDOM,
+            baseURL: "https://wisdom-gate.juheapi.com/v1"
+        });
+
+        const completion = await client.chat.completions.create({
+            model: "gpt-5-nano",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a powerful AI assistant inside a WhatsApp bot."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7
+        });
+
+        return completion.choices[0].message.content;
+
+    } catch (err) {
+        console.error("GPT-5 Nano error:", err.message);
         throw err;
     }
 }
@@ -291,7 +261,6 @@ async function callMistral(prompt) {
     }
 }
 
-
 async function aiCommand(sock, chatId, message) {
     try {
         let text = '';
@@ -313,7 +282,7 @@ async function aiCommand(sock, chatId, message) {
         const command = parts[0].toLowerCase(); 
         const query = parts.slice(1).join(' ').trim();
 
-        if (!query) {
+        if (!query && command !== '*transcribe') {
             return sock.sendMessage(chatId, {
                 text: '❌ Utilisation : *gpt question | *gemini question | *llama | *deepseek'
             }, { quoted: message });
@@ -392,7 +361,7 @@ async function aiCommand(sock, chatId, message) {
                     if (!result || !result.text)
                         throw new Error("Réponse Gemini vide");
 
-                    if (result) return sock.sendMessage(chatId, { text: "*🧠 Machine AI :* \n "+result.text }, { quoted: message });
+                    if (result) return sock.sendMessage(chatId, { text: "*🧠 Machine AI Gemini :* \n "+result.text }, { quoted: message });
 
                 } catch (err) {
                     console.log(`❌ Clé ${i + 1} erreur`);
@@ -412,29 +381,41 @@ async function aiCommand(sock, chatId, message) {
             }, { quoted: message });
                
         }
-        else if (command === '*deepseek') {
+
+        else if (command === '*nano') {
+
             try {
-                const answer = await callDeepSeek(query);
+
+                const answer = await callGPT5Nano(query);
+
                 if (answer)
-                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
+                    return sock.sendMessage(chatId, {
+                        text: "*🧠 Machine AI Nano :*\n" + answer
+                    }, { quoted: message });
 
             } catch (e) {
-                console.error('DeepSeek failed:', e.message);
+
+                console.error('GPT-5 Nano failed:', e.message);
+
                 return sock.sendMessage(chatId, {
-                    text: '❌ DeepSeek indisponible pour le moment.'
+                    text: '❌ GPT-5 Nano indisponible.'
                 }, { quoted: message });
             }
         }
-        else if (command === '*deepseek2') {
-            try {
-                const answer = await callDeepSeekR1(query);
-                if (answer)
-                    return sock.sendMessage(chatId, { text: answer }, { quoted: message });
 
-            } catch (e) {
-                console.error('DeepSeek R1 failed:', e.message);
+        else if (command === '*deepseek') {
+            try {
+
+                const answer = await callDeepSeek(query);
+
+                if (answer)
+                    return sock.sendMessage(chatId, { text: "*🧠 Machine AI Deepseek:* \n" +answer }, { quoted: message });
+            } 
+            catch (e) {
+                console.error('DeepSeek R1 Wisdom failed:', e.message);
+
                 return sock.sendMessage(chatId, {
-                    text: '❌ DeepSeek R1 indisponible.'
+                    text: '❌ DeepSeek  indisponible.'
                 }, { quoted: message });
             }
         }
@@ -442,7 +423,7 @@ async function aiCommand(sock, chatId, message) {
             try {
                 const answer = await callMetaAI(query);
                 if (answer)
-                    return sock.sendMessage(chatId, { text:"*🧠 Machine AI :* \n" +answer }, { quoted: message });
+                    return sock.sendMessage(chatId, { text:"*🧠 Machine AI Llama :* \n" +answer }, { quoted: message });
 
             } catch (e) {
                 console.error('Meta AI failed:', e.message);
@@ -456,13 +437,66 @@ async function aiCommand(sock, chatId, message) {
             try {
                 const answer = await callCerebras(query);
                 if (answer)
-                    return sock.sendMessage(chatId, { text: "*🧠 Machine AI :* \n "+ answer }, { quoted: message });
+                    return sock.sendMessage(chatId, { text: "*🧠 Machine AI Cipher :* \n "+ answer }, { quoted: message });
 
             } catch (e) {
                 console.error('Cerebras failed:', e.message);
                 return sock.sendMessage(chatId, {
                     text: '❌ Cerebras indisponible.'
                 }, { quoted: message });
+            }
+        }
+        else if (command === '*img') {
+
+            try {
+
+                const img = await generateNanoBanana(query);
+
+                await sock.sendMessage(chatId, {
+                    image: img,
+                    caption: "🍌 Image générée par Nano Banana"
+                }, { quoted: message });
+
+            } catch (e) {
+
+                console.error("Nano Banana failed:", e.message);
+
+                return sock.sendMessage(chatId, {
+                    text: "❌ Impossible de générer l'image."
+                }, { quoted: message });
+            }
+        }
+        else if (command === "*transcribe") {
+           const quoted = message.message?.extendedTextMessage?.contextInfo?.quotedMessage
+
+            if (!quoted || !quoted.audioMessage) {
+                return sock.sendMessage(chatId, {
+                    text: "❌ Réponds à un vocal avec *transcribe"
+                }, { quoted: message })
+            }
+
+            try {
+
+                await sock.sendMessage(chatId, {
+                    text: "🎤 transcription..."
+                }, { quoted: message })
+
+                const audioBuffer = await downloadAudioMessage(quoted)
+
+                const text = await transcribeAudio(audioBuffer)
+
+                await sock.sendMessage(chatId, {
+                    text: `*Transcription :*\n\n${text}`
+                }, { quoted: message })
+
+            } catch (err) {
+
+                console.log("Transcribe failed:", err)
+
+                await sock.sendMessage(chatId, {
+                    text: "❌ erreur pendant la transcription"
+                }, { quoted: message })
+
             }
         }
         else if (command === '*hackbox') {
@@ -478,22 +512,7 @@ async function aiCommand(sock, chatId, message) {
                 }, { quoted: message });
             }
         }
-    else if (command === '*r1') {
-    try {
 
-        const answer = await callDeepSeekR1Wisdom(query);
-
-        if (answer)
-            return sock.sendMessage(chatId, { text: answer }, { quoted: message });
-
-    } catch (e) {
-        console.error('DeepSeek R1 Wisdom failed:', e.message);
-
-        return sock.sendMessage(chatId, {
-            text: '❌ DeepSeek R1 indisponible.'
-        }, { quoted: message });
-    }
-}
     } catch (err) {
         console.error('AI ERROR:', err.message);
         await sock.sendMessage(chatId, { text: '❌ Erreur IA, réessaie plus tard.' }, { quoted: message });
@@ -501,4 +520,4 @@ async function aiCommand(sock, chatId, message) {
 }
 
 
-module.exports = { aiCommand, callGeminiOfficial, callOpenAI,callDeepSeek,callDeepSeekR1,callCerebras , callMistral , Image , callMetaAI};
+module.exports = { aiCommand, callGeminiOfficial, callOpenAI, callDeepSeek, callCerebras , callMistral , callGPT5Nano , callMetaAI};

@@ -795,7 +795,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*play') || userMessage.startsWith('*mp3') || userMessage.startsWith('*ytmp3') || userMessage.startsWith('*song'):
                 await songCommand(sock,chatId,message);
                 break;
-            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*image') || userMessage.startsWith('*deepseek') || userMessage.startsWith('*deepseek2') || userMessage.startsWith('*llama') || userMessage.startsWith('*cerebras') || userMessage.startsWith('*ai') || userMessage.startsWith('*hackbox') || userMessage.startsWith('*r1'):
+            case userMessage.startsWith('*gpt') || userMessage.startsWith('*gemini') || userMessage.startsWith('*deepseek') || userMessage.startsWith('*llama') || userMessage.startsWith('*cerebras') || userMessage.startsWith('*ai') || userMessage.startsWith('*hackbox')  || userMessage.startsWith('*nano') || userMessage.startsWith('*img') || userMessage.startsWith('*transcribe'):
                 await aiCommand(sock,chatId,message);
                 break;
             case userMessage.startsWith('*translate') || userMessage.startsWith('*trt'):
@@ -865,6 +865,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 break;
             case userMessage.startsWith('*autodelete'):
                 await handleAutoDeleteCommand(sock,message,args);
+                break;
             case userMessage.startsWith('*tagall'):
                 await tagAll(sock,chatId,senderId,message,args);
                 break;

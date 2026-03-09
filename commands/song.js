@@ -7,17 +7,11 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-// =======================
-// CACHE CONFIG
-// =======================
 const CACHE_DIR = path.join(__dirname, '../cache/music');
 if (!fs.existsSync(CACHE_DIR)) {
     fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-// =======================
-// AUDIO QUALITY
-// =======================
 function getAudioQuality(arg) {
     switch (arg) {
         case '64':

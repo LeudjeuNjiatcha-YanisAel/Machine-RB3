@@ -26,7 +26,7 @@ _Tape une commande avec le préfixe (*)_
 │ 💬  *chatbot on/off*    → IA auto
 │ 📸  *chip*          → Extraire la pp
 │ 📦  *extract*       → Extrait vue unique
-│ 🔎  *info*
+│ 🌍  *translate <texte> <lang>*
 ╰───────────────────
 
 ╭───≼  🛡️ *ADMIN & MODÉRATION*
@@ -53,7 +53,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🤣  *emojimix*     → Fusionner 02 emo
 │ 📈  *topmembers*
 │ 📊  *audit*               → Activité bot
-│ 🌍  *translate <texte> <lang>*
+│ 🎤  *transcribe* 
 │ 🔎  *osint numero*
 ╰──────────────────
 
@@ -62,6 +62,7 @@ _Tape une commande avec le préfixe (*)_
 │ 💡  *gemini <question>*
 │ 🧠  *deepseek <question>*
 │ 🔰  *essentiel* 
+│ 💡  *nano <question>*
 │ ✨  *llama <question>*
 │ 👾  *hackbox <question>*
 │ 🎬  *genere <prompt>*      → Vidéo IA
