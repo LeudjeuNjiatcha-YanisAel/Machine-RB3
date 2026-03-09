@@ -26,6 +26,7 @@ _Tape une commande avec le préfixe (*)_
 │ 💬  *chatbot on/off*    → IA auto
 │ 📸  *chip*          → Extraire la pp
 │ 📦  *extract*       → Extrait vue unique
+│ 🔰  *summary on/off*      → Résumé des discussions 
 │ 🌍  *translate <texte> <lang>*
 ╰───────────────────
 
@@ -53,9 +54,10 @@ _Tape une commande avec le préfixe (*)_
 │ 🤣  *emojimix*     → Fusionner 02 emo
 │ 📈  *topmembers*
 │ 📊  *audit*               → Activité bot
-│ 🎤  *transcribe* 
+│ 🎤  *transcribe*
+│ 💯  *codefix*          → Corrige un code 
 │ 🔎  *osint numero*
-╰──────────────────
+╰───────────────────
 
 ╭───≼  🤖 *INT ARTIFICIEL*
 │ 🧠  *gpt <question>*

@@ -16,7 +16,6 @@ const model = genAI.getGenerativeModel({
         });
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
-// ================= MEMORY =================
 const chatMemory = {
     messages: new Map(),
     userInfo: new Map()
@@ -54,7 +53,6 @@ async function generateGeminiWithRotation(prompt) {
     throw new Error("Toutes les clés Gemini ont échoué");
 }
 
-// ===== Ajouter message mémoire =====
 function addMessageToMemory(userId, role, text) {
     if (!chatMemory.messages.has(userId))
         chatMemory.messages.set(userId, []);
@@ -71,7 +69,6 @@ function addMessageToMemory(userId, role, text) {
     if (history.length > 12) history.shift();
 }
 
-// ================= DATA =================
 function loadUserGroupData() {
     try {
         const data = JSON.parse(fs.readFileSync(USER_GROUP_DATA));
@@ -98,7 +95,26 @@ async function showTyping(sock, chatId, text = "") {
     } catch {}
 }
 
-// ================= QUICK REPLIES =================
+async function getFastAIResponse(prompt) {
+
+    const gemini = generateGeminiWithRotation(prompt);
+    const cerebras = callCerebras(prompt);
+
+    try {
+        const response = await Promise.race([
+            gemini,
+            cerebras
+        ]);
+
+        return response || "Hmm 🤔 reformule.";
+
+    } catch (err) {
+        console.error("AI race error:", err);
+        return "😅 Petit bug IA.";
+    }
+}
+
+
 function quickReplies(text) {
     const lower = text.toLowerCase();
 
@@ -150,6 +166,7 @@ async function getAIResponse(text, context = {}) {
 
     const fast = quickReplies(text);
     if (fast) return fast;
+    let prompt;
 
     try {
 
@@ -162,7 +179,7 @@ async function getAIResponse(text, context = {}) {
 
         const userInfo = context.userInfo || {};
 
-        const prompt = `
+        prompt = `
 Tu es un ami qui discute naturellement sur WhatsApp.
 
 Règles :
@@ -202,7 +219,7 @@ Réponds naturellement :
                 return cerebras || "Patiente un peu... 🤖";
             }
             catch(cerebrasErr){
-                console.error("Fallback Llama failed:", llamaErr);
+                console.error("Fallback Llama failed:", cerebrasErr);
                 return "😅 Petit bug IA… réessaie.";
             }
         }
@@ -243,12 +260,9 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
         context?.participant &&
         context.participant.includes(botJid.split('@')[0]);
 
-
-        // Init mémoire utilisateur
         if (!chatMemory.userInfo.has(senderId))
             chatMemory.userInfo.set(senderId, {});
 
-        // Extraction infos
         const info = extractUserInfo(cleanedMessage);
         if (Object.keys(info).length > 0) {
             chatMemory.userInfo.set(senderId, {
@@ -257,7 +271,6 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
             });
         }
 
-        // Ajouter message user mémoire
         addMessageToMemory(senderId, "user", cleanedMessage);
 
         const history = chatMemory.messages.get(senderId);

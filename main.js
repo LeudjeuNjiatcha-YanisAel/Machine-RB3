@@ -114,6 +114,8 @@ const ytsearch = require('./commands/ytsearch');
 const ytmp4 = require('./commands/ytmp4');
 const {handleAntitagCommand,handleTagDetection} = require('./commands/antitag');
 const {handleAutoDeleteCommand , autoDeleteHandler} = require('./commands/autodelete');
+const { handleCodeFix } = require('./commands/codefix');
+const { trackMessage, handleSummary } = require('./commands/summary');
 
 // Global settings
 global.packname = settings.packname;
@@ -180,6 +182,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             message.message?.buttonsResponseMessage?.selectedButtonId?.trim() ||
             ''
         ).toLowerCase().replace(/\.\s+/g,'.').trim();
+
         await implante(sock, message, userMessage || "");
 
         // Preserve raw message for commands like .tag that need original casing
@@ -188,8 +191,8 @@ async function handleMessages(sock,messageUpdate,printLog) {
             message.message?.imageMessage?.caption?.trim() ||
             message.message?.videoMessage?.caption?.trim() ||
             '';
-
-            // 🎮 Gestion du jeu Million - Slam
+        await trackMessage(chatId, senderId, rawText);
+        // 🎮 Gestion du jeu Million - Slam
         
 
         // Only log command usage
@@ -879,6 +882,45 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 break;
             case userMessage.startsWith('*tagaudio'):
                 await tagAllAudio(sock,chatId,senderId,message,args);
+                break;
+        
+            // case userMessage.startsWith(prefix + 'setprefix'):
+    
+            //     const newPrefix = userMessage.split(" ")[1];
+
+            //     if (!newPrefix) {
+            //         await sock.sendMessage(chatId, { text: "Exemple : *setprefix !" });
+            //         break;
+            //     }
+
+            //     prefix = newPrefix;
+
+            //     await sock.sendMessage(chatId, { 
+            //         text: `✅ Préfixe changé en : ${prefix}` 
+            //     });case userMessage.startsWith(prefix + 'setprefix'):
+                
+            //     const newPrefix = userMessage.split(" ")[1];
+
+            //     if (!newPrefix) {
+            //         await sock.sendMessage(chatId, { text: "Exemple : *setprefix !" });
+            //         break;
+            //     }
+
+            //     prefix = newPrefix;
+
+            //     await sock.sendMessage(chatId, { 
+            //         text: `✅ Préfixe changé en : ${prefix}` 
+            //     });
+
+            // break;
+            case userMessage.startsWith('*codefix'):
+                await handleCodeFix(sock, message, chatId);
+            break;
+
+            case userMessage.startsWith('*summary'):
+                await handleSummary(sock, message, chatId, senderId, userMessage);
+            break;
+
             default:
                 if (isGroup) {
                     // Handle non-command group messages
