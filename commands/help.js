@@ -12,7 +12,7 @@ async function helpCommand(sock, chatId, message) {
     ╰━━━✨━━━━━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
-👋 *Salut @${name}*
+👋 *Hello @${name}*
     _Profite au maximum mes commandes_.
 
 ┌════════════════════════╮
