@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    //const jid = message.key.participant || message.key.remoteJid;
-    //const name = await sock.getName(jid);
+    const jid = message.key.participant || message.key.remoteJid;
+    const name = await sock.getName(jid);
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━━━━━✨━╮
@@ -12,11 +12,11 @@ async function helpCommand(sock, chatId, message) {
     ╰━━━✨━━━━━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
-👋 *Salut @*
+👋 *Salut @${name}*
     _Profite au maximum mes commandes_.
 
 ┌════════════════════════╮
-👑    *COMMANDES DE MACHINE* 👑
+👑     *COMMANDES DE MACHINE* 👑
 ╰════════════════════════╯
 _Tape une commande sans oublier le préfixe (*)_
 ✦ • ────── ✾ ────── • ✦
