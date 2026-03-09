@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    const jid = message.key.participant || message.key.remoteJid;
-    const name = await sock.getName(jid);
+    //const jid = message.key.participant || message.key.remoteJid;
+    //const name = await sock.getName(jid);
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━━━━━✨━╮
