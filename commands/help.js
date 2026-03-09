@@ -3,18 +3,20 @@ const fs = require('fs');
 const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
-    const mention = message.key.participant || message.key.remoteJid;
-    const helpMessage = `
-    ╭━━━✨━━━━━━━━━━━✨━╮
-    ┃ 🤖 MACHINE BOT ACCUEIL ┃
-    ╰━━━✨━━━━━━━━━━━✨━╯
+    const jid = message.key.participant || message.key.remoteJid;
+    const name = await sock.getName(jid);
 
-    👋 Salut @${mention.split('@')[0]}
-    Profite au maximum mes commandes.
+    const helpMessage = `
+    ╭━━━✨━━━━━━━━━━━━━━━━━━✨━╮
+    ┃ 🤖 *MACHINE BOT ACCUEIL* ┃
+    ╰━━━✨━━━━━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
+👋 *Salut @${name}*
+    _Profite au maximum mes commandes_.
+
 ┌════════════════════════╮
-👑*COMMANDES DE MACHINE* 👑
+👑    *COMMANDES DE MACHINE* 👑
 ╰════════════════════════╯
 _Tape une commande avec le préfixe (*)_
 ✦ • ────── ✾ ────── • ✦
@@ -32,7 +34,7 @@ _Tape une commande avec le préfixe (*)_
 │ 🌍  *translate <texte> <lang>
 ╰════════════════════
 
-╭══〔 🛡️ *ADMIN & MODÉRATION* 〕═╮
+╭══〔 🛡️ *ADMINISTRATION* 〕═╮
 │ 🔇  *mute* / 🔊 *unmute
 │ 🚫  *antidelete on/off
 │ 🏷️  *tagall
