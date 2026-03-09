@@ -378,7 +378,6 @@ async function startXeonBotInc() {
 
                 // ⚠️ NE PAS relancer startXeonBotInc ici
                 console.log(chalk.blueBright('⏳ Baileys va tenter une reconnexion automatique...'));
-                startXeonBotInc()
             }
             });
 
