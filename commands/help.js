@@ -8,7 +8,7 @@ async function helpCommand(sock, chatId, message) {
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━✨━╮
-    ┃ 🤖 *MACHINE BOT ACCUEIL*┃
+    ┃ 🤖 *MACHINE BOT ACCUEIL*    ┃
     ╰━━━✨━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
@@ -16,7 +16,7 @@ async function helpCommand(sock, chatId, message) {
     _Profite au maximum de mes commandes_.
 
 ┌════════════════════════╮
-👑     *COMMANDES DE MACHINE* 👑
+👑     *COMMANDES DE MACHINE*    👑
 ╰════════════════════════╯
 _Tape une commande sans oublier le préfixe (*)_
 ✦ • ────── ✾ ────── • ✦
@@ -30,7 +30,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 💬  *chatbot on/off    → IA auto
 │ 📸  *chip          → Extraire la pp
 │ 📦  *extract       → Extrait vue unique
-│ 📘  *summary on/off  → Résumé des discu 
+│ 📘  *summary on/off  → Résu des discu 
 │ 🌍  *translate <texte> <lang>
 ╰════════════════════
 
@@ -69,6 +69,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 🧠  *deepseek <question>
 │ 🔰  *essentiel 
 │ 💡  *nano <question>
+| 💡  *cerebras <question>
 │ ✨  *llama <question>
 │ 👾  *hackbox <question>
 │ 🎬  *genere <prompt>      → Vidéo IA

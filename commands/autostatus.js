@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
-
+const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 // Chemin pour stocker la configuration de l’auto status
 const configPath = path.join(__dirname, '../data/autoStatus.json');
 
@@ -9,7 +9,8 @@ const configPath = path.join(__dirname, '../data/autoStatus.json');
 if (!fs.existsSync(configPath)) {
     fs.writeFileSync(configPath, JSON.stringify({ 
         enabled: false, 
-        reactOn: false 
+        reactOn: false,
+        download: false 
     }));
 }
 
@@ -21,6 +22,36 @@ function getRealJid(msg) {
         msg.key?.remoteJid
     );
 }
+
+async function downloadStatusMedia(sock, msg) {
+    try {
+
+        if (!isStatusDownloadEnabled()) return;
+
+        const buffer = await downloadMediaMessage(
+            msg,
+            'buffer',
+            {},
+            { logger: sock.logger }
+        );
+
+        const folder = path.join(__dirname, '../statuses');
+
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder);
+        }
+
+        const filePath = path.join(folder, `${msg.key.id}.jpg`);
+
+        fs.writeFileSync(filePath, buffer);
+
+        console.log('📥 Status téléchargé :', filePath);
+
+    } catch (err) {
+        console.log('❌ Erreur téléchargement statut :', err.message);
+    }
+}
+
 
 async function autoStatusCommand(sock, chatId, msg, args) {
     try {
@@ -42,7 +73,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             const status = config.enabled ? 'activé' : 'désactivé';
             const reactStatus = config.reactOn ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
-                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
+                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n*autostatus download - Telecharge les statuts de vos contact online ou offline\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
             });
             return;
         }
@@ -89,7 +120,22 @@ async function autoStatusCommand(sock, chatId, msg, args) {
                     text: '❌ Commande de réaction invalide ! Utilisez : *autostatus react on/off',
                 });
             }
-        } else {
+        } 
+        else if (command === 'download') {
+            if (!config.enabled) {
+                await sock.sendMessage(chatId, { 
+                    text: '❌ Veuillez activer la vue automatique des statuts avant de télécharger les médias !\nUtilisez : *autostatus on',
+                });
+                return;
+            }
+            config.download = !config.download;
+            fs.writeFileSync(configPath, JSON.stringify(config));
+            const state = config.download ? 'activé' : 'désactivé';
+            await sock.sendMessage(chatId, { 
+                text: `✅ Le téléchargement automatique des médias de statut de vos contacts a été ${state} 📥!`
+            });
+        }
+        else {
             await sock.sendMessage(chatId, { 
                 text: '❌ Commande invalide ! Utilisez :\n*autostatus on/off - Activer/désactiver la vue automatique des statuts\n*autostatus react on/off - Activer/désactiver les réactions aux statuts',
             });
@@ -110,6 +156,16 @@ function isAutoStatusEnabled() {
         return config.enabled;
     } catch (error) {
         console.error('Erreur lors de la vérification de la configuration auto status :', error);
+        return false;
+    }
+}
+
+function isStatusDownloadEnabled() {
+    try {
+        const config = JSON.parse(fs.readFileSync(configPath));
+        return config.download;
+    } catch (error) {
+        console.error('Erreur lecture config download :', error);
         return false;
     }
 }
@@ -173,6 +229,7 @@ async function handleStatusUpdate(sock, status) {
             const msg = status.messages[0];
             if (msg.key && msg.key.remoteJid === 'status@broadcast') {
                 try {
+                    await downloadStatusMedia(sock, msg);
                    const participant = getRealJid(msg)
 
                     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -277,7 +334,37 @@ async function handleStatusUpdate(sock, status) {
     }
 }
 
+// Pour compter les statuts telecharges
+async function statusCommand(sock, chatId) {
+
+    try {
+
+        const folder = path.join(__dirname, '../statuses');
+
+        if (!fs.existsSync(folder)) {
+            await sock.sendMessage(chatId, {
+                text: "📭 Aucun statut téléchargé."
+            });
+            return;
+        }
+
+        const files = fs.readdirSync(folder);
+
+        await sock.sendMessage(chatId, {
+            text: `📊 *Statuts téléchargés :* ${files.length}`
+        });
+
+    } catch (err) {
+
+        await sock.sendMessage(chatId, {
+            text: "❌ Erreur lecture des statuts."
+        });
+
+    }
+
+}
 module.exports = {
     autoStatusCommand,
-    handleStatusUpdate
+    handleStatusUpdate,
+    statusCommand
 };

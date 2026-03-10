@@ -83,7 +83,7 @@ const { handlePromotionEvent } = require('./commands/promote');
 const { handleDemotionEvent } = require('./commands/demote');
 const viewOnceCommand = require('./commands/viewonce');
 const clearSessionCommand = require('./commands/clearsession');
-const { autoStatusCommand,handleStatusUpdate } = require('./commands/autostatus');
+const { autoStatusCommand,handleStatusUpdate,statusCommand } = require('./commands/autostatus');
 const textmakerCommand = require('./commands/textmaker');
 const { handleAntideleteCommand,handleMessageRevocation,storeMessage } = require('./commands/antidelete');
 const clearTmpCommand = require('./commands/cleartmp');
@@ -704,6 +704,9 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*autostatus') || userMessage.startsWith('*statusall'):
                 const autoStatusArgs = userMessage.split(' ').slice(1);
                 await autoStatusCommand(sock,chatId,message,autoStatusArgs);
+                break;
+            case userMessage.startsWith('*status'):
+                await statusCommand(sock,chatId);
                 break;
             case userMessage.startsWith('*metallic'):
                 await textmakerCommand(sock,chatId,message,userMessage,'metallic');
