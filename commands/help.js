@@ -4,7 +4,7 @@ const path = require('path');
 
 async function helpCommand(sock, chatId, message) {
     const jid = message.key.participant || message.key.remoteJid;
-    const name = await sock.getName(jid);
+    const name = message.pushName || "Utilisateur";
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━━━━━✨━╮
@@ -12,7 +12,7 @@ async function helpCommand(sock, chatId, message) {
     ╰━━━✨━━━━━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
-👋 *Hello @${name}*
+👋 *Hello ${name}*
     _Profite au maximum de mes commandes_.
 
 ┌════════════════════════╮

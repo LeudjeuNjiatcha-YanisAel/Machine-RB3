@@ -31,6 +31,17 @@ async function pingCommand(sock, chatId, message) {
         await sock.sendPresenceUpdate('composing', chatId);
         const apiLatency = Date.now() - apiStart;
 
+        let statusIcon = "🟢";
+        let statusText = "Excellent";
+
+        if (ping > 600) {
+            statusIcon = "🔴";
+            statusText = "Faible";
+        } else if (ping > 200) {
+            statusIcon = "🟡";
+            statusText = "Moyen";
+        }
+
         const uptimeInSeconds = process.uptime();
         const uptimeFormatted = formatTime(uptimeInSeconds);
         const platform = os.platform();
@@ -38,7 +49,7 @@ async function pingCommand(sock, chatId, message) {
         const now = new Date().toLocaleString();
         const botInfo = `
 ╭━━≼〔 🚀 *MachineBot-Status* 〕≽━━╮
-│ 📶 *Ping*     : _*${ping} ms*_
+│ 📶 *Ping*     : _*${ping} ms*_ ${statusIcon}
 │ 📡 *Latence API* : _*${apiLatency} ms*_
 │ ⏱️ *Uptime*   : _${uptimeFormatted}_
 │ 🔖 *Version*  : _v${settings.version}_
