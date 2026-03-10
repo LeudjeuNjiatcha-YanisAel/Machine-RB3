@@ -73,7 +73,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             const status = config.enabled ? 'activé' : 'désactivé';
             const reactStatus = config.reactOn ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
-                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n*autostatus download - Telecharge les statuts de vos contact online ou offline\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
+                text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n📥*autostatus download - Telecharge les statuts de vos contact online ou offline\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
             });
             return;
         }
@@ -132,7 +132,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             fs.writeFileSync(configPath, JSON.stringify(config));
             const state = config.download ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
-                text: `✅ Le téléchargement automatique des médias de statut de vos contacts a été ${state} 📥!`
+                text: `✅ Le téléchargement automatique des médias de statut de vos contacts a été ${state}!`
             });
         }
         else {
