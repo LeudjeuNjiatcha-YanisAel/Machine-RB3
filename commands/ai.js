@@ -361,7 +361,7 @@ async function aiCommand(sock, chatId, message) {
                     if (!result || !result.text)
                         throw new Error("Réponse Gemini vide");
 
-                    if (result) return sock.sendMessage(chatId, { text: "*🧠 Machine AI Gemini :* \n "+result.text }, { quoted: message });
+                    if (result) return sock.sendMessage(chatId, { text: "*✨ Machine AI Flash :* \n "+result.text }, { quoted: message });
 
                 } catch (err) {
                     console.log(`❌ Clé ${i + 1} erreur`);
@@ -390,7 +390,7 @@ async function aiCommand(sock, chatId, message) {
 
                 if (answer)
                     return sock.sendMessage(chatId, {
-                        text: "*🧠 Machine AI Nano :*\n" + answer
+                        text: "*🧠 Machine AI GPT :*\n" + answer
                     }, { quoted: message });
 
             } catch (e) {
@@ -409,7 +409,7 @@ async function aiCommand(sock, chatId, message) {
                 const answer = await callDeepSeek(query);
 
                 if (answer)
-                    return sock.sendMessage(chatId, { text: "*🧠 Machine AI Deepseek:* \n" +answer }, { quoted: message });
+                    return sock.sendMessage(chatId, { text: "*🧠 Machine AI Deep:* \n" +answer }, { quoted: message });
             } 
             catch (e) {
                 console.error('DeepSeek R1 Wisdom failed:', e.message);
@@ -423,7 +423,7 @@ async function aiCommand(sock, chatId, message) {
             try {
                 const answer = await callMetaAI(query);
                 if (answer)
-                    return sock.sendMessage(chatId, { text:"*🧠 Machine AI Llama :* \n" +answer }, { quoted: message });
+                    return sock.sendMessage(chatId, { text:"*✨ Machine AI :* \n" +answer }, { quoted: message });
 
             } catch (e) {
                 console.error('Meta AI failed:', e.message);
@@ -503,7 +503,7 @@ async function aiCommand(sock, chatId, message) {
             try {
                 const answer = await callMistral(query);
                 if (answer)
-                    return sock.sendMessage(chatId, { text: "*🧠 Mr.Robot AI :* \n "+answer }, { quoted: message });
+                    return sock.sendMessage(chatId, { text: "*💻 Mr.Robot AI :* \n "+answer }, { quoted: message });
 
             } catch (e) {
                 console.error('Mistral failed:', e.message);

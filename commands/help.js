@@ -7,12 +7,12 @@ async function helpCommand(sock, chatId, message) {
     const name = message.pushName || "Utilisateur";
 
     const helpMessage = `
-    ╭━━━✨━━━━━━━━━━━━━━━━━━✨━╮
-    ┃ 🤖 *MACHINE BOT ACCUEIL* ┃
-    ╰━━━✨━━━━━━━━━━━━━━━━━━✨━╯
+    ╭━━━✨━━━━━━━━━━━━━━✨━╮
+    ┃ 🤖 *MACHINE BOT ACCUEIL*┃
+    ╰━━━✨━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
-👋 *Hello ${name}*
+👋 *Hello ${name}* !
     _Profite au maximum de mes commandes_.
 
 ┌════════════════════════╮
@@ -30,7 +30,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 💬  *chatbot on/off    → IA auto
 │ 📸  *chip          → Extraire la pp
 │ 📦  *extract       → Extrait vue unique
-│ 📘  *summary on/off      → Résumé des discussions 
+│ 📘  *summary on/off  → Résumé des discu 
 │ 🌍  *translate <texte> <lang>
 ╰════════════════════
 
@@ -48,7 +48,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 🖼️  *setpp
 ╰════════════════════
 
-╭══〔 🎭 *OUTILS & UTILITAIRES* 〕═╮
+╭══〔 🛠 *OUTILS & UTILITAIRES* 〕═╮
 │ 🔊  *tts <texte>        → Texte en vocal
 │ 🔮  *character           → Trait physique
 │ 🎋  *sand <texte>
