@@ -13,7 +13,7 @@ async function helpCommand(sock, chatId, message) {
  
 ✦ • ────── ✾ ────── • ✦
 👋 *Hello @${name}*
-    _Profite au maximum mes commandes_.
+    _Profite au maximum de mes commandes_.
 
 ┌════════════════════════╮
 👑     *COMMANDES DE MACHINE* 👑
@@ -82,7 +82,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 🎵  *music <musique> <qualité>
 ╰═════════════════
 
-╭══〔 🎮 *GAMES MR ROBOT* 〕═╮
+╭══〔 🎮 *GAMES CENTER* 〕═╮
 │ ❌  *tictactoe @user
 │ 💰  *million
 │ 🌍  *capital
