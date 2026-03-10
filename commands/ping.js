@@ -49,7 +49,7 @@ async function pingCommand(sock, chatId, message) {
         const now = new Date().toLocaleString();
         const botInfo = `
 ╭━━≼〔 🚀 *MachineBot Status* 〕≽━━╮
-│ 📶 *Ping*     : _${ping} ms_ ${statusIcon} (_${statusText}_)
+│ 📶 *Ping*     : _${ping} ms_       ${statusIcon} (_${statusText}_)
 │ 📡 *Latence API* : _${apiLatency} ms_
 │ ⏱️ *Uptime*   : _${uptimeFormatted}_
 │ 🔖 *Version*  : _v${settings.version}_
