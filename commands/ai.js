@@ -50,7 +50,7 @@ async function transcribeAudio(buffer) {
 
         const transcription = await client.audio.transcriptions.create({
             file: fs.createReadStream(tempPath),
-            model: "whisper-large-v3"
+            model: "whisper-large-v3-turbo"
         });
 
         fs.unlinkSync(tempPath); // supprime fichier temporaire

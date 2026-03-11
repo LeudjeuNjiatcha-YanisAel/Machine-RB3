@@ -8,11 +8,11 @@ async function helpCommand(sock, chatId, message) {
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━✨━╮
-    ┃ 🤖 *MACHINE BOT ACCUEIL*        ┃
+    ┃ 🤖 *MACHINE BOT ACCUEIL*           ┃
     ╰━━━✨━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦
-👋 Hello *${name} !*
+👋 *Hello ${name} !*
     _Profite au maximum de mes commandes_.
 
 ┌════════════════════════╮
@@ -26,7 +26,7 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 🏓  *ping          → Test de vitesse
 │ 🎨  *sticker       → Image en sticker
 │ 🟢  *groupinfo     → Infos du groupe
-│ 🔥  *implante <on/off>
+│ 🎤  *transcribe
 │ 💬  *chatbot on/off    → IA auto
 │ 📸  *chip          → Extraire la pp
 │ 📦  *extract       → Extrait vue unique
@@ -58,7 +58,6 @@ _Tape une commande sans oublier le préfixe (*)_
 │ 🤣  *emojimix     → Fusionner 02 emo
 │ 📈  *topmembers
 │ 📊  *audit               → Activité bot
-│ 🎤  *transcribe
 │ 💯  *codefix          → Corrige un code 
 │ 🔎  *osint numero
 ╰═══════════════════
