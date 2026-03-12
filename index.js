@@ -142,92 +142,137 @@ app.use(express.json())
 
 app.post("/connect", async (req,res)=>{
 
-const number = req.body.number
-const randomPrefixes = ["!","#","$","&","?","%"]
+    const number = req.body.number
+    const randomPrefixes = ["!","#","$","&","?","%"]
 
-if(!number){
-return res.json({error:true})
-}
+    if(!number){
+    return res.json({error:true})
+    }
 
-/* vérifier si numéro déjà connecté */
+    /* vérifier si numéro déjà connecté */
 
-if(bots[number]){
-return res.json({
-error:true,
-message:"Ce numéro est déjà connecté"
-})
-}
+    if(bots[number]){
+    return res.json({
+    error:true,
+    message:"Ce numéro est déjà connecté"
+    })
+    }
 
-/* limite utilisateurs */
+    /* limite utilisateurs */
 
-if(Object.keys(bots).length >= MAX_USERS){
-return res.json({
-error:true,
-message:"Maximum utilisateurs connectés atteint"
-})
-}
+    if(Object.keys(bots).length >= MAX_USERS){
+    return res.json({
+    error:true,
+    message:"Maximum utilisateurs connectés atteint"
+    })
+    }
 
-if(Object.keys(bots).length >= 1){
-   userPrefixes[number] = randomPrefixes[Math.floor(Math.random()*randomPrefixes.length)]
-   addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
-}else{
-   userPrefixes[number] = "*"
-   addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
-}
+    if(Object.keys(bots).length >= 1){
+    userPrefixes[number] = randomPrefixes[Math.floor(Math.random()*randomPrefixes.length)]
+    addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
+    }else{
+    userPrefixes[number] = "*"
+    addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
+    }
+    
+    try{
 
-try{
+        if(!fs.existsSync("./sessions")){
+        fs.mkdirSync("./sessions")
+        }
+        const sessionPath = `./sessions/${number}`
 
-if(!fs.existsSync("./sessions")){
-fs.mkdirSync("./sessions")
-}
-const sessionPath = `./sessions/${number}`
+        const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+        const {version} = await fetchLatestBaileysVersion()
 
-const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+        const sock = makeWASocket({
+            version,
+            auth: state,
+            printQRInTerminal: false,
+            browser: ['Ubuntu','Chrome','20.0.04']
+        })
 
-const sock = makeWASocket({
-auth: state,
-printQRInTerminal:false
-})
+        sock.ev.on("creds.update", saveCreds)
 
-sock.ev.on("creds.update", saveCreds)
+        bots[number] = sock
 
-// enregistrer bot 
+        sock.ev.on("connection.update", async (update) => {
+            const { connection, lastDisconnect } = update
 
-bots[number] = sock
+            if(connection === "connecting"){
 
-sock.ev.on('connection.update', async (update) => {
-const { connection } = update;  
-if(connection === "close"){
-delete bots[number]
-delete userPrefixes[number]
-addLog("❌ "+number+" s'est déconnecté")
-}
-})
+                if(!sock.authState.creds.registered){
 
-await delay(3000) // attendre connexion
+                    let code = await sock.requestPairingCode(number)
 
-let code = await sock.requestPairingCode(number)
+                    code = code.match(/.{1,4}/g).join("-")
 
-code = code.match(/.{1,4}/g).join("-")
+                    addLog("📲 Code d'association généré pour "+number)
 
-if(!code){
-return res.json({error:true})
-}
+                    res.json({
+                        code,
+                        prefix:userPrefixes[number]
+                    })
+                }
+            }
 
-addLog("📲 Code d'association généré pour "+number)
+            if(connection === "open"){
+                addLog("✅ "+number+" connecté à WhatsApp")
+            }
 
-res.json({
-code,
-prefix:userPrefixes[number]
-})
+            if(connection === "close"){
 
-}catch(err){
+                const reason = lastDisconnect?.error?.output?.statusCode
 
-console.log(err)
+                if(reason === DisconnectReason.loggedOut){
+                    addLog("❌ Connexion fermée : "+reason)
 
-res.json({error:true})
+                    delete bots[number]
+                    delete userPrefixes[number]
 
-}
+                    if(fs.existsSync(sessionPath)){
+                    fs.rmSync(sessionPath,{recursive:true,force:true})
+                    }
+                    addLog("❌ "+number+" s'est déconnecté")
+                }
+                else{
+                    addLog("Reconnexion automatique pour "+number+"...")
+                    delete bots[number]
+                    const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+                    const sock = makeWASocket({
+                    auth: state,
+                    browser:['Ubuntu','Chrome','20.0.04']
+                    })
+
+                    bots[number] = sock
+                }
+            }
+
+        })
+
+    // await delay(3000) // attendre connexion
+
+    // let code = await sock.requestPairingCode(number)
+
+    // code = code.match(/.{1,4}/g).join("-")
+
+    // if(!code){
+    // return res.json({error:true})
+    // }
+
+    // addLog("📲 Code d'association généré pour "+number)
+
+    // res.json({
+    // code,
+    // prefix:userPrefixes[number]
+    // })
+
+    }
+    catch(err){
+        console.log(err)
+
+        res.json({error:true})
+    }
 
 })
 
