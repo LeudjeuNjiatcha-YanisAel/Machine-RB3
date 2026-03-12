@@ -226,31 +226,40 @@ app.post("/connect", async (req,res)=>{
 
             if(connection === "close"){
 
-                const reason = lastDisconnect?.error?.output?.statusCode
+    const reason = lastDisconnect?.error?.output?.statusCode
 
-                if(reason === DisconnectReason.loggedOut){
-                    addLog("❌ Connexion fermée : "+reason)
+    if(reason === DisconnectReason.loggedOut){
 
-                    delete bots[number]
-                    delete userPrefixes[number]
+        addLog("❌ "+number+" déconnecté définitivement")
 
-                    if(fs.existsSync(sessionPath)){
-                    fs.rmSync(sessionPath,{recursive:true,force:true})
-                    }
-                    addLog("❌ "+number+" s'est déconnecté")
-                }
-                else{
-                    addLog("Reconnexion automatique pour "+number+"...")
-                    delete bots[number]
-                    const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
-                    const sock = makeWASocket({
-                    auth: state,
-                    browser:['Ubuntu','Chrome','20.0.04']
-                    })
+        delete bots[number]
+        delete userPrefixes[number]
 
-                    bots[number] = sock
-                }
-            }
+        if(fs.existsSync(sessionPath)){
+            fs.rmSync(sessionPath,{recursive:true,force:true})
+        }
+
+    } else {
+
+        addLog("⚠️ Connexion fermée, attente reconnexion...")
+
+        setTimeout(async () => {
+
+            addLog("🔄 Reconnexion pour "+number)
+
+            const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+
+            const newSock = makeWASocket({
+                auth: state,
+                browser:['Ubuntu','Chrome','20.0.04']
+            })
+
+            bots[number] = newSock
+
+        }, 5000)
+
+    }
+}
 
         })
 
