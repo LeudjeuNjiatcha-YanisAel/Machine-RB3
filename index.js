@@ -174,7 +174,7 @@ app.post("/connect", async (req,res)=>{
     userPrefixes[number] = "*"
     addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
     }
-    
+    let sock
     try{
 
         if(!fs.existsSync("./sessions")){
@@ -192,6 +192,7 @@ app.post("/connect", async (req,res)=>{
             browser: ['Ubuntu','Chrome','20.0.04']
         })
 
+        let responseSent = false
         sock.ev.on("creds.update", saveCreds)
 
         bots[number] = sock
@@ -209,12 +210,15 @@ app.post("/connect", async (req,res)=>{
 
                     addLog("📲 Code d'association généré pour "+number)
 
-                    res.json({
-                        code,
-                        prefix:userPrefixes[number]
-                    })
+                    if(!responseSent){
+                        responseSent = true
+                        res.json({
+                            code,
+                            prefix:userPrefixes[number]
+                        })
+                    }
                 }
-            }
+            }   
 
             if(connection === "open"){
                 addLog("✅ "+number+" connecté à WhatsApp")
@@ -266,14 +270,7 @@ app.post("/connect", async (req,res)=>{
     // code,
     // prefix:userPrefixes[number]
     // })
-
-    }
-    catch(err){
-        console.log(err)
-
-        res.json({error:true})
-    }
-    sock.ev.on("messages.upsert", async (chatUpdate) => {
+        sock.ev.on("messages.upsert", async (chatUpdate) => {
 
 const mek = chatUpdate.messages[0]
 
@@ -297,6 +294,12 @@ sock.ev.on("group-participants.update", async (data) => {
 await handleGroupParticipantUpdate(sock, data)
 })
 
+    }
+    catch(err){
+        console.log(err)
+
+        res.json({error:true})
+    }
 })
 
 app.get("/prefix/:number",(req,res)=>{
