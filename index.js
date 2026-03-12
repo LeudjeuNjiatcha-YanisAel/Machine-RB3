@@ -186,11 +186,14 @@ app.post("/connect", async (req,res)=>{
         const {version} = await fetchLatestBaileysVersion()
 
         const sock = makeWASocket({
-            version,
-            auth: state,
-            printQRInTerminal: false,
-            browser: ['Ubuntu','Chrome','20.0.04']
-        })
+    version,
+    auth: state,
+    printQRInTerminal: false,
+    browser: ['Ubuntu','Chrome','20.0.04'],
+    connectTimeoutMs: 60000,
+    keepAliveIntervalMs: 30000,
+    defaultQueryTimeoutMs: 60000
+})
 
         let responseSent = false
         sock.ev.on("creds.update", saveCreds)
@@ -250,9 +253,14 @@ app.post("/connect", async (req,res)=>{
             const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
 
             const newSock = makeWASocket({
-                auth: state,
-                browser:['Ubuntu','Chrome','20.0.04']
-            })
+    version,
+    auth: state,
+    printQRInTerminal: false,
+    browser: ['Ubuntu','Chrome','20.0.04'],
+    connectTimeoutMs: 60000,
+    keepAliveIntervalMs: 30000,
+    defaultQueryTimeoutMs: 60000
+})
 
             bots[number] = newSock
 
