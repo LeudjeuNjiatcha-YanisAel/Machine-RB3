@@ -152,7 +152,9 @@ async function handleMessages(sock,messageUpdate,printLog) {
         const isGroup = chatId.endsWith('@g.us');
         const senderIsSudo = await isSudo(senderId);
         const senderIsOwnerOrSudo = await isOwnerOrSudo(senderId,sock,chatId);
-        let prefix = global.userPrefixes[senderId] || "*"
+        
+        const botNumber = sock.user.id.split(":")[0]
+        let prefix = global.userPrefixes[botNumber] || "*"
         // Handle button responses
         if (message.message?.buttonsResponseMessage) {
             const buttonId = message.message.buttonsResponseMessage.selectedButtonId;
@@ -876,7 +878,8 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 await tagAll(sock,chatId,senderId,message,args);
                 break;
             case userMessage.startsWith(prefix+'tagadmins'):
-                await tagAdmins(sock,chatId,senderId,message,args)
+                await tagAdmins(sock,chatId,senderId,message,args);
+                break;
             case userMessage.startsWith(prefix+'tagnotadmin'):
                 await tagNonAdmins(sock,chatId,senderId,message,args);
                 break;

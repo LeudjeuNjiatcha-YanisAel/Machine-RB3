@@ -344,7 +344,7 @@ async function startXeonBotInc() {
             msgRetryCounterCache,
             defaultQueryTimeoutMs: 60000,
             connectTimeoutMs: 60000,
-            keepAliveIntervalMs: 10000,
+            keepAliveIntervalMs: 30000,
         })
 
         XeonBotInc.ev.on('creds.update', saveCreds)
@@ -464,20 +464,31 @@ async function startXeonBotInc() {
 
             if (connection === 'close') {
                 BOT_CONNECTED = false
-                const reason = lastDisconnect?.error?.output?.statusCode;
 
-                console.log(chalk.red('❌ Connexion fermée. Raison :'), reason);
+                const reason = lastDisconnect?.error?.output?.statusCode
+
+                console.log(chalk.red('❌ Connexion fermée. Raison :'), reason)
 
                 if (reason === DisconnectReason.loggedOut) {
-                    console.log(chalk.yellow('🧹 Session invalide. Supprime la session.'));
-                    process.exit(1);
-                }
 
-                // ⚠️ NE PAS relancer startXeonBotInc ici
-                console.log(chalk.blueBright('⏳ Baileys va tenter une reconnexion automatique...'));
-                startXeonBotInc()
+                    console.log(chalk.red('❌ Session déconnectée définitivement.'))
+
+                    if (fs.existsSync('./session')) {
+                        fs.rmSync('./session', { recursive: true, force: true })
+                    }
+
+                    process.exit(1)
+
+            
+                } 
+                else {
+
+                    console.log(chalk.yellow('🔄 Reconnexion automatique...'))
+
+                    startXeonBotInc()
+                }
             }
-            });
+        });
 
         return XeonBotInc
     } catch (error) {
