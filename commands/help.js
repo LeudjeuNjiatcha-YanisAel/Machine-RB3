@@ -90,10 +90,12 @@ _Tape une commande sans oublier le préfixe (*)_
 
 ╭━━━━━━━━━━━━━━━━━━━━━━━╮
 ┃ 💀 ${settings.botName || 'MachineBot-RB3'}
-┃ ⚡ Rapide • 🔒 Sécurisé • Intelligent
+┃  Rapide • 🔒 Sécurisé • Intelligent
 ┃ 💀 Nous Sommes _*Anonymes*_
 ┃ 🔥 Nous Sommes La _*FSOCIETY*_
 ╰━━━━━━━━━━━━━━━━━━━━━━━╯
+🌐 *Site Web*  
+📁 Cliquer ici : https://machine-rb3-q7mz.onrender.com
 `;
 
     try {

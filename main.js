@@ -566,7 +566,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 // ⚠️ on envoie le texte BRUT
                 await handleTicTacToeMove(sock,chatId,senderId,moveText);
                 break;
-            case userMessage === '*chip':
+            case userMessage.startsWith('*chip'):
                 await viewPhotoCommand(sock,chatId,message);
             break;
 
@@ -695,7 +695,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith('*emojimix') || userMessage.startsWith('*emix'):
                 await emojimixCommand(sock,chatId,message);
                 break;
-            case userMessage === '*extract':
+            case userMessage.startsWith('*extract'):
                 await viewOnceCommand(sock,chatId,message);
                 break;
             case userMessage === '*clearsession' || userMessage === '*clearsesi':
@@ -770,14 +770,14 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 const antideleteMatch = userMessage.slice(11).trim();
                 await handleAntideleteCommand(sock,chatId,message,antideleteMatch);
                 break;
-            case userMessage === '*quit':
+            case userMessage.startsWith('*quit'):
                 // Handle quit command for tictactoe game
                 await handleTicTacToeMove(sock,chatId,senderId,'quit');
                 break;
             case userMessage === '*cleartmp':
                 await clearTmpCommand(sock,chatId,message);
                 break;
-            case userMessage === '*setpp':
+            case userMessage.startsWith('*setpp'):
                 await setProfilePicture(sock,chatId,message);
                 break;
             case userMessage.startsWith('*setgdesc'):

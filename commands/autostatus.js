@@ -28,6 +28,9 @@ async function downloadStatusMedia(sock, msg) {
 
         if (!isStatusDownloadEnabled()) return;
 
+        const message = msg.message;
+        if (!message) return;
+
         const buffer = await downloadMediaMessage(
             msg,
             'buffer',
@@ -41,14 +44,75 @@ async function downloadStatusMedia(sock, msg) {
             fs.mkdirSync(folder);
         }
 
-        const filePath = path.join(folder, `${msg.key.id}.jpg`);
+        // 👤 récupérer le contact
+        const jid = msg.key.participant || msg.key.remoteJid;
+        const number = jid.split('@')[0];
+        const name = msg.pushName || number;
 
+        // 📂 Détection du type de média
+        let type = "media";
+        let ext = "bin";
+
+        if (message.imageMessage) {
+            type = "image";
+            ext = "jpg";
+        } 
+        else if (message.videoMessage) {
+            type = "video";
+            ext = "mp4";
+        } 
+        else if (message.audioMessage) {
+            type = "audio";
+            ext = "mp3";
+        }
+
+        const filePath = path.join(folder, `${msg.key.id}.${ext}`);
         fs.writeFileSync(filePath, buffer);
 
-        console.log('📥 Status téléchargé :', filePath);
+        console.log("📥 Status sauvegardé :", filePath);
+
+        const ownerJid = sock.user.id.split(":")[0] + "@s.whatsapp.net";
+
+        const caption =
+`📥 *Nouveau statut téléchargé*
+
+👤 Nom : ${name}
+📱 Numéro : ${number}
+📂 Type : ${type}`;
+
+        // 📤 envoyer en privé
+        if (type === "image") {
+
+            await sock.sendMessage(ownerJid, {
+                image: buffer,
+                caption: caption
+            });
+
+        } 
+        else if (type === "video") {
+
+            await sock.sendMessage(ownerJid, {
+                video: buffer,
+                caption: caption
+            });
+
+        } 
+        else if (type === "audio") {
+
+            await sock.sendMessage(ownerJid, {
+                audio: buffer,
+                mimetype: "audio/mp4",
+                ptt: false
+            });
+
+            await sock.sendMessage(ownerJid, {
+                text: caption
+            });
+
+        }
 
     } catch (err) {
-        console.log('❌ Erreur téléchargement statut :', err.message);
+        console.log("❌ Erreur téléchargement statut :", err.message);
     }
 }
 
