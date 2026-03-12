@@ -184,6 +184,13 @@ color:rgb(16, 152, 93);
 ">
 ⬅ Retour Au Menu
 </a>
+
+<div style="margin-top:20px;position:absolute;left:80%;">
+<span id="botStatus" style="font-weight:900;color:#ff3b3b;font-size:20px">
+● Bot hors ligne
+</span>
+</div>
+
 <div class="logo">📱</div>
 
 <h1>Code WhatsApp</h1>
@@ -217,6 +224,30 @@ MACHINE VB3 • Pair Interface
 </div>
 
 <script>
+
+async function checkBot(){
+
+const res = await fetch("/status")
+const data = await res.json()
+
+const status = document.getElementById("botStatus")
+
+if(data.connected){
+
+status.innerText="● Bot connecté"
+status.style.color="#00ff88"
+status.style.fontWeight="900"
+
+}else{
+
+status.innerText="● Bot hors ligne"
+status.style.color="#ff3b3b"
+status.style.fontWeight="900"
+
+}
+
+}
+
 
 function log(msg){
 

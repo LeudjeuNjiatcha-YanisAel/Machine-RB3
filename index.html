@@ -80,6 +80,15 @@ background:linear-gradient(45deg,var(--primary),var(--secondary));
 margin-bottom:10px;
 }
 
+h2{
+font-size:35px;
+font-weight:700;
+background:linear-gradient(45deg,var(--primary),var(--secondary));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+margin-bottom:20px;
+}
+
 .subtitle{
 color:var(--text-dim);
 font-size:18px;
@@ -112,7 +121,7 @@ box-shadow:0 5px 20px rgba(88,101,242,0.4);
 }
 
 .secondary{
-background:linear-gradient(45deg,var(--primary),var(--secon));
+background:linear-gradient(45deg,var(--primary),var(--secondary));
 border:1px solid rgba(255,255,255,0.1);
 }
 
@@ -167,12 +176,24 @@ font-size:13px;
 color:var(--text-dim);
 }
 
+@keyframes onlineGlow{
+0%{color:#00ff88}
+50%{color:#00ff00}
+100%{color:#017c43}
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="container">
+
+<div style="margin-top:20px;position:absolute;left:80%;">
+<span id="botStatus" style="font-weight:900;color:#ff3b3b;font-size:20px">
+● Bot hors ligne
+</span>
+</div>
 
 <div class="logo">🤖</div>
 
@@ -194,11 +215,7 @@ Scanner QR Code
 </a>
 
 </div>
-<div style="margin-top:20px">
-<span id="botStatus" style="font-weight:600;color:#ff3b3b">
-● Bot hors ligne
-</span>
-</div>
+
 <div class="features">
 
 <div class="feature">
@@ -227,7 +244,49 @@ Scanner QR Code
 
 </div>
 
-<h2 style="margin-top:40px">Console du bot</h2>
+<h2 style="margin-top:40px" >Commandes du Bot</h2>
+
+<div class="features">
+
+<div class="feature">
+<span>⚙️</span>
+<h3>Système</h3>
+<p>help / menu • ping • sticker • groupinfo • transcribe • chatbot</p>
+</div>
+
+<div class="feature">
+<span>🛡</span>
+<h3>Administration</h3>
+<p>mute • unmute • tagall • delete • antibadword • kick • autodelete</p>
+</div>
+
+<div class="feature">
+<span>🛠</span>
+<h3>Outils</h3>
+<p>tts • character • sand • matrix • emojimix • audit • codefix • osint</p>
+</div>
+
+<div class="feature">
+<span>🤖</span>
+<h3>Intelligence Artificielle</h3>
+<p>gpt • gemini • deepseek • nano • cerebras • llama • hackbox</p>
+</div>
+
+<div class="feature">
+<span>📥</span>
+<h3>Download</h3>
+<p>play • youtube • ytmp4 • ytsearch • music</p>
+</div>
+
+<div class="feature">
+<span>🎮</span>
+<h3>Games Center</h3>
+<p>tictactoe • million • capital</p>
+</div>
+
+</div>
+
+<h3 style="margin-top:40px;font-size:30px;">Console du bot</h2>
 
 <div id="console" style="
 background:#000;
@@ -241,7 +300,7 @@ font-family:monospace;
 "></div>
 
 <div class="footer">
-MACHINE VB3 • Hosted on Render
+ MACHINE VB3 - Bot IA WhatsApp de nouvelle génération. © 2026 Tous droits réservés.
 </div>
 
 </div>
@@ -259,12 +318,14 @@ const status = document.getElementById("botStatus")
 if(data.connected){
 
 status.innerText="● Bot connecté"
-status.style.color="#00ff88"
+status.style.animation="onlineGlow 2s infinite"
+status.style.fontWeight="900"
 
 }else{
 
 status.innerText="● Bot hors ligne"
 status.style.color="#ff3b3b"
+status.style.animation="none"
 
 }
 

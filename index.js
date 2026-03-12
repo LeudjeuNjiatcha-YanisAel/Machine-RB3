@@ -52,6 +52,7 @@ let hasConnected = false;
 // ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
+let XeonBotInc = null
 
 async function restoreSessionFromEnv() {
     try {
@@ -124,6 +125,10 @@ if(!number){
 return res.json({error:true})
 }
 
+if(!XeonBotInc){
+return res.json({error:true,message:"Bot not ready"})
+}
+
 try{
 
 let code = await XeonBotInc.requestPairingCode(number)
@@ -132,16 +137,19 @@ PAIRING_CODE = code
 
 code = code.match(/.{1,4}/g).join("-")
 
+addLog("📲 Code D'association Generer Pour "+number)
+
 res.json({code})
 
 }catch(err){
+
+console.log(err)
 
 res.json({error:true})
 
 }
 
 })
-
 
 let WEB_LOGS = []
 
@@ -229,7 +237,7 @@ async function startXeonBotInc() {
         const { state, saveCreds } = await useMultiFileAuthState(`./session`)
         const msgRetryCounterCache = new NodeCache()
 
-        const XeonBotInc = makeWASocket({
+        let XeonBotInc = makeWASocket({
             version,
             logger: pino({ level: 'silent' }),
             printQRInTerminal: !pairingCode,
@@ -297,43 +305,43 @@ async function startXeonBotInc() {
             }
         })
 
-        if (pairingCode && !XeonBotInc.authState.creds.registered) {
-            let phoneNumber = await question(
-                chalk.bgBlack(chalk.greenBright(
-                    `Entrez votre numéro WhatsApp ⏩\nFormat : 2376xxxxxxxx (sans espaces ni +) : `
-                ))
-            )
+//         if (pairingCode && !XeonBotInc.authState.creds.registered) {
+//             let phoneNumber = await question(
+//                 chalk.bgBlack(chalk.greenBright(
+//                     `Entrez votre numéro WhatsApp ⏩\nFormat : 2376xxxxxxxx (sans espaces ni +) : `
+//                 ))
+//             )
 
-            phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
+//             phoneNumber = phoneNumber.replace(/[^0-9]/g, '')
 
-            const pn = require('awesome-phonenumber');
-            if (!pn('+' + phoneNumber).isValid()) {
-                console.log(chalk.red(
-                    'Numéro invalide. Veuillez entrer un numéro international valide.'
-                ))
-                process.exit(1)
-            }
+//             const pn = require('awesome-phonenumber');
+//             if (!pn('+' + phoneNumber).isValid()) {
+//                 console.log(chalk.red(
+//                     'Numéro invalide. Veuillez entrer un numéro international valide.'
+//                 ))
+//                 process.exit(1)
+//             }
 
-            setTimeout(async () => {
-                try {
-                    let code = await XeonBotInc.requestPairingCode(phoneNumber)
-                    PAIRING_CODE = code
-                    code = code?.match(/.{1,4}/g)?.join("-") || code
-                    console.log(chalk.black(chalk.bgGreen(`Votre code d’association : `)), chalk.black(chalk.blueBright(code)))
-                    console.log(chalk.yellow(
-                        `\nVeuillez saisir ce code dans WhatsApp :\n` +
-                        `1. Ouvrez WhatsApp\n` +
-                        `2. Paramètres > Appareils associés\n` +
-                        `3. Associer un appareil`))
- console.log(chalk.blue(`4. Entrez le code ci-dessus`)) 
-                } catch (error) {
-                    console.error('Erreur lors de la génération du code :', error)
-                    console.log(chalk.red(
-                        'Impossible d’obtenir le code d’association. Vérifiez le numéro.'
-                    ))
-                }
-            }, 3000)
-        }
+//             setTimeout(async () => {
+//                 try {
+//                     let code = await XeonBotInc.requestPairingCode(phoneNumber)
+//                     PAIRING_CODE = code
+//                     code = code?.match(/.{1,4}/g)?.join("-") || code
+//                     console.log(chalk.black(chalk.bgGreen(`Votre code d’association : `)), chalk.black(chalk.blueBright(code)))
+//                     console.log(chalk.yellow(
+//                         `\nVeuillez saisir ce code dans WhatsApp :\n` +
+//                         `1. Ouvrez WhatsApp\n` +
+//                         `2. Paramètres > Appareils associés\n` +
+//                         `3. Associer un appareil`))
+//  console.log(chalk.blue(`4. Entrez le code ci-dessus`)) 
+//                 } catch (error) {
+//                     console.error('Erreur lors de la génération du code :', error)
+//                     console.log(chalk.red(
+//                         'Impossible d’obtenir le code d’association. Vérifiez le numéro.'
+//                     ))
+//                 }
+//             }, 3000)
+//         }
 
         XeonBotInc.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect, qr } = update;
