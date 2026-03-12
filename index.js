@@ -124,10 +124,18 @@ let bots = {}
 let userPrefixes = {}
 
 app.get("/status",(req,res)=>{
+
+const list = Object.keys(bots).map(num => ({
+number:num,
+prefix:userPrefixes[num] || "*"
+}))
+
 res.json({
 connected:Object.keys(bots).length > 0,
-users:Object.keys(bots).length
+users:Object.keys(bots).length,
+list:list
 })
+
 })
 
 app.use(express.json())
@@ -198,6 +206,10 @@ addLog("❌ "+number+" s'est déconnecté")
 let code = await sock.requestPairingCode(number)
 
 code = code.match(/.{1,4}/g).join("-")
+
+if(!code){
+return res.json({error:true})
+}
 
 addLog("📲 Code d'association généré pour "+number)
 

@@ -18,7 +18,7 @@ function formatTime(seconds) {
     return time.trim();
 }
 
-async function pingCommand(sock, chatId, message) {
+async function pingCommand(sock, chatId, message,prefix) {
     try {
         const start = Date.now();
         await sock.sendMessage(chatId, { text: 'Pong! 🏓' }, { quoted: message });
@@ -58,7 +58,7 @@ async function pingCommand(sock, chatId, message) {
 📦 *NodeJS*   : _${nodeVersion}_
 🕒 *Heure*     : _${now}_
 
-    _Taper **help* pour commencer_ `.trim();
+    _Taper *${prefix}help* pour commencer_ `.trim();
 
         // Reply to the original message with the bot info
         await sock.sendMessage(chatId, { text: botInfo},{ quoted: message });

@@ -187,12 +187,12 @@ color:var(--text-dim);
 </div>
 
 <div id="usersCount" style="
-font-size:18px;
-font-weight:700;
+font-size:19px;
+font-weight:800;
 color:#00d4ff;
 position: absolute;
-margin-top:10px;">
-0 / 3 utilisateur connectes
+margin-top:20px;">
+<span id="users">0 / 3 </span> utilisateur(s) connecté(s)
 </div>
 
 <div class="logo">🤖</div>
@@ -221,25 +221,25 @@ Scanner QR Code
 <div class="feature">
 <span>⚡</span>
 <h3>Ultra rapide</h3>
-<p>Powered by Baileys for instant WhatsApp automation.</p>
+<p>Automatisation instantanée de WhatsApp grâce à Baileys.</p>
 </div>
 
 <div class="feature">
 <span>🤖</span>
 <h3>Réponses IA</h3>
-<p>Automatic AI replies and smart conversations.</p>
+<p>Réponses automatiques de l'IA et conversations intelligentes.</p>
 </div>
 
 <div class="feature">
 <span>📥</span>
 <h3>Outils Media</h3>
-<p>Download view-once media and convert files.</p>
+<p>Télécharger les médias à visionnage unique et convertir les fichiers.</p>
 </div>
 
 <div class="feature">
 <span>🛡</span>
 <h3>Moderation</h3>
-<p>Anti bad words, reactions and auto management.</p>
+<p>Lutte contre les gros mots, les réactions et la gestion automatique.</p>
 </div>
 
 </div>
@@ -308,15 +308,21 @@ font-family:monospace;
 </body>
 <script>
 
+
 async function updateUsers(){
+
+try{
 
 const res = await fetch("/status")
 const data = await res.json()
 
 const users = data.users
 
-document.getElementById("usersCount").innerText =
-users + " / 3 users connecter"
+document.getElementById("usersCount").innerText = users + " / 3 utilisateurs connectés"
+document.getElementById("users").style.color = "#0051ff"
+document.getElementById("users").style.fontWeight = "900"
+
+}catch(e){}
 
 }
 

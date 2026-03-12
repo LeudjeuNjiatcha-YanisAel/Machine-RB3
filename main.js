@@ -595,7 +595,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 await demoteCommand(sock,chatId,mentionedJidListDemote,message);
                 break;
             case userMessage.startsWith(prefix+'ping'):
-                await pingCommand(sock,chatId,message);
+                await pingCommand(sock,chatId,message,prefix);
                 break;
             case userMessage.startsWith(prefix+'alive'):
                 await aliveCommand(sock,chatId,message);
