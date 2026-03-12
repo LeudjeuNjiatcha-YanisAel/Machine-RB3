@@ -2,7 +2,7 @@ const settings = require('../settings');
 const fs = require('fs');
 const path = require('path');
 
-async function helpCommand(sock, chatId, message) {
+async function helpCommand(sock,chatId,message,prefix) {
     const jid = message.key.participant || message.key.remoteJid;
     const name = message.pushName || "Utilisateur";
 
@@ -18,74 +18,74 @@ async function helpCommand(sock, chatId, message) {
 ┌════════════════════════╮
 👑     *COMMANDES DE MACHINE*     👑
 ╰════════════════════════╯
-_Tape une commande sans oublier le préfixe (*)_
+_Tape une commande sans oublier le préfixe (${prefix})_
 ✦ • ────── ✾ ────── • ✦
 
 ╭══〔 📂 *SYSTÈME & GÉNÉRAL* 〕═╮
-│ ⚙️  *help / menu   → Affiche le menu
-│ 🏓  *ping          → Test de vitesse
-│ 🎨  *sticker       → Image en sticker
-│ 🟢  *groupinfo     → Infos du groupe
-│ 🎤  *transcribe
-│ 💬  *chatbot on/off    → IA auto
-│ 📸  *chip          → Extraire la pp
-│ 📦  *extract       → Extrait vue unique
-│ 📘  *summary on/off 
-│ 🌍  *translate <texte> <lang>
+│ ⚙️  ${prefix}help / menu   → Affiche le menu
+│ 🏓  ${prefix}ping          → Test de vitesse
+│ 🎨  ${prefix}sticker       → Image en sticker
+│ 🟢  ${prefix}groupinfo     → Infos du groupe
+│ 🎤  ${prefix}transcribe
+│ 💬  ${prefix}chatbot on/off    → IA auto
+│ 📸  ${prefix}chip          → Extraire la pp
+│ 📦  ${prefix}extract       → Extrait vue unique
+│ 📘  ${prefix}summary on/off 
+│ 🌍  ${prefix}translate <texte> <lang>
 ╰════════════════════
 
 ╭══〔 🛡️ *ADMINISTRATION* 〕═╮
-│ 🔇  *mute / 🔊 *unmute
-│ 🚫  *antidelete on/off
-│ 🏷️  *tagall
-│ 🗑️  *delete <msg>
-│ 🚫  *antibadword on/off
-│ 👮  *admins
-│ ❌  *kick
-│ 🗑️  *autodelete on/off
-│ ⭐  *sudo
-│ ✅  *statusall on/off
-│ 🖼️  *setpp
+│ 🔇  ${prefix}mute / 🔊 ${prefix}unmute
+│ 🚫  ${prefix}antidelete on/off
+│ 🏷️  ${prefix}tagall
+│ 🗑️  ${prefix}delete <msg>
+│ 🚫  ${prefix}antibadword on/off
+│ 👮  ${prefix}admins
+│ ❌  ${prefix}kick
+│ 🗑️  ${prefix}autodelete on/off
+│ ⭐  ${prefix}sudo
+│ ✅  ${prefix}statusall on/off
+│ 🖼️  ${prefix}setpp
 ╰════════════════════
 
 ╭══〔 🛠 *OUTILS & UTILITAIRES* 〕═╮
-│ 🔊  *tts <texte>        → Texte en vocal
-│ 🔮  *character           → Trait physique
-│ 🎋  *sand <texte>
-│ 🎇  *impressive <texte>
-│ 🔆  *matrix <texte>
-│ 🚓  *waste
-│ 🤣  *emojimix     → Fusionner 02 emo
-│ 📈  *topmembers
-│ 📊  *audit               → Activité bot
-│ 💯  *codefix          → Corrige un code 
-│ 🔎  *osint numero
+│ 🔊  ${prefix}tts <texte>        → Texte en vocal
+│ 🔮  ${prefix}character           → Trait physique
+│ 🎋  ${prefix}sand <texte>
+│ 🎇  ${prefix}impressive <texte>
+│ 🔆  ${prefix}matrix <texte>
+│ 🚓  ${prefix}waste
+│ 🤣  ${prefix}emojimix     → Fusionner 02 emo
+│ 📈  ${prefix}topmembers
+│ 📊  ${prefix}audit               → Activité bot
+│ 💯  ${prefix}codefix          → Corrige un code 
+│ 🔎  ${prefix}osint numero
 ╰═══════════════════
 
 ╭══〔 🤖 *INT ARTIFICIEL* 〕═╮
-│ 🧠  *gpt <question>
-│ 💡  *gemini <question>
-│ 🧠  *deepseek <question>
-│ 🔰  *essentiel 
-│ 💡  *nano <question>
-| 💡  *cerebras <question>
-│ ✨  *llama <question>
-│ 👾  *hackbox <question>
-│ 🎬  *genere <prompt>      → Vidéo IA
+│ 🧠  ${prefix}gpt <question>
+│ 💡  ${prefix}gemini <question>
+│ 🧠  ${prefix}deepseek <question>
+│ 🔰  ${prefix}essentiel 
+│ 💡  ${prefix}nano <question>
+| 💡  ${prefix}cerebras <question>
+│ ✨  ${prefix}llama <question>
+│ 👾  ${prefix}hackbox <question>
+│ 🎬  ${prefix}genere <prompt>      → Vidéo IA
 ╰═════════════════
 
 ╭══〔 📥 *DOWNLOAD & MÉDIAS* 〕═╮
-│ 🎵  *play <musique>
-│ ▶️  *youtube <sujet>
-│ 🎬  *ytmp4 <lien> <qualité>
-│ 🔎  *ytsearch <mot clé>
-│ 🎵  *music <musique> <qualité>
+│ 🎵  ${prefix}play <musique>
+│ ▶️  ${prefix}youtube <sujet>
+│ 🎬  ${prefix}ytmp4 <lien> <qualité>
+│ 🔎  ${prefix}ytsearch <mot clé>
+│ 🎵  ${prefix}music <musique> <qualité>
 ╰═════════════════
 
 ╭══〔 🎮 *GAMES CENTER* 〕═╮
-│ ❌  *tictactoe @user
-│ 💰  *million
-│ 🌍  *capital
+│ ❌  ${prefix}tictactoe @user
+│ 💰  ${prefix}million
+│ 🌍  ${prefix}capital
 ╰═════════════════
 
 ╭━━━━━━━━━━━━━━━━━━━━━━━╮
