@@ -108,11 +108,11 @@ app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'))
 })
 
-app.get("/qr",(req,res)=>{
+app.get("/qr-verif",(req,res)=>{
     res.json({qr:QR_CODE})
 })
 
-app.get('/qrpage', (req, res) => {
+app.get('/qr', (req, res) => {
     res.sendFile(path.join(__dirname, 'qr.html'));
 })
 

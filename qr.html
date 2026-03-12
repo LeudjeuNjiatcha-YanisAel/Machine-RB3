@@ -157,7 +157,7 @@ consoleBox.scrollTop = consoleBox.scrollHeight
 
 async function loadQR(){
 
-const res = await fetch("/qr")
+const res = await fetch("/qr-verif")
 const data = await res.json()
 
 if(!data.qr) return
