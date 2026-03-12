@@ -108,12 +108,12 @@ app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'))
 })
 
-app.get("/qr-verif",(req,res)=>{
-    res.json({qr:QR_CODE})
-})
-
 app.get('/qr', (req, res) => {
     res.sendFile(path.join(__dirname, 'qr.html'));
+})
+
+app.get("/qr-verif",(req,res)=>{
+    res.json({qr:QR_CODE})
 })
 
 let BOT_CONNECTED = false
@@ -203,6 +203,9 @@ delete userPrefixes[number]
 addLog("❌ "+number+" s'est déconnecté")
 }
 })
+
+await delay(3000) // attendre connexion
+
 let code = await sock.requestPairingCode(number)
 
 code = code.match(/.{1,4}/g).join("-")
@@ -333,7 +336,7 @@ async function startXeonBotInc() {
                 creds: state.creds,
                 keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
             },
-            markOnlineOnConnect: true,
+            markOnlineOnConnect: false,
             generateHighQualityLinkPreview: true,
             syncFullHistory: false,
             getMessage: async (key) => {
