@@ -185,7 +185,7 @@ app.post("/connect", async (req,res)=>{
         const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
         const {version} = await fetchLatestBaileysVersion()
 
-        const sock = makeWASocket({
+        sock = makeWASocket({
     version,
     auth: state,
     printQRInTerminal: false,
@@ -197,8 +197,6 @@ app.post("/connect", async (req,res)=>{
 
         let responseSent = false
         sock.ev.on("creds.update", saveCreds)
-
-        bots[number] = sock
 
         sock.ev.on("connection.update", async (update) => {
             const { connection, lastDisconnect } = update
@@ -225,6 +223,7 @@ app.post("/connect", async (req,res)=>{
 
             if(connection === "open"){
                 addLog("✅ "+number+" connecté à WhatsApp")
+                bots[number] = sock
             }
 
             if(connection === "close"){
@@ -251,6 +250,7 @@ app.post("/connect", async (req,res)=>{
             addLog("🔄 Reconnexion pour "+number)
 
             const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+            const { version } = await fetchLatestBaileysVersion()
 
             const newSock = makeWASocket({
     version,
