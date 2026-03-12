@@ -119,9 +119,15 @@ app.get('/qr', (req, res) => {
 let BOT_CONNECTED = false
 let PAIRING_CODE = null
 let QR_CODE = null
+const MAX_USERS = 3
+let bots = {}
+let userPrefixes = {}
 
 app.get("/status",(req,res)=>{
-res.json({connected:BOT_CONNECTED})
+res.json({
+connected:Object.keys(bots).length > 0,
+users:Object.keys(bots).length
+})
 })
 
 app.use(express.json())
@@ -129,26 +135,76 @@ app.use(express.json())
 app.post("/connect", async (req,res)=>{
 
 const number = req.body.number
+const randomPrefixes = ["!","#","$","&","?","%"]
 
 if(!number){
 return res.json({error:true})
 }
 
-if(!XeonBotInc){
-return res.json({error:true,message:"Bot not ready"})
+/* vérifier si numéro déjà connecté */
+
+if(bots[number]){
+return res.json({
+error:true,
+message:"Ce numéro est déjà connecté"
+})
+}
+
+/* limite utilisateurs */
+
+if(Object.keys(bots).length >= MAX_USERS){
+return res.json({
+error:true,
+message:"Maximum utilisateurs connectés atteint"
+})
+}
+
+if(Object.keys(bots).length >= 1){
+   userPrefixes[number] = randomPrefixes[Math.floor(Math.random()*randomPrefixes.length)]
+   addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
+}else{
+   userPrefixes[number] = "*"
+   addLog("⚙️ Prefix attribué à "+number+" : "+userPrefixes[number])
 }
 
 try{
 
-let code = await XeonBotInc.requestPairingCode(number)
+if(!fs.existsSync("./sessions")){
+fs.mkdirSync("./sessions")
+}
+const sessionPath = `./sessions/${number}`
 
-PAIRING_CODE = code
+const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+
+const sock = makeWASocket({
+auth: state,
+printQRInTerminal:false
+})
+
+sock.ev.on("creds.update", saveCreds)
+
+// enregistrer bot 
+
+bots[number] = sock
+
+sock.ev.on('connection.update', async (update) => {
+const { connection } = update;  
+if(connection === "close"){
+delete bots[number]
+delete userPrefixes[number]
+addLog("❌ "+number+" s'est déconnecté")
+}
+})
+let code = await sock.requestPairingCode(number)
 
 code = code.match(/.{1,4}/g).join("-")
 
-addLog("📲 Code D'association Generer Pour "+number)
+addLog("📲 Code d'association généré pour "+number)
 
-res.json({code})
+res.json({
+code,
+prefix:userPrefixes[number]
+})
 
 }catch(err){
 
@@ -157,6 +213,16 @@ console.log(err)
 res.json({error:true})
 
 }
+
+})
+
+app.get("/prefix/:number",(req,res)=>{
+
+const number = req.params.number
+
+res.json({
+prefix:userPrefixes[number] || "*"
+})
 
 })
 

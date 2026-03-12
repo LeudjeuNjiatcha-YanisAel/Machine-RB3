@@ -186,6 +186,15 @@ color:var(--text-dim);
 </span>
 </div>
 
+<div id="usersCount" style="
+font-size:18px;
+font-weight:700;
+color:#00d4ff;
+position: absolute;
+margin-top:10px;">
+0 / 3 utilisateur connectes
+</div>
+
 <div class="logo">🤖</div>
 
 <h1>MACHINE VB3</h1>
@@ -298,6 +307,22 @@ font-family:monospace;
 
 </body>
 <script>
+
+async function updateUsers(){
+
+const res = await fetch("/status")
+const data = await res.json()
+
+const users = data.users
+
+document.getElementById("usersCount").innerText =
+users + " / 3 users connecter"
+
+}
+
+setInterval(updateUsers,3000)
+
+updateUsers()
 
 async function checkBot(){
 
