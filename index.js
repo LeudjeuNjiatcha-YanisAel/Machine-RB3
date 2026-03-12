@@ -121,7 +121,7 @@ let PAIRING_CODE = null
 let QR_CODE = null
 const MAX_USERS = 3
 let bots = {}
-let userPrefixes = {}
+global.userPrefixes = {}
 
 app.get("/status",(req,res)=>{
 
