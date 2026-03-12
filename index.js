@@ -189,7 +189,7 @@ app.post("/connect", async (req,res)=>{
     version,
     auth: state,
     printQRInTerminal: false,
-    browser: ['Ubuntu','Chrome','20.0.04'],
+    browser: ['Chrome','Linux','20.0.04'],
     connectTimeoutMs: 60000,
     keepAliveIntervalMs: 30000,
     defaultQueryTimeoutMs: 60000
@@ -203,7 +203,7 @@ app.post("/connect", async (req,res)=>{
 
             if(connection === "connecting"){
 
-                if(!sock.authState.creds.registered){
+                if(!sock.user && !sock.authState.creds.registered){
 
                     let code = await sock.requestPairingCode(number)
 
@@ -252,14 +252,41 @@ app.post("/connect", async (req,res)=>{
             const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
             const { version } = await fetchLatestBaileysVersion()
 
-            const newSock = makeWASocket({
-    version,
-    auth: state,
-    printQRInTerminal: false,
-    browser: ['Ubuntu','Chrome','20.0.04'],
-    connectTimeoutMs: 60000,
-    keepAliveIntervalMs: 30000,
-    defaultQueryTimeoutMs: 60000
+           const newSock = makeWASocket({
+version,
+logger: pino({ level: "silent" }),
+auth: state,
+printQRInTerminal: false,
+browser: ['Chrome','Linux','20.0.04'],
+connectTimeoutMs: 60000,
+keepAliveIntervalMs: 30000,
+defaultQueryTimeoutMs: 60000
+})
+
+newSock.ev.on("creds.update", saveCreds)
+
+newSock.ev.on("messages.upsert", async (chatUpdate) => {
+
+const mek = chatUpdate.messages[0]
+
+await reactToAllMessages(newSock, mek)
+
+if (!mek.message) return
+
+await autoResponse(newSock, mek)
+await autoDeleteHandler(newSock, mek)
+
+if (mek.key && mek.key.remoteJid === 'status@broadcast') {
+await handleStatus(newSock, chatUpdate)
+return
+}
+
+await handleMessages(newSock, chatUpdate, true)
+
+})
+
+newSock.ev.on("group-participants.update", async (data) => {
+await handleGroupParticipantUpdate(newSock, data)
 })
 
             bots[number] = newSock
@@ -419,7 +446,7 @@ setInterval(() => {
 //             version,
 //             logger: pino({ level: 'silent' }),
 //             printQRInTerminal: !pairingCode,
-//             browser: ["Ubuntu", "Chrome", "20.0.04"],
+//             browser: ["Chrome", "Linux", "20.0.04"],
 //             auth: {
 //                 creds: state.creds,
 //                 keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
