@@ -214,7 +214,7 @@ setInterval(() => {
     }
 }, 30_000)
 
-// let phoneNumber = "682441127"
+let phoneNumber = "682441127"
 let owner = JSON.parse(fs.readFileSync('./data/owner.json'))
 
 global.botname = "MACHINE VB3"
@@ -240,7 +240,7 @@ async function startXeonBotInc() {
         XeonBotInc = makeWASocket({
             version,
             logger: pino({ level: 'silent' }),
-            printQRInTerminal: false,
+            printQRInTerminal: !pairingCode,
             browser: ["Ubuntu", "Chrome", "20.0.04"],
             auth: {
                 creds: state.creds,

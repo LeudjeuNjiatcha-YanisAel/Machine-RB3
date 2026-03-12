@@ -267,7 +267,8 @@ consoleBox.scrollTop = consoleBox.scrollHeight
 
 async function connectBot(){
 
-const number = document.getElementById("number").value
+let number = document.getElementById("number").value
+number = number.replace(/[^0-9]/g,"")
 
 if(!number){
 log("❌ Enter phone number")
@@ -348,6 +349,8 @@ lastLog = data.length
 
 setInterval(checkStatus,5000)
 setInterval(getLogs,4000)
+checkStatus()
+getLogs()
 
 </script>
 
