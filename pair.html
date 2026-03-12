@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
 <meta charset="UTF-8">
@@ -271,11 +271,11 @@ let number = document.getElementById("number").value
 number = number.replace(/[^0-9]/g,"")
 
 if(!number){
-log("❌ Enter phone number")
+log("❌ Entrer votre numero de telephone")
 return
 }
 
-log("⏳ Connecting...")
+log("⏳ Connection...")
 
 const res = await fetch("/connect",{
 method:"POST",
@@ -289,7 +289,7 @@ if(data.code){
 
 document.getElementById("pairCode").innerText = data.code
 
-log("✅ Pair code generated")
+log("✅ Code d'association generer")
 
 }else{
 
@@ -307,7 +307,7 @@ await fetch("/disconnect",{method:"POST"})
 
 document.getElementById("pairCode").innerText=""
 
-log("⚠ Bot disconnected")
+log("⚠ Bot deconnecter")
 
 }
 
@@ -320,11 +320,12 @@ const data = await res.json()
 
 if(data.connected){
 
-log("✅ Bot connected")
+log("✅ Bot connecter")
 
 }
 
 }
+
 
 /* LIVE LOGS */
 
@@ -347,10 +348,11 @@ lastLog = data.length
 
 }
 
-setInterval(checkStatus,5000)
-setInterval(getLogs,4000)
-checkStatus()
+checkBot()
 getLogs()
+
+setInterval(checkBot,5000)
+setInterval(getLogs,4000)
 
 </script>
 

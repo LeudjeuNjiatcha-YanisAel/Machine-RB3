@@ -108,8 +108,17 @@ app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'))
 })
 
+app.get("/qr",(req,res)=>{
+    res.json({qr:QR_CODE})
+})
+
+app.get('/qrpage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'qr.html'));
+})
+
 let BOT_CONNECTED = false
 let PAIRING_CODE = null
+let QR_CODE = null
 
 app.get("/status",(req,res)=>{
 res.json({connected:BOT_CONNECTED})
@@ -347,6 +356,8 @@ async function startXeonBotInc() {
             const { connection, lastDisconnect, qr } = update;
 
             if (qr) {
+                QR_CODE = qr
+                addLog('📱 QR Code généré. Veuillez le scanner avec WhatsApp.');
                 console.log(chalk.yellow('📱 QR Code généré.'));
             }
 
