@@ -385,6 +385,8 @@
 //     require(file)
 // })
 
+
+
 require('./settings')
 require('dotenv').config();
 const { Boom } = require('@hapi/boom')
@@ -440,6 +442,84 @@ let hasConnected = false;
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
 let XeonBotInc = null
+
+async function startSock(number){
+
+try{
+
+const sessionPath = `./sessions/${number}`
+
+const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+
+const { version } = await fetchLatestBaileysVersion()
+
+const sock = makeWASocket({
+version,
+logger: pino({level:"silent"}),
+auth: state,
+printQRInTerminal:false,
+browser:['Ubuntu','Chrome','20.0.04'],
+connectTimeoutMs:60000,
+keepAliveIntervalMs:10000
+})
+
+sock.ev.on("creds.update", saveCreds)
+
+sock.ev.on("connection.update", async (update)=>{
+
+const { connection, lastDisconnect } = update
+
+if(connection === "connecting"){
+addLog("⏳ Connection "+number)
+}
+
+if(connection === "open"){
+
+addLog("✅ "+number+" connecté")
+
+bots[number] = sock
+
+}
+
+if(connection === "close"){
+
+const reason = new Boom(lastDisconnect?.error)?.output?.statusCode
+
+console.log("connexion fermée :",reason)
+
+if(reason === DisconnectReason.loggedOut){
+
+addLog("❌ "+number+" deconnecté")
+
+delete bots[number]
+delete userPrefixes[number]
+
+fs.rmSync(sessionPath,{recursive:true,force:true})
+
+}else{
+
+console.log("🔄 Reconnexion",number)
+
+setTimeout(()=>{
+try{ sock.end() }catch{}
+startSock(number)
+},4000)
+
+}
+
+}
+
+})
+
+return sock
+
+}catch(err){
+
+console.log("Erreur startSock :",err)
+
+}
+
+}
 
 async function restoreSessionFromEnv() {
     try {
@@ -560,29 +640,7 @@ userPrefixes[number] = "*"
 
 try{
 
-if(!fs.existsSync("./sessions")){
-fs.mkdirSync("./sessions")
-}
-
-const sessionPath = `./sessions/${number}`
-
-const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
-const {version} = await fetchLatestBaileysVersion()
-
-let sock = makeWASocket({
-version,
-logger: pino({ level: "silent" }),
-auth: state,
-printQRInTerminal:false,
-browser:['Ubuntu','Chrome','20.0.04'],
-connectTimeoutMs:60000,
-keepAliveIntervalMs:10000
-})
-
-sock.ev.on("creds.update", saveCreds)
-
-
-/* 🔥 génération pairing code DIRECT */
+const sock = await startSock(number)
 
 await delay(5000)
 
@@ -597,82 +655,6 @@ addLog("📲 Code généré pour "+number)
 res.json({
 code,
 prefix:userPrefixes[number]
-})
-
-/* EVENTS */
-
-sock.ev.on("connection.update", async(update)=>{
-
-const {connection,lastDisconnect} = update
-
-if(connection === "open"){
-
-addLog("✅ "+number+" connecté")
-
-bots[number] = sock
-
-}
-
-if(connection === "close"){
-
-const reason = lastDisconnect?.error?.output?.statusCode
-
-console.log("connexion fermée :",reason)
-
-if(reason === DisconnectReason.loggedOut){
-
-addLog("❌ "+number+" déconnecté")
-
-delete bots[number]
-delete userPrefixes[number]
-
-if(fs.existsSync(sessionPath)){
-fs.rmSync(sessionPath,{recursive:true,force:true})
-}
-
-}else{
-
-addLog("🔄 Reconnexion "+number)
-
-setTimeout(()=>{
-delete bots[number]
-},5000)
-
-if(fs.existsSync(sessionPath)){
-fs.rmSync(sessionPath,{recursive:true,force:true})
-}
-
-}
-
-}
-
-})
-
-/* messages */
-
-sock.ev.on("messages.upsert", async(chatUpdate)=>{
-
-const mek = chatUpdate.messages?.[0]
-if(!mek) return
-
-await reactToAllMessages(sock, mek)
-
-if(!mek.message) return
-
-await autoResponse(sock, mek)
-await autoDeleteHandler(sock, mek)
-
-if(mek.key && mek.key.remoteJid === 'status@broadcast'){
-await handleStatus(sock, chatUpdate)
-return
-}
-
-await handleMessages(sock, chatUpdate, true)
-
-})
-
-sock.ev.on("group-participants.update", async(data)=>{
-await handleGroupParticipantUpdate(sock, data)
 })
 
 }catch(err){
