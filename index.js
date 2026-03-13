@@ -637,6 +637,10 @@ setTimeout(()=>{
 delete bots[number]
 },5000)
 
+if(fs.existsSync(sessionPath)){
+fs.rmSync(sessionPath,{recursive:true,force:true})
+}
+
 }
 
 }
