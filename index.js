@@ -217,21 +217,21 @@ setInterval(() => {
 }, 30_000)
 
 // let phoneNumber = "682441127"
-let owner = JSON.parse(fs.readFileSync('./data/owner.json'))
+// let owner = JSON.parse(fs.readFileSync('./data/owner.json'))
 
-global.botname = "MACHINE VB3"
-global.themeemoji = "•"
-const pairingCode = !!phoneNumber || process.argv.includes("--pairing-code")
-const useMobile = process.argv.includes("--mobile")
+// global.botname = "MACHINE VB3"
+// global.themeemoji = "•"
+// const pairingCode = !!phoneNumber || process.argv.includes("--pairing-code")
+// const useMobile = process.argv.includes("--mobile")
 
-const rl = process.stdin.isTTY ? readline.createInterface({ input: process.stdin, output: process.stdout }) : null
-const question = (text) => {
-    if (rl) {
-        return new Promise((resolve) => rl.question(text, resolve))
-    } else {
-        return Promise.resolve(settings.ownerNumber || phoneNumber)
-    }
-}
+// const rl = process.stdin.isTTY ? readline.createInterface({ input: process.stdin, output: process.stdout }) : null
+// const question = (text) => {
+//     if (rl) {
+//         return new Promise((resolve) => rl.question(text, resolve))
+//     } else {
+//         return Promise.resolve(settings.ownerNumber || phoneNumber)
+//     }
+// }
 
 async function startXeonBotInc() {
     try {
