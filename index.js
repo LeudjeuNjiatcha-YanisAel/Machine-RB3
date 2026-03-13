@@ -581,9 +581,10 @@ keepAliveIntervalMs:10000
 
 sock.ev.on("creds.update", saveCreds)
 
-bots[number] = sock
 
 /* 🔥 génération pairing code DIRECT */
+
+await delay(5000)
 
 let code = await sock.requestPairingCode(number)
 
