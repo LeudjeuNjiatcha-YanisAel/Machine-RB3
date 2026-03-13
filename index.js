@@ -639,8 +639,8 @@
 //     require(file)
 // })
 
-require('./settings')
-require('dotenv').config()
+require("./settings")
+require("dotenv").config()
 
 const express = require("express")
 const fs = require("fs")
@@ -652,7 +652,8 @@ const {
 default: makeWASocket,
 DisconnectReason,
 useMultiFileAuthState,
-fetchLatestBaileysVersion
+fetchLatestBaileysVersion,
+delay
 } = require("@whiskeysockets/baileys")
 
 const {
@@ -671,46 +672,33 @@ const PORT = process.env.PORT || 3000
 app.use(express.json())
 
 /*
-===============================
+========================
 VARIABLES
-===============================
+========================
 */
 
 let bots = {}
 let userPrefixes = {}
-let WEB_LOGS = []
+
+let QR_CODE = null
+let PAIRING_CODE = null
 
 const MAX_USERS = 3
-let PAIRING_CODE = null
-let QR_CODE = null
 
 /*
-===============================
+========================
 LOG SYSTEM
-===============================
+========================
 */
 
-function addLog(msg){
-
-const log = {
-time: new Date().toLocaleTimeString(),
-msg
-}
-
-WEB_LOGS.push(log)
-
-if(WEB_LOGS.length > 200){
-WEB_LOGS.shift()
-}
-
+function log(msg){
 console.log(msg)
-
 }
 
 /*
-===============================
+========================
 WEB ROUTES
-===============================
+========================
 */
 
 app.get("/",(req,res)=>{
@@ -725,41 +713,19 @@ app.get("/qr",(req,res)=>{
 res.sendFile(path.join(__dirname,"qr.html"))
 })
 
-app.get("/logs",(req,res)=>{
-res.json(WEB_LOGS)
+app.get("/qr-verif",(req,res)=>{
+res.json({qr:QR_CODE})
 })
 
 app.get("/paircode",(req,res)=>{
-
-if(!PAIRING_CODE){
-return res.json({status:false})
-}
-
-res.json({
-status:true,
-code:PAIRING_CODE
-})
-
-})
-
-app.get("/qr-verif",(req,res)=>{
-
-if(!QR_CODE){
-return res.json({status:false})
-}
-
-res.json({
-status:true,
-qr:QR_CODE
-})
-
+res.json({code:PAIRING_CODE})
 })
 
 app.get("/status",(req,res)=>{
 
-const list = Object.keys(bots).map(num=>({
-number:num,
-prefix:userPrefixes[num]
+const list = Object.keys(bots).map(n=>({
+number:n,
+prefix:userPrefixes[n]
 }))
 
 res.json({
@@ -771,12 +737,12 @@ list
 })
 
 /*
-===============================
+========================
 CONNECT USER
-===============================
+========================
 */
 
-app.post("/connect",async(req,res)=>{
+app.post("/connect", async (req,res)=>{
 
 let number = req.body.number
 
@@ -785,13 +751,6 @@ return res.json({error:true})
 }
 
 number = number.replace(/[^0-9]/g,"")
-
-if(number.length < 10){
-return res.json({
-error:true,
-message:"Numéro invalide"
-})
-}
 
 if(bots[number]){
 return res.json({
@@ -803,7 +762,7 @@ message:"Numéro déjà connecté"
 if(Object.keys(bots).length >= MAX_USERS){
 return res.json({
 error:true,
-message:"Maximum utilisateurs atteint"
+message:"Max utilisateurs atteint"
 })
 }
 
@@ -815,17 +774,17 @@ userPrefixes[number]=randomPrefixes[Math.floor(Math.random()*randomPrefixes.leng
 userPrefixes[number]="*"
 }
 
-addLog("⚙️ Prefix attribué : "+userPrefixes[number])
-
-const sessionPath=`./sessions/${number}`
+log("Prefix : "+userPrefixes[number])
 
 if(!fs.existsSync("./sessions")){
 fs.mkdirSync("./sessions")
 }
 
-const {state,saveCreds}=await useMultiFileAuthState(sessionPath)
+const sessionPath=`./sessions/${number}`
 
-const {version}=await fetchLatestBaileysVersion()
+const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+
+const { version } = await fetchLatestBaileysVersion()
 
 const sock = makeWASocket({
 
@@ -839,28 +798,40 @@ keepAliveIntervalMs:30000
 
 })
 
-sock.ev.on("creds.update",saveCreds)
+sock.ev.on("creds.update", saveCreds)
 
 let responseSent=false
 
-sock.ev.on("connection.update", async (update) => {
+sock.ev.on("connection.update", async (update)=>{
 
 const { connection, lastDisconnect, qr } = update
 
-if (qr) {
+/*
+====================
+QR CODE
+====================
+*/
+
+if(qr){
 QR_CODE = qr
-addLog("📷 QR généré")
+log("QR généré")
 }
 
-if (connection === "connecting") {
+/*
+====================
+PAIRING CODE
+====================
+*/
 
-addLog("🔄 Connexion à WhatsApp...")
+if(connection === "connecting"){
 
-if (!sock.authState.creds.registered) {
+log("Connexion...")
 
-setTimeout(async () => {
+if(!sock.authState.creds.registered){
 
-try {
+await delay(3000)
+
+try{
 
 let code = await sock.requestPairingCode(number)
 
@@ -868,59 +839,74 @@ PAIRING_CODE = code
 
 code = code.match(/.{1,4}/g).join("-")
 
-addLog("📲 Code généré pour " + number)
+log("Code généré : "+code)
 
-if (!responseSent) {
+if(!responseSent){
 
-responseSent = true
+responseSent=true
 
 res.json({
 code,
-prefix: userPrefixes[number]
+prefix:userPrefixes[number]
 })
 
 }
 
-} catch (err) {
+}catch(err){
 
 console.log(err)
-
-addLog("❌ Impossible de générer le code")
-
-}
-
-}, 2000)
+log("Erreur génération code")
 
 }
 
 }
 
-if (connection === "open") {
+}
 
-addLog("✅ " + number + " connecté")
+/*
+====================
+CONNECTED
+====================
+*/
 
-bots[number] = sock
+if(connection === "open"){
+
+log("Connecté : "+number)
+
+bots[number]=sock
 
 }
 
-if (connection === "close") {
+/*
+====================
+DISCONNECTED
+====================
+*/
+
+if(connection === "close"){
 
 const reason = lastDisconnect?.error?.output?.statusCode
 
-if (reason === DisconnectReason.loggedOut) {
+if(reason === DisconnectReason.loggedOut){
 
-addLog("❌ " + number + " déconnecté définitivement")
+log("Déconnecté définitivement")
 
 delete bots[number]
 delete userPrefixes[number]
 
-if (fs.existsSync(sessionPath)) {
-fs.rmSync(sessionPath, { recursive: true, force: true })
+if(fs.existsSync(sessionPath)){
+fs.rmSync(sessionPath,{recursive:true,force:true})
 }
 
-} else {
+}else{
 
-addLog("⚠️ Connexion fermée, reconnexion...")
+log("Reconnexion...")
+
+setTimeout(()=>{
+
+startSock(number,res)
+
+},5000)
 
 }
 
@@ -929,9 +915,9 @@ addLog("⚠️ Connexion fermée, reconnexion...")
 })
 
 /*
-===============================
+========================
 MESSAGES
-===============================
+========================
 */
 
 sock.ev.on("messages.upsert",async(chatUpdate)=>{
@@ -962,33 +948,29 @@ await handleGroupParticipantUpdate(sock,data)
 })
 
 /*
-===============================
-DISCONNECT API
-===============================
+========================
+DISCONNECT
+========================
 */
 
 app.post("/disconnect",(req,res)=>{
-
 process.exit(0)
-
 })
 
 /*
-===============================
+========================
 START SERVER
-===============================
+========================
 */
 
 app.listen(PORT,()=>{
-
-console.log("🌍 Serveur actif sur port "+PORT)
-
+console.log("Serveur actif sur "+PORT)
 })
 
 /*
-===============================
-AUTO PING RENDER
-===============================
+========================
+RENDER AUTO PING
+========================
 */
 
 setInterval(async()=>{
@@ -1001,46 +983,22 @@ if(!url) return
 
 await axios.get(url)
 
-console.log("🔁 ping render ok")
+console.log("Ping OK")
 
-}catch{
-
-console.log("⚠️ ping erreur")
-
-}
+}catch{}
 
 },300000)
 
 /*
-===============================
-ANTI RAM CRASH
-===============================
-*/
-
-setInterval(()=>{
-
-const used = process.memoryUsage().rss /1024/1024
-
-if(used>400){
-
-console.log("⚠️ RAM élevée redémarrage")
-
-process.exit(1)
-
-}
-
-},30000)
-
-/*
-===============================
+========================
 ANTI CRASH
-===============================
+========================
 */
 
 process.on("uncaughtException",(err)=>{
-console.log("❌ erreur:",err)
+console.log(err)
 })
 
 process.on("unhandledRejection",(err)=>{
-console.log("❌ rejection:",err)
+console.log(err)
 })
