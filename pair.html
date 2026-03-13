@@ -149,7 +149,7 @@ margin-top:10px;
 font-size:18px;
 font-weight:500;
 color:var(--primary);
-animation: pukse 1.5s infinite
+animation: pulse 1.5s infinite
 };
 /* console */
 
@@ -258,9 +258,7 @@ status.style.color="#ff3b3b"
 status.style.fontWeight="900"
 
 }
-
 }
-
 
 function log(msg){
 
@@ -275,8 +273,6 @@ consoleBox.appendChild(div)
 consoleBox.scrollTop = consoleBox.scrollHeight
 
 }
-
-/* CONNECT */
 
 async function connectBot(){
 
@@ -301,6 +297,8 @@ const data = await res.json()
 if(data.code){
 
 document.getElementById("pairCode").innerText = data.code
+document.getElementById("prefixUser").innerText =
+"Prefix utilisateur : " + data.prefix
 
 log("✅ Code d'association generer")
 log("⚙️ Prefix utilisateur : "+data.prefix)
@@ -308,12 +306,8 @@ log("⚙️ Prefix utilisateur : "+data.prefix)
 }else{
     log("❌ Error connecting")
 }
-document.getElementById("prefixbox").innerText =
-"Prefix utilisateur : " + data.prefix
 
 }
-
-/* DISCONNECT */
 
 async function disconnectBot(){
 
@@ -324,8 +318,6 @@ document.getElementById("pairCode").innerText=""
 log("⚠ Bot deconnecter")
 
 }
-
-/* STATUS */
 
 async function checkStatus(){
 
@@ -339,9 +331,6 @@ log("✅ Bot connecter")
 }
 
 }
-
-
-/* LIVE LOGS */
 
 let lastLog = 0
 
