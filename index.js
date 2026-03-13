@@ -843,19 +843,24 @@ sock.ev.on("creds.update",saveCreds)
 
 let responseSent=false
 
-sock.ev.on("connection.update",async(update)=>{
+sock.ev.on("connection.update", async (update) => {
 
-const {connection,lastDisconnect,qr}=update
+const { connection, lastDisconnect, qr } = update
 
-if(qr){
-
+if (qr) {
 QR_CODE = qr
-
 addLog("📷 QR généré")
-
 }
 
-if(!sock.authState.creds.registered){
+if (connection === "connecting") {
+
+addLog("🔄 Connexion à WhatsApp...")
+
+if (!sock.authState.creds.registered) {
+
+setTimeout(async () => {
+
+try {
 
 let code = await sock.requestPairingCode(number)
 
@@ -863,53 +868,59 @@ PAIRING_CODE = code
 
 code = code.match(/.{1,4}/g).join("-")
 
-addLog("📲 Code généré pour "+number)
+addLog("📲 Code généré pour " + number)
 
-if(!responseSent){
+if (!responseSent) {
 
-responseSent=true
+responseSent = true
 
 res.json({
 code,
-prefix:userPrefixes[number]
+prefix: userPrefixes[number]
 })
 
 }
 
-}
+} catch (err) {
 
-if(connection==="open"){
+console.log(err)
 
-addLog("✅ "+number+" connecté")
-
-bots[number]=sock
+addLog("❌ Impossible de générer le code")
 
 }
 
-if(connection==="close"){
+}, 2000)
+
+}
+
+}
+
+if (connection === "open") {
+
+addLog("✅ " + number + " connecté")
+
+bots[number] = sock
+
+}
+
+if (connection === "close") {
 
 const reason = lastDisconnect?.error?.output?.statusCode
 
-if(reason===DisconnectReason.loggedOut){
+if (reason === DisconnectReason.loggedOut) {
 
-addLog("❌ "+number+" déconnecté définitivement")
+addLog("❌ " + number + " déconnecté définitivement")
 
 delete bots[number]
 delete userPrefixes[number]
 
-if(fs.existsSync(sessionPath)){
-fs.rmSync(sessionPath,{recursive:true,force:true})
+if (fs.existsSync(sessionPath)) {
+fs.rmSync(sessionPath, { recursive: true, force: true })
 }
 
-}else{
+} else {
 
-addLog("⚠️ reconnexion automatique")
-
-setTimeout(()=>{
-
-delete bots[number]
-
-},5000)
+addLog("⚠️ Connexion fermée, reconnexion...")
 
 }
 
