@@ -95,7 +95,7 @@ _Tape une commande sans oublier le préfixe (${prefix})_
 ┃ 🔥 Nous Sommes La _*FSOCIETY*_
 ╰━━━━━━━━━━━━━━━━━━━━━━━╯
 🌐 *Site Web*  
-📁 Cliquer ici : https://machine-rb3-q7mz.onrender.com
+📁 Cliquer ici : https://machine-rb3-sx04.onrender.com
 `;
 
     try {

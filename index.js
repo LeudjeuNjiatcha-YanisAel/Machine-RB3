@@ -122,7 +122,13 @@ try{
 
     })
     MachineBot.ev.on("connection.update", async (update)=>{
+        
+        if(update.qr){
+            QR_CODE = update.qr
+            addLog("📱 QR Code généré")
+        }
         const { connection, lastDisconnect } = update
+        
         if(connection === "connecting"){
             addLog('🔄 Connexion à WhatsApp en cours...');
         }
@@ -242,6 +248,7 @@ let QR_CODE = null
 const MAX_USERS = 3
 let bots = {}
 let userPrefixes = {}
+global.userPrefixes = userPrefixes
 
 
 app.get("/status",(req,res)=>{
@@ -290,7 +297,7 @@ app.post("/connect", async (req,res)=>{
     try{
         const MachineBot = await startMachineBot(number)
 
-        await delay(5000)
+        await delay(3000)
 
         let code = await MachineBot.requestPairingCode(number)
 
@@ -322,8 +329,7 @@ app.get("/prefix/:number",(req,res)=>{
 
     let WEB_LOGS = []
 
-    function addLog(message){
-
+function addLog(message){
     const log = {
     time: new Date().toLocaleTimeString(),
     msg: message

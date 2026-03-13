@@ -124,7 +124,7 @@ global.channelLink = "https://whatsapp.com/channel/0029Va90zAnIHphOuO8Msp3A";
 global.ytch = "Verison 20";
 
 // Add this near the top of main.js with other global configurations
-let prefix = "*"
+
 async function handleMessages(sock,messageUpdate,printLog) {
     let chatId = null;
     try {
@@ -152,8 +152,8 @@ async function handleMessages(sock,messageUpdate,printLog) {
         const isGroup = chatId.endsWith('@g.us');
         const senderIsSudo = await isSudo(senderId);
         const senderIsOwnerOrSudo = await isOwnerOrSudo(senderId,sock,chatId);
-        
-        // const botNumber = sock.user.id.split(":")[0]
+        const botNumber = sock.user.id.split(":")[0]
+        let prefix = global.userPrefixes[botNumber] || "*"
         // Handle button responses
         if (message.message?.buttonsResponseMessage) {
             const buttonId = message.message.buttonsResponseMessage.selectedButtonId;
@@ -888,7 +888,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith(prefix+'tagaudio'):
                 await tagAllAudio(sock,chatId,senderId,message,args);
                 break;
-            case userMessage.startsWith(prefix+'setprefixe'):
+            case userMessage.startsWith(prefix + 'setprefix'):
 
                 if (!message.key.fromMe && !senderIsOwnerOrSudo) {
                     await sock.sendMessage(chatId,{

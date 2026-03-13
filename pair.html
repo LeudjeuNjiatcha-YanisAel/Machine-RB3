@@ -129,7 +129,11 @@ transform:translateY(-3px);
 filter:brightness(1.1);
 }
 
-/* pairing code */
+@keyframes pulse{
+0%{opacity:1}
+50%{opacity:0.5}
+100%{opacity:1}
+}
 
 .codeBox{
 margin-top:15px;
@@ -137,8 +141,16 @@ font-size:22px;
 letter-spacing:3px;
 font-weight:600;
 color:var(--secondary);
+animation:pulse 1.5s infinite;
 }
 
+.prefixBox{
+margin-top:10px;
+font-size:18px;
+font-weight:500;
+color:var(--primary);
+animation: pukse 1.5s infinite
+};
 /* console */
 
 .console{
@@ -214,6 +226,7 @@ Deconnecter
 </div>
 
 <div class="codeBox" id="pairCode"></div>
+<div class="prefixBox" id="prefixUser"></div>
 
 <div class="console" id="console"></div>
 
@@ -293,10 +306,10 @@ log("✅ Code d'association generer")
 log("⚙️ Prefix utilisateur : "+data.prefix)
 
 }else{
-
-log("❌ Error connecting")
-
+    log("❌ Error connecting")
 }
+document.getElementById("prefixbox").innerText =
+"Prefix utilisateur : " + data.prefix
 
 }
 
