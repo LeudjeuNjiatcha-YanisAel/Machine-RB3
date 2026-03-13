@@ -49,155 +49,128 @@ const unzipper = require('unzipper');
 const { handleBadwordDetection } = require('./lib/antibadword');
 const {autoDeleteHandler} = require('./commands/autodelete');
 let hasConnected = false;
+
 // ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
-let XeonBotInc = null
+let MachineBot = null
 
-async function startSock(number){
-
-try{
-
-const sessionPath = `./sessions/${number}`
-
-const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
-
-const { version } = await fetchLatestBaileysVersion()
-
-const sock = makeWASocket({
-version,
-logger: pino({level:"silent"}),
-auth: state,
-printQRInTerminal:false,
-browser:['Ubuntu','Chrome','20.0.04'],
-connectTimeoutMs:60000,
-keepAliveIntervalMs:10000
-})
-store.bind(sock.ev)
-
-sock.ev.on("creds.update", saveCreds)
-
-/* ===================== MESSAGES ===================== */
-
-sock.ev.on("messages.upsert", async (chatUpdate)=>{
+async function startMachineBot(number){
 
 try{
+    const sessionPath = `./sessions/${number}`
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath)
+    const { version } = await fetchLatestBaileysVersion()
 
-if(chatUpdate.type !== "notify") return
+    const MachineBot = makeWASocket({
+        version,
+        logger: pino({level:"silent"}),
+        auth: state,
+        printQRInTerminal:false,
+        browser:['Ubuntu','Chrome','20.0.04'],
+        connectTimeoutMs:60000,
+        keepAliveIntervalMs:10000
+    })
 
-const mek = chatUpdate.messages?.[0]
+    store.bind(MachineBot.ev)
+    MachineBot.ev.on("creds.update",saveCreds)
 
-if(!mek) return
-if(!mek.message) return
+    // MESSAGES
 
-/* ignore status */
+    MachineBot.ev.on("messages.upsert", async (chatUpdate)=>{
+        try{
+            if(chatUpdate.type !== "notify") return
 
-if(mek.key?.remoteJid === "status@broadcast"){
-await handleStatus(sock, chatUpdate)
-return
-}
+            const mek = chatUpdate.messages[0]
 
-/* ignore messages du bot */
+            await reactToAllMessages(MachineBot,mek)
+            if(!mek.message) return;
+            await autoResponse(MachineBot,mek)
+            await autoDeleteHandler(MachineBot, mek)
 
-if(mek.key.fromMe) return
+            mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
+            if (mek.key && mek.key.remoteJid === 'status@broadcast') {
+                await handleStatus(MachineBot, chatUpdate);
+                return;
+            }
 
-/* reactions */
+            if (!mek?.message) return;
+            if (!MachineBot.public && !mek.key.fromMe && chatUpdate.type === 'notify') {
+                const isGroup = mek.key?.remoteJid?.endsWith('@g.us')
+                if (!isGroup) return
+            }
+            if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return    
+            if (MachineBot?.msgRetryCounterCache) {
+                MachineBot.msgRetryCounterCache.clear()
+            }
+            // trackActivity(mek);
+            try {
+                await handleMessages(MachineBot, chatUpdate, true)
+            }
+            catch (err) {
+                console.error("Erreur dans handleMessages :", err)
+                    if (mek.key && mek.key.remoteJid) {
+                        await MachineBot.sendMessage(mek.key.remoteJid, {
+                            text: '❌ Une erreur est survenue lors du traitement de votre message.'
+                            })
+                    }
+            }
+        }
+        catch(err){
+            console.log("❌ erreur messages:",err)
+        }
 
-await reactToAllMessages(sock, mek)
+    })
+    MachineBot.ev.on("connection.update", async (update)=>{
+        const { connection, lastDisconnect } = update
+        if(connection === "connecting"){
+            addLog('🔄 Connexion à WhatsApp en cours...');
+        }
 
-/* auto response */
+        if(connection === "open"){
+            addLog("✅ "+number+" connecté")
+            addLog('🤖 Bot connecté avec succès !');
+            bots[number] = MachineBot
+            const botNumber = MachineBot.user.id.split(':')[0] + '@s.whatsapp.net';
+                try{
+                    await MachineBot.sendMessage(botNumber, {
+                        text:
+                            `🤖 *Bot connecté avec succès*🤖!\n\n` +
+                            `⏰ *Heure* : ${new Date().toLocaleString()}\n` +
+                            `✅ *Statut* : En ligne Et Operationnel\n`
 
-await autoResponse(sock, mek)
+                    });
+                }catch(err){
+                    console.error('Erreur lors de l’envoi du message de bienvenue :', err);
+                }
+        }
 
-/* auto delete */
+        if(connection === "close"){
+            const reason = new Boom(lastDisconnect?.error)?.output?.statusCode
+            console.log("connexion fermée :",reason)
+            if(reason === DisconnectReason.loggedOut){
+                addLog("❌ "+number+" deconnecté")
+                delete bots[number]
+                delete userPrefixes[number]
+                fs.rmSync(sessionPath,{recursive:true,force:true})
+            }
+            else{
+                console.log("🔄 Reconnexion",number)
+                setTimeout(()=>{
+                try{ MachineBot.end() }catch{}
+                startMachineBot(number)
+                },4000)
+            }
 
-await autoDeleteHandler(sock, mek)
+        }
+    })
 
-/* anti badword */
+    return MachineBot
 
-await handleBadwordDetection(sock, mek)
+    }catch(err){
+        console.log("Erreur startMachineBot :",err)
 
-/* handler principal */
-
-await handleMessages(sock, chatUpdate, true)
-
-}catch(err){
-
-console.log("❌ erreur messages:",err)
-
-}
-
-})
-
-/* ===================== GROUP EVENTS ===================== */
-
-sock.ev.on("group-participants.update", async (data)=>{
-
-try{
-
-await handleGroupParticipantUpdate(sock, data)
-
-}catch(err){
-
-console.log("❌ erreur group:",err)
-
-}
-
-})
-
-sock.ev.on("connection.update", async (update)=>{
-
-const { connection, lastDisconnect } = update
-
-if(connection === "connecting"){
-addLog("⏳ Connection "+number)
-}
-
-if(connection === "open"){
-
-addLog("✅ "+number+" connecté")
-
-bots[number] = sock
-
-}
-
-if(connection === "close"){
-
-const reason = new Boom(lastDisconnect?.error)?.output?.statusCode
-
-console.log("connexion fermée :",reason)
-
-if(reason === DisconnectReason.loggedOut){
-
-addLog("❌ "+number+" deconnecté")
-
-delete bots[number]
-delete userPrefixes[number]
-
-fs.rmSync(sessionPath,{recursive:true,force:true})
-
-}else{
-
-console.log("🔄 Reconnexion",number)
-
-setTimeout(()=>{
-try{ sock.end() }catch{}
-startSock(number)
-},4000)
-
-}
-
-}
-
-})
-
-return sock
-
-}catch(err){
-
-console.log("Erreur startSock :",err)
-
-}
+    }
 
 }
 
@@ -272,107 +245,97 @@ let userPrefixes = {}
 
 
 app.get("/status",(req,res)=>{
+    const list = Object.keys(bots).map(num => ({
+    number:num,
+    prefix:userPrefixes[num] || "*"
+    }))
 
-const list = Object.keys(bots).map(num => ({
-number:num,
-prefix:userPrefixes[num] || "*"
-}))
-
-res.json({
-connected:Object.keys(bots).length > 0,
-users:Object.keys(bots).length,
-list:list
-})
-
+    res.json({
+    connected:Object.keys(bots).length > 0,
+    users:Object.keys(bots).length,
+    list:list
+    })
 })
 
 app.use(express.json())
 
 app.post("/connect", async (req,res)=>{
 
-const number = req.body.number
+    const number = req.body.number
 
-if(!number){
-return res.json({error:true})
-}
+    if(!number){
+        return res.json({error:true})
+    }
 
-if(bots[number]){
-return res.json({
-error:true,
-message:"Ce numéro est déjà connecté"
-})
-}
+    if(bots[number]){
+        return res.json({
+        error:true,
+        message:"Ce numéro est déjà connecté"
+        })
+    }
 
-if(Object.keys(bots).length >= MAX_USERS){
-return res.json({
-error:true,
-message:"Maximum utilisateurs connectés atteint"
-})
-}
+    if(Object.keys(bots).length >= MAX_USERS){
+        return res.json({
+        error:true,
+        message:"Maximum utilisateurs connectés atteint"
+        })
+    }
 
-const randomPrefixes = ["!","#","$","&","?","%"]
+    const randomPrefixes = ["!","#","$","&","?","%"]
+    if(Object.keys(bots).length >= 1){
+        userPrefixes[number] = randomPrefixes[Math.floor(Math.random()*randomPrefixes.length)]
+    }else{
+        userPrefixes[number] = "*"
+    }
+    try{
+        const MachineBot = await startMachineBot(number)
 
-if(Object.keys(bots).length >= 1){
-userPrefixes[number] = randomPrefixes[Math.floor(Math.random()*randomPrefixes.length)]
-}else{
-userPrefixes[number] = "*"
-}
+        await delay(5000)
 
-try{
+        let code = await MachineBot.requestPairingCode(number)
 
-const sock = await startSock(number)
+        PAIRING_CODE = code
 
-await delay(5000)
+        code = code.match(/.{1,4}/g).join("-")
 
-let code = await sock.requestPairingCode(number)
+        addLog("📲 Code généré pour "+number)
 
-PAIRING_CODE = code
-
-code = code.match(/.{1,4}/g).join("-")
-
-addLog("📲 Code généré pour "+number)
-
-res.json({
-code,
-prefix:userPrefixes[number]
-})
-
-}catch(err){
-
-console.log(err)
-
-res.json({error:true})
-
-}
-
+        res.json({
+        code,
+        prefix:userPrefixes[number]
+        })
+    }catch(err){
+        console.log(err)
+        res.json({error:true})
+    }
 })
 
 app.get("/prefix/:number",(req,res)=>{
 
-const number = req.params.number
+    const number = req.params.number
 
-res.json({
-prefix:userPrefixes[number] || "*"
-})
+    res.json({
+    prefix:userPrefixes[number] || "*"
+    })
 
-})
+    })
 
-let WEB_LOGS = []
+    let WEB_LOGS = []
 
-function addLog(message){
+    function addLog(message){
 
-const log = {
-time: new Date().toLocaleTimeString(),
-msg: message
-}
+    const log = {
+    time: new Date().toLocaleTimeString(),
+    msg: message
+    }
 
-WEB_LOGS.push(log)
+    WEB_LOGS.push(log)
 
-if(WEB_LOGS.length > 200){
-WEB_LOGS.shift()
-}
+    if(WEB_LOGS.length > 200){
+    WEB_LOGS.shift()
+    }
 
-console.log(message)
+    console.log(message)
 
 }
 
