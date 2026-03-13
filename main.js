@@ -888,7 +888,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith(prefix+'tagaudio'):
                 await tagAllAudio(sock,chatId,senderId,message,args);
                 break;
-            case userMessage.startsWith(prefix + 'setprefix'):
+            case userMessage.startsWith(prefix+'setprefixe'):
 
                 if (!message.key.fromMe && !senderIsOwnerOrSudo) {
                     await sock.sendMessage(chatId,{
