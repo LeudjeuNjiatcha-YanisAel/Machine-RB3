@@ -118,15 +118,26 @@ background:linear-gradient(45deg,var(--primary),var(--secondary));
 box-shadow:0 5px 20px rgba(88,101,242,0.4);
 }
 
+@keyframes pulse{
+0%{opacity:1}
+50%{opacity:0.5}
+100%{opacity:1}
+}
+
+.admin{
+border-style:none;
+background:linear-gradient(45deg,#ff7b00,#ff004c);
+box-shadow:0 5px 20px rgba(255,0,80,0.4);
+cursor:pointer;
+animation: pulse 2.5s infinite;
+}
+
 .btn:hover{
 transform:translateY(-3px);
 filter:brightness(1.1);
 }
 
-.admin{
-background:linear-gradient(45deg,#ff7b00,#ff004c);
-box-shadow:0 5px 20px rgba(255,0,80,0.4);
-}
+
 
 .features{
 display:grid;
@@ -218,7 +229,9 @@ Associer avec un code
 <a href="/qr" class="btn secondary">
 Scanner QR Code
 </a>
-
+<button onclick="openAdmin()" class="btn admin">
+Admin
+</button>
 </div>
 
 <div class="features">
@@ -307,9 +320,6 @@ font-size:13px;
 font-family:monospace;
 "></div>
 
-<button onclick="openAdmin()" class="btn admin">
-Admin
-</button>
 
 <div class="footer">
  MACHINE VB3 - Bot IA WhatsApp de nouvelle génération. © 2026 Tous droits réservés.
