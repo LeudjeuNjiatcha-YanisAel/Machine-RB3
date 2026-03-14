@@ -275,7 +275,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 
                 // Only run chatbot in public mode or for owner/sudo
                 if (isPublic || isOwnerOrSudoCheck) {
-                    await handleChatbotResponse(number,sock,chatId,message,userMessage,senderId);
+                    await handleChatbotResponse(botNumber,sock,chatId,message,userMessage,senderId);
                 }
             }
             return;
