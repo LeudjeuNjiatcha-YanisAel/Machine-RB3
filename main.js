@@ -645,7 +645,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 }
 
                 const match = userMessage.slice(8).trim();
-                await handleChatbotCommand(sock,chatId,message,match);
+                await handleChatbotCommand(botNumber,sock,chatId,message,match);
                 break;
             case userMessage.startsWith(prefix+'take') || userMessage.startsWith(prefix+'steal'):
                 {
