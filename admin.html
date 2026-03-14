@@ -175,7 +175,15 @@
         ● Bot hors ligne
         </span>
         </div>
-
+        <a href="/" style="
+            position:absolute;
+            left:20px;
+            top:20px;
+            font-size:18px;
+            text-decoration:none;
+            color:#1bd96a;
+            ">⬅ Retour
+        </a>
         <div class="logo">🤖</div>
         <h1>MACHINE VB3<br>ADMIN</h1>
         <p class="subtitle">Bienvenue sur le panneau d'administration de MACHINE VB3. Ici, vous pouvez gérer votre bot IA WhatsApp, visualiser les analyses et configurer les paramètres.</p>
@@ -220,7 +228,7 @@
         }
     }
 
-    setInterval(checkBot,3000)
+    setInterval(checkBot,1000)
 
     const password = sessionStorage.getItem("adminAccess")
 
