@@ -100,9 +100,9 @@ function getQuickReply(text) {
 }
 
 async function autoResponse(sock, msg) {
+    const botNumber = sock.user.id.split(":")[0]
     let prefix = global.userPrefixes[botNumber] || "*"
     try {
-        const botNumber = sock.user.id.split(":")[0]
         if (!msg?.key?.remoteJid) return;
 
         const remoteJid = msg.key.remoteJid;
