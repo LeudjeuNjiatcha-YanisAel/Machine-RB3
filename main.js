@@ -55,14 +55,12 @@ const warningsCommand = require('./commands/warnings');
 const ttsCommand = require('./commands/tts');
 const { tictactoeCommand,handleTicTacToeMove } = require('./commands/tictactoe');
 const { incrementMessageCount,topMembers } = require('./commands/topmembers');
-const ownerCommand = require('./commands/owner');
 const deleteCommand = require('./commands/delete');
 const { Antilink } = require('./lib/antilink');
 const { handleMentionDetection,mentionToggleCommand,setMentionCommand } = require('./commands/mention');
 const kickCommand = require('./commands/kick');
 const { complimentCommand } = require('./commands/compliment');
 const { insultCommand } = require('./commands/insult');
-const { clearCommand } = require('./commands/clear');
 const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
 const { welcomeCommand,handleJoinEvent } = require('./commands/welcome');
@@ -82,11 +80,9 @@ const emojimixCommand = require('./commands/emojimix');
 const { handlePromotionEvent } = require('./commands/promote');
 const { handleDemotionEvent } = require('./commands/demote');
 const viewOnceCommand = require('./commands/viewonce');
-const clearSessionCommand = require('./commands/clearsession');
 const { autoStatusCommand,handleStatusUpdate,statusCommand } = require('./commands/autostatus');
 const textmakerCommand = require('./commands/textmaker');
 const { handleAntideleteCommand,handleMessageRevocation,storeMessage } = require('./commands/antidelete');
-const clearTmpCommand = require('./commands/cleartmp');
 const setProfilePicture = require('./commands/setpp');
 const { setGroupDescription,setGroupName,setGroupPhoto } = require('./commands/groupmanage');
 
@@ -109,7 +105,6 @@ const {execute,handleSlam} = require('./commands/million');
 const resumeCommand = require('./commands/resume.js');
 const {logCommand,logMessage,logBotMessage} = require('./lib/audit');
 const auditCommand = require('./commands/audit');
-const implante = require("./commands/implante");
 const ytsearch = require('./commands/ytsearch');
 const ytmp4 = require('./commands/ytmp4');
 const {handleAntitagCommand,handleTagDetection} = require('./commands/antitag');
@@ -183,8 +178,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             message.message?.buttonsResponseMessage?.selectedButtonId?.trim() ||
             ''
         ).toLowerCase().replace(/\.\s+/g,'.').trim();
-
-        await implante(sock, message, userMessage || "");
 
         // Preserve raw message for commands like .tag that need original casing
         const rawText = message.message?.conversation?.trim() ||
@@ -282,7 +275,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 
                 // Only run chatbot in public mode or for owner/sudo
                 if (isPublic || isOwnerOrSudoCheck) {
-                    await handleChatbotResponse(sock,chatId,message,userMessage,senderId);
+                    await handleChatbotResponse(number,sock,chatId,message,userMessage,senderId);
                 }
             }
             return;
@@ -302,7 +295,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
         const isAdminCommand = adminCommands.some(cmd => userMessage.startsWith(cmd));
 
         // List of owner commands
-        const ownerCommands = ['*mode','*autostatus','*antidelete','*cleartmp','*setpp','*clearsession','*areact','*autoreact','*autotyping','*autoread','*pmblocker'];
+        const ownerCommands = ['*mode','*autostatus','*antidelete','*setpp','*areact','*autoreact','*autotyping','*autoread','*pmblocker'];
         const isOwnerCommand = ownerCommands.some(cmd => userMessage.startsWith(cmd));
 
         let isSenderAdmin = false;
@@ -584,9 +577,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith(prefix+'insult'):
                 await insultCommand(sock,chatId,message);
                 break;
-            case userMessage.startsWith(prefix+'clear'):
-                if (isGroup) await clearCommand(sock,chatId);
-                break;
             case userMessage.startsWith(prefix+'promote'):
                 const mentionedJidListPromote = message.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
                 await promoteCommand(sock,chatId,mentionedJidListPromote,message);
@@ -603,7 +593,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
                 break;
             case userMessage.startsWith(prefix+'welcome'):
                 if (isGroup) {
-                    // Check admin status if not already checked
                     if (!isSenderAdmin) {
                         const adminStatus = await isAdmin(sock,chatId,senderId);
                         isSenderAdmin = adminStatus.isSenderAdmin;
@@ -699,9 +688,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith(prefix+'extract'):
                 await viewOnceCommand(sock,chatId,message);
                 break;
-            case userMessage.startsWith(prefix+'clearsession') || userMessage.startsWith(prefix+'clearsesi'):
-                await clearSessionCommand(sock,chatId,message);
-                break;
             case userMessage.startsWith(prefix+'autostatus') || userMessage.startsWith(prefix+'statusall'):
                 const autoStatusArgs = userMessage.split(' ').slice(1);
                 await autoStatusCommand(sock,chatId,message,autoStatusArgs);
@@ -774,9 +760,6 @@ async function handleMessages(sock,messageUpdate,printLog) {
             case userMessage.startsWith(prefix+'quit'):
                 // Handle quit command for tictactoe game
                 await handleTicTacToeMove(sock,chatId,senderId,'quit');
-                break;
-            case userMessage.startsWith(prefix+'cleartmp'):
-                await clearTmpCommand(sock,chatId,message);
                 break;
             case userMessage.startsWith(prefix+'setpp'):
                 await setProfilePicture(sock,chatId,message);

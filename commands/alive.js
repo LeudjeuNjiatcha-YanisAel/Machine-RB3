@@ -10,7 +10,7 @@ async function aliveCommand(sock, chatId, message) {
                        `• Protection Anti-lien\n` +
                        `• Commandes amusantes\n` +
                        `• Et bien plus encore !\n\n` +
-                       `Tapez **menu* pour voir la liste complète des commandes`;
+                       `Tapez *menu* preceder de votre prefix pour voir la liste complète des commandes`;
 
         await sock.sendMessage(chatId, {
             text: message1,

@@ -194,7 +194,7 @@ font-size:20px;
 text-decoration:none;
 color:rgb(16, 152, 93);
 ">
-⬅ Retour Au Menu
+⬅ Retour
 </a>
 
 <div style="margin-top:20px;position:absolute;left:80%;">
@@ -304,21 +304,43 @@ log("✅ Code d'association generer")
 log("⚙️ Prefix utilisateur : "+data.prefix)
 
 }else{
-    log("❌ Error connecting")
+    log("❌ Erreur de connection")
 }
 
 }
 
 async function disconnectBot(){
 
-await fetch("/disconnect",{method:"POST"})
+let number = document.getElementById("number").value
+number = number.replace(/[^0-9]/g,"")
+
+if(!number){
+log("❌ Entrer votre numero")
+return
+}
+
+const res = await fetch("/disconnect",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({number})
+})
+
+const data = await res.json()
+
+if(data.success){
 
 document.getElementById("pairCode").innerText=""
+document.getElementById("prefixUser").innerText=""
 
-log("⚠ Bot deconnecter")
+log("❌ Bot supprimé : "+number)
+
+}else{
+
+log("⚠ "+data.message)
 
 }
 
+}
 async function checkStatus(){
 
 const res = await fetch("/status")

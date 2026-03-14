@@ -1,8 +1,3 @@
-/**
- * Knight Bot - Un Bot WhatsApp
- * Commande Autoread - Lire automatiquement tous les messages
- */
-
 const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
@@ -10,7 +5,6 @@ const isOwnerOrSudo = require('../lib/isOwner');
 // Chemin pour stocker la configuration
 const configPath = path.join(__dirname, '..', 'data', 'autoread.json');
 
-// Initialiser le fichier de configuration s'il n'existe pas
 function initConfig() {
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, JSON.stringify({ enabled: false }, null, 2));

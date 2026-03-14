@@ -5,8 +5,7 @@ const { callGeminiOfficial,callMetaAI,callOpenAI } = require('./commands/ai');
 
 const CONFIG_PATH = path.join(__dirname, './data/autoresponse.json');
 
-let AUTO_RESPONSE_ENABLED = true;
-
+let AUTO_RESPONSE_STATE = {};
 
 function cleanJid(jid = '') {
     return jid.split(':')[0];
@@ -15,8 +14,7 @@ function cleanJid(jid = '') {
 function loadState() {
     try {
         if (fs.existsSync(CONFIG_PATH)) {
-            const data = JSON.parse(fs.readFileSync(CONFIG_PATH));
-            AUTO_RESPONSE_ENABLED = data.enabled ?? true;
+            AUTO_RESPONSE_STATE = JSON.parse(fs.readFileSync(CONFIG_PATH));
         }
     } catch (err) {
         console.error("AutoResponse Load Error:", err);
@@ -27,34 +25,56 @@ function saveState() {
     try {
         fs.writeFileSync(
             CONFIG_PATH,
-            JSON.stringify({ enabled: AUTO_RESPONSE_ENABLED }, null, 2)
+            JSON.stringify(AUTO_RESPONSE_STATE, null, 2)
         );
     } catch (err) {
         console.error("AutoResponse Save Error:", err);
     }
 }
 
+let saveTimeout = null
+
+function scheduleSave(){
+
+    if(saveTimeout) return
+
+    saveTimeout = setTimeout(()=>{
+
+        saveState()
+        saveTimeout = null
+
+    },2000)
+
+}
+
 loadState();
 
 const conversationMemory = {};
 
-function updateMemory(userId, role, text) {
-    if (!conversationMemory[userId]) {
-        conversationMemory[userId] = [];
+function updateMemory(botNumber, userId, role, text) {
+
+    if (!conversationMemory[botNumber]) {
+        conversationMemory[botNumber] = {};
     }
 
-    conversationMemory[userId].push(`${role}: ${text}`);
+    if (!conversationMemory[botNumber][userId]) {
+        conversationMemory[botNumber][userId] = [];
+    }
 
-    if (conversationMemory[userId].length > 6) {
-        conversationMemory[userId].shift();
+    conversationMemory[botNumber][userId].push(`${role}: ${text}`);
+
+    if (conversationMemory[botNumber][userId].length > 6) {
+        conversationMemory[botNumber][userId].shift();
     }
 }
 
-function getHistory(userId) {
-    return conversationMemory[userId]
-        ? conversationMemory[userId].join('\n')
+function getHistory(botNumber, userId) {
+
+    return conversationMemory?.[botNumber]?.[userId]
+        ? conversationMemory[botNumber][userId].join('\n')
         : '';
 }
+
 function random(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
@@ -80,7 +100,9 @@ function getQuickReply(text) {
 }
 
 async function autoResponse(sock, msg) {
+    let prefix = global.userPrefixes[botNumber] || "*"
     try {
+        const botNumber = sock.user.id.split(":")[0]
         if (!msg?.key?.remoteJid) return;
 
         const remoteJid = msg.key.remoteJid;
@@ -111,7 +133,8 @@ async function autoResponse(sock, msg) {
 
         const senderId = cleanJid(senderIdRaw);
 
-        if (args[0] === '*autoresponse') {
+        // if (args[0] === '*autoresponse') 
+        if (rawText.startsWith(prefix + "autoresponse")) {
             const isOwner = await isOwnerOrSudo(senderId, sock, remoteJid);
 
             if (!isOwner) {
@@ -123,8 +146,8 @@ async function autoResponse(sock, msg) {
             }
 
             if (args[1] === 'off') {
-                AUTO_RESPONSE_ENABLED = false;
-                saveState();
+                AUTO_RESPONSE_STATE[botNumber] = false;
+                scheduleSave();
                 return sock.sendMessage(
                     remoteJid,
                     { text: "⛔ Auto-response désactivée." },
@@ -133,8 +156,8 @@ async function autoResponse(sock, msg) {
             }
 
             if (args[1] === 'on') {
-                AUTO_RESPONSE_ENABLED = true;
-                saveState();
+                AUTO_RESPONSE_STATE[botNumber] = true;
+                scheduleSave();
                 return sock.sendMessage(
                     remoteJid,
                     { text: "✅ Auto-response activée." },
@@ -144,15 +167,15 @@ async function autoResponse(sock, msg) {
 
             return sock.sendMessage(
                 remoteJid,
-                { text: "Usage: *autoresponse on/off" },
+                { text: `Usage: ${prefix}autoresponse on/off` },
                 { quoted: msg }
             );
         }
 
-        if (!AUTO_RESPONSE_ENABLED) return;
+        if (!AUTO_RESPONSE_STATE[botNumber]) return;
 
-        updateMemory(senderId, "User", rawText);
-        const history = getHistory(senderId);
+        updateMemory(botNumber,senderId, "User", rawText);
+        const history = getHistory(botNumber,senderId);
 
         let reply = getQuickReply(rawText);
 
@@ -205,7 +228,7 @@ Message:
             }
         }
 
-        updateMemory(senderId, "", reply);
+        updateMemory(botNumber,senderId, "Bot", reply);
 
         await sock.sendMessage(
             remoteJid,

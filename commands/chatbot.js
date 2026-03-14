@@ -16,10 +16,11 @@ const model = genAI.getGenerativeModel({
         });
 const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 
-const chatMemory = {
-    messages: new Map(),
-    userInfo: new Map()
-};
+// const memory = {
+//     messages: new Map(),
+//     userInfo: new Map()
+// };
+const botMemory = new Map();
 
 // Pour la rotation des cles 
 async function generateGeminiWithRotation(prompt) {
@@ -53,20 +54,28 @@ async function generateGeminiWithRotation(prompt) {
     throw new Error("Toutes les clés Gemini ont échoué");
 }
 
-function addMessageToMemory(userId, role, text) {
-    if (!chatMemory.messages.has(userId))
-        chatMemory.messages.set(userId, []);
+function getBotMemory(number){
 
-    const history = chatMemory.messages.get(userId);
+    if(!botMemory.has(number)){
+        botMemory.set(number,{
+            messages:new Map(),
+            userInfo:new Map()
+        });
+    }
 
-    history.push({
-        role,
-        text,
-        time: Date.now()
-    });
+    return botMemory.get(number);
+}
 
-    // garder seulement 12 messages
-    if (history.length > 12) history.shift();
+function getBotMemory(number){
+
+    if(!botMemory.has(number)){
+        botMemory.set(number,{
+            messages:new Map(),
+            userInfo:new Map()
+        });
+    }
+
+    return botMemory.get(number);
 }
 
 function loadUserGroupData() {
@@ -228,7 +237,8 @@ Réponds naturellement :
 
 
 // ================= CHATBOT RESPONSE =================
-async function handleChatbotResponse(sock, chatId, message, userMessage, senderId) {
+async function handleChatbotResponse(number,sock, chatId, message, userMessage, senderId) {
+    const memory = getBotMemory(number);
     const isGroup = chatId.endsWith('@g.us');
     if (!isGroup) return;
 
@@ -260,26 +270,26 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
         context?.participant &&
         context.participant.includes(botJid.split('@')[0]);
 
-        if (!chatMemory.userInfo.has(senderId))
-            chatMemory.userInfo.set(senderId, {});
+        if (!memory.userInfo.has(senderId))
+            memory.userInfo.set(senderId, {});
 
         const info = extractUserInfo(cleanedMessage);
         if (Object.keys(info).length > 0) {
-            chatMemory.userInfo.set(senderId, {
-                ...chatMemory.userInfo.get(senderId),
+            memory.userInfo.set(senderId, {
+                ...memory.userInfo.get(senderId),
                 ...info
             });
         }
 
-        addMessageToMemory(senderId, "user", cleanedMessage);
+        addMessageToMemory(number,senderId, "user", cleanedMessage);
 
-        const history = chatMemory.messages.get(senderId);
+        const history = memory.messages.get(senderId);
 
         const typingPromise = showTyping(sock, chatId, cleanedMessage);
 
         const response = await getAIResponse(cleanedMessage, {
             messages: history,
-            userInfo: chatMemory.userInfo.get(senderId)
+            userInfo: memory.userInfo.get(senderId)
         });
         await typingPromise;
 
@@ -290,7 +300,7 @@ async function handleChatbotResponse(sock, chatId, message, userMessage, senderI
         }, { quoted: message });
 
         // Ajouter réponse bot mémoire
-        addMessageToMemory(senderId, "assistant", response);
+        addMessageToMemory(number,senderId, "assistant", response);
 
     } catch (err) {
         console.error("Chatbot error:", err);

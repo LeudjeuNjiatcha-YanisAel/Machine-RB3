@@ -8,7 +8,7 @@ async function helpCommand(sock,chatId,message,prefix) {
 
     const helpMessage = `
     ╭━━━✨━━━━━━━━━━━━━━✨━╮
-    ┃ 🤖 *MACHINE BOT ACCUEIL*           ┃
+    ┃ 🤖 *MACHINE BOT ACCUEIL* 🤖        ┃
     ╰━━━✨━━━━━━━━━━━━━━✨━╯
  
 ✦ • ────── ✾ ────── • ✦

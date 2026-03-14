@@ -123,6 +123,11 @@ transform:translateY(-3px);
 filter:brightness(1.1);
 }
 
+.admin{
+background:linear-gradient(45deg,#ff7b00,#ff004c);
+box-shadow:0 5px 20px rgba(255,0,80,0.4);
+}
+
 .features{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -245,6 +250,9 @@ Scanner QR Code
 </div>
 
 <h2 style="margin-top:40px" >Commandes du Bot</h2>
+<p class="subtitle">
+Utiliser les commandes avec votre prefixe attribuer lors de l'apparaige.
+</p>
 
 <div class="features">
 
@@ -299,6 +307,10 @@ font-size:13px;
 font-family:monospace;
 "></div>
 
+<button onclick="openAdmin()" class="btn admin">
+Admin
+</button>
+
 <div class="footer">
  MACHINE VB3 - Bot IA WhatsApp de nouvelle génération. © 2026 Tous droits réservés.
 </div>
@@ -312,15 +324,16 @@ font-family:monospace;
 async function updateUsers(){
 
 try{
+    const res = await fetch("/status")
+    const data = await res.json()
 
-const res = await fetch("/status")
-const data = await res.json()
+    const users = data.users
 
-const users = data.users
-
-document.getElementById("usersCount").innerText = users + " / 3 utilisateurs connectés"
-document.getElementById("users").style.color = "#0051ff"
-document.getElementById("users").style.fontWeight = "900"
+    if(data.connected){
+        document.getElementById("usersCount").innerText = users + " / 3 utilisateurs connectés"
+        document.getElementById("users").style.color = "#0051ff"
+        document.getElementById("users").style.fontWeight = "900"
+    }
 
 }catch(e){}
 
@@ -332,53 +345,61 @@ updateUsers()
 
 async function checkBot(){
 
-const res = await fetch("/status")
-const data = await res.json()
+    const res = await fetch("/status")
+    const data = await res.json()
 
-const status = document.getElementById("botStatus")
+    const status = document.getElementById("botStatus")
 
-if(data.connected){
-
-status.innerText="● Bot connecté"
-status.style.animation="onlineGlow 2s infinite"
-status.style.fontWeight="900"
-
-}else{
-
-status.innerText="● Bot hors ligne"
-status.style.color="#ff3b3b"
-status.style.animation="none"
+    if(data.connected){
+        status.innerText="● Bot connecté"
+        status.style.animation="onlineGlow 2s infinite"
+        status.style.fontWeight="900"
+    }else{
+        status.innerText="● Bot hors ligne"
+        status.style.color="#ff3b3b"
+        status.style.animation="none"
+    }
 
 }
-
-}
-
-setInterval(checkBot,3000)
+setInterval(checkBot,2000)
 
 async function updateLogs(){
+    const res = await fetch("/logs")
+    const logs = await res.json()
 
-const res = await fetch("/logs")
-const logs = await res.json()
+    const consoleBox = document.getElementById("console")
 
-const consoleBox = document.getElementById("console")
+    consoleBox.innerHTML=""
 
-consoleBox.innerHTML=""
+    logs.forEach(l=>{
 
-logs.forEach(l=>{
+    const line = document.createElement("div")
 
-const line = document.createElement("div")
+    line.innerText = "["+l.time+"] "+l.msg
 
-line.innerText = "["+l.time+"] "+l.msg
+    consoleBox.appendChild(line)
 
-consoleBox.appendChild(line)
+    })
 
-})
-
-consoleBox.scrollTop = consoleBox.scrollHeight
-
+    consoleBox.scrollTop = consoleBox.scrollHeight
 }
 
 setInterval(updateLogs,2000)
+
+function openAdmin(){
+    const pass = prompt("Mot de passe administrateur")
+
+    if(pass === "yanisael2007"){
+
+    sessionStorage.setItem("adminAccess","ok")
+    window.location.href="/admin"
+
+    }else{
+
+    alert("Mot de passe incorrect")
+
+    }
+}
 
 </script>
 </html>

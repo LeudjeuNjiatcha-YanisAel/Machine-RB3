@@ -53,7 +53,15 @@ let hasConnected = false;
 // ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
+
 let MachineBot = null
+let BOT_CONNECTED = false
+let PAIRING_CODE = null
+let QR_CODE = null
+const MAX_USERS = 3
+let bots = {}
+let userPrefixes = {}
+global.userPrefixes = userPrefixes
 
 async function startMachineBot(number){
 
@@ -226,12 +234,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-// Route de ping
+// Ajout des routes au serveur
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'))
+})
+
+app.get("/users", (req, res) => {
+res.sendFile(__dirname + "/users.html")
+}) 
+
+app.get("/admin",(req,res)=>{
+res.sendFile(path.join(__dirname,"admin.html"))
 })
 
 app.get('/qr', (req, res) => {
@@ -241,15 +257,6 @@ app.get('/qr', (req, res) => {
 app.get("/qr-verif",(req,res)=>{
     res.json({qr:QR_CODE})
 })
-
-let BOT_CONNECTED = false
-let PAIRING_CODE = null
-let QR_CODE = null
-const MAX_USERS = 3
-let bots = {}
-let userPrefixes = {}
-global.userPrefixes = userPrefixes
-
 
 app.get("/status",(req,res)=>{
     const list = Object.keys(bots).map(num => ({
@@ -353,8 +360,52 @@ app.get("/paircode",(req,res)=>{
 res.json({code:PAIRING_CODE})
 })
 
-app.post("/disconnect",(req,res)=>{
-process.exit(0)
+app.post("/disconnect", async (req,res)=>{
+
+const number = req.body.number
+
+if(!number){
+return res.json({error:true,message:"Numero requis"})
+}
+
+if(!bots[number]){
+return res.json({
+error:true,
+message:"Bot introuvable"
+})
+}
+
+try{
+
+await bots[number].logout()
+
+delete bots[number]
+delete userPrefixes[number]
+
+const sessionPath = `./sessions/${number}`
+
+if(fs.existsSync(sessionPath)){
+fs.rmSync(sessionPath,{recursive:true,force:true})
+}
+
+addLog("❌ Bot "+number+" deconnecté")
+
+res.json({
+success:true,
+message:"Bot supprimé"
+})
+
+}catch(err){
+
+console.log(err)
+
+res.json({
+error:true,
+message:"Erreur de deconnexion"
+})
+
+}
+
 })
 // Démarrage du serveur web
 app.listen(PORT, () => {
