@@ -22,6 +22,10 @@ const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 // };
 const botMemory = new Map();
 
+function getUserGroupFile(number){
+    return path.join(__dirname,`../data/${number}/group.json`);
+}
+
 // Pour la rotation des cles 
 async function generateGeminiWithRotation(prompt) {
 
