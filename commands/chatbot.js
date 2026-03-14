@@ -82,17 +82,17 @@ function getBotMemory(number){
     return botMemory.get(number);
 }
 
-function loadUserGroupData() {
-    try {
-        const data = JSON.parse(fs.readFileSync(USER_GROUP_DATA));
-
-        if (!data.chatbot || typeof data.chatbot !== 'object')
-            data.chatbot = {};
-
+function loadUserGroupData(number){
+    const file = getUserGroupFile(number);
+    try{
+        const data = JSON.parse(fs.readFileSync(file));
+    if(!data.chatbot)
+        data.chatbot = {};
         return data;
-    } catch {
-        return { chatbot: {} };
+    }catch{
+        return {chatbot:{}};
     }
+
 }
 
 function getRandomDelay(text = "") {
@@ -249,7 +249,7 @@ async function handleChatbotResponse(number,sock, chatId, message, userMessage, 
     // 🚫 Ignore les messages envoyés par toi-même
     if (message.key.fromMe) return;
 
-    const data = loadUserGroupData();
+    const data = loadUserGroupData(number);
     if (!data.chatbot[chatId]) return;
 
     try {
@@ -311,9 +311,9 @@ async function handleChatbotResponse(number,sock, chatId, message, userMessage, 
     }
 }
 
-async function handleChatbotCommand(sock, chatId, message, match) {
+async function handleChatbotCommand(number,sock, chatId, message, match) {
 
-    const data = loadUserGroupData();
+    const data = loadUserGroupData(number);
 
     if (!match) {
         return sock.sendMessage(chatId,{
