@@ -356,9 +356,9 @@ function addLog(message){
 
 }
 
-app.get("/log",(req,res)=>{
-    res.json(COMMAND_LOGS)
-})
+// app.get("/log",(req,res)=>{
+//     res.json(COMMAND_LOGS)
+// })
 
 app.get("/logs",(req,res)=>{
     res.json(WEB_LOGS)

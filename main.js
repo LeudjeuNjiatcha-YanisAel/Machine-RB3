@@ -210,7 +210,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // Only log command usage
         if (userMessage.startsWith(prefix+'')) {
             console.log(`📝 Commande utiliser en ${isGroup ? 'group' : 'private'}: ${userMessage}`);
-            commandLog(`📝 Commande utiliser en ${isGroup ? 'group' : 'private'}: ${userMessage}`)
+            // commandLog(`📝 Commande utiliser en ${isGroup ? 'group' : 'private'}: ${userMessage}`)
         }   
         // Read bot mode once; don't early-return so moderation can still run in private mode
         let isPublic = true;
