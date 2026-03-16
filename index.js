@@ -62,6 +62,8 @@ const MAX_USERS = 3
 let bots = {}
 let userPrefixes = {}
 global.userPrefixes = userPrefixes
+let log = global.COMMAND_LOGS
+
 
 async function startMachineBot(number){
 
@@ -356,9 +358,9 @@ function addLog(message){
 
 }
 
-// app.get("/log",(req,res)=>{
-//     res.json(COMMAND_LOGS)
-// })
+app.get("/log",(req,res)=>{
+    res.json(log)
+})
 
 app.get("/logs",(req,res)=>{
     res.json(WEB_LOGS)
