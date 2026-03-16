@@ -243,8 +243,12 @@ app.get('/pair', (req, res) => {
 })
 
 app.get("/users", (req, res) => {
-res.sendFile(__dirname + "/users.html")
+    res.sendFile(__dirname + "/users.html")
 }) 
+
+app.get("/visual",(req,res)=>{
+    res.sendFile(path.join(__dirname,'visual.html'))
+})
 
 app.get("/admin",(req,res)=>{
 res.sendFile(path.join(__dirname,"admin.html"))
