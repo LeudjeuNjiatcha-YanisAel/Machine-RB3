@@ -120,6 +120,24 @@ global.ytch = "Verison 20";
 
 // Add this near the top of main.js with other global configurations
 
+let COMMAND_LOGS = []
+
+function commandLog(message){
+    const log = {
+    time: new Date().toLocaleTimeString(),
+    msg: message
+    }
+
+    COMMAND_LOGS.push(log)
+
+    if(COMMAND_LOGS.length > 200){
+    COMMAND_LOGS.shift()
+    }
+
+    console.log(message)
+}
+
+
 async function handleMessages(sock,messageUpdate,printLog) {
     let chatId = null;
     try {
@@ -192,7 +210,8 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // Only log command usage
         if (userMessage.startsWith(prefix+'')) {
             console.log(`📝 Commande utiliser en ${isGroup ? 'group' : 'private'}: ${userMessage}`);
-        }
+            commandLog(`📝 Commande utiliser en ${isGroup ? 'group' : 'private'}: ${userMessage}`)
+        }   
         // Read bot mode once; don't early-return so moderation can still run in private mode
         let isPublic = true;
         try {

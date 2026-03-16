@@ -334,7 +334,7 @@ app.get("/prefix/:number",(req,res)=>{
 
     })
 
-    let WEB_LOGS = []
+let WEB_LOGS = []
 
 function addLog(message){
     const log = {
@@ -352,59 +352,59 @@ function addLog(message){
 
 }
 
+app.get("/log",(req,res)=>{
+    res.json(COMMAND_LOGS)
+})
+
 app.get("/logs",(req,res)=>{
-res.json(WEB_LOGS)
+    res.json(WEB_LOGS)
 })
 
 app.get("/paircode",(req,res)=>{
-res.json({code:PAIRING_CODE})
+    res.json({code:PAIRING_CODE})
 })
 
 app.post("/disconnect", async (req,res)=>{
+    const number = req.body.number
 
-const number = req.body.number
+    if(!number){
+        return res.json({error:true,message:"Numero requis"})
+    }
 
-if(!number){
-return res.json({error:true,message:"Numero requis"})
-}
+    if(!bots[number]){
+        return res.json({
+        error:true,
+        message:"Bot introuvable"
+    })
+    }
 
-if(!bots[number]){
-return res.json({
-error:true,
-message:"Bot introuvable"
-})
-}
+    try{
 
-try{
+        await bots[number].logout()
 
-await bots[number].logout()
+        delete bots[number]
+        delete userPrefixes[number]
 
-delete bots[number]
-delete userPrefixes[number]
+        const sessionPath = `./sessions/${number}`
 
-const sessionPath = `./sessions/${number}`
+        if(fs.existsSync(sessionPath)){
+        fs.rmSync(sessionPath,{recursive:true,force:true})
+        }
 
-if(fs.existsSync(sessionPath)){
-fs.rmSync(sessionPath,{recursive:true,force:true})
-}
+        addLog("❌ Bot "+number+" deconnecté")
 
-addLog("❌ Bot "+number+" deconnecté")
+        res.json({
+        success:true,
+        message:"Bot supprimé"
+        })
+    }catch(err){
+        console.log(err)
 
-res.json({
-success:true,
-message:"Bot supprimé"
-})
-
-}catch(err){
-
-console.log(err)
-
-res.json({
-error:true,
-message:"Erreur de deconnexion"
-})
-
-}
+        res.json({
+        error:true,
+        message:"Erreur de deconnexion"
+        })
+    }
 
 })
 // Démarrage du serveur web
