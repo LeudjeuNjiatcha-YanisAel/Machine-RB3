@@ -120,22 +120,22 @@ global.ytch = "Verison 20";
 
 // Add this near the top of main.js with other global configurations
 
-let COMMAND_LOGS = []
+// let COMMAND_LOGS = []
 
-function commandLog(message){
-    const log = {
-    time: new Date().toLocaleTimeString(),
-    msg: message
-    }
+// function commandLog(message){
+//     const log = {
+//     time: new Date().toLocaleTimeString(),
+//     msg: message
+//     }
 
-    COMMAND_LOGS.push(log)
+//     COMMAND_LOGS.push(log)
 
-    if(COMMAND_LOGS.length > 200){
-    COMMAND_LOGS.shift()
-    }
+//     if(COMMAND_LOGS.length > 200){
+//     COMMAND_LOGS.shift()
+//     }
 
-    console.log(message)
-}
+//     console.log(message)
+// }
 
 
 async function handleMessages(sock,messageUpdate,printLog) {
