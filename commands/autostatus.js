@@ -2,16 +2,55 @@ const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
 const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+
 // Chemin pour stocker la configuration de l’auto status
 const configPath = path.join(__dirname, '../data/autoStatus.json');
 
-// Initialiser le fichier de configuration s’il n’existe pas
-if (!fs.existsSync(configPath)) {
-    fs.writeFileSync(configPath, JSON.stringify({ 
-        enabled: false, 
-        reactOn: false,
-        download: false 
-    }));
+// Fonction pour obtenir toutes les config ou initialiser si vide
+function getConfig() {
+    if (!fs.existsSync(configPath)) {
+        fs.writeFileSync(configPath, JSON.stringify({}));
+    }
+    try {
+        return JSON.parse(fs.readFileSync(configPath));
+    } catch {
+        return {};
+    }
+}
+
+// Obtenir l'ID du bot courant (son numéro sans le domaine)
+function getBotId(sock) {
+    if (!sock?.user?.id) return 'default';
+    return sock.user.id.split(':')[0];
+}
+
+// Obtenir la config spécifique du bot courant
+function getBotConfig(sock) {
+    let config = getConfig();
+    const botId = getBotId(sock);
+    
+    // Migration: si le fichier contient l'ancienne structure globale
+    if (typeof config.enabled === 'boolean') {
+        config = {}; 
+    }
+    
+    if (!config[botId]) {
+        config[botId] = { enabled: false, reactOn: false, download: false };
+    }
+    return config[botId];
+}
+
+// Sauvegarder la config spécifique du bot courant
+function saveBotConfig(sock, botConfig) {
+    let config = getConfig();
+    const botId = getBotId(sock);
+    
+    if (typeof config.enabled === 'boolean') {
+        config = {};
+    }
+    
+    config[botId] = botConfig;
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 }
 
 function getRealJid(msg) {
@@ -25,8 +64,7 @@ function getRealJid(msg) {
 
 async function downloadStatusMedia(sock, msg) {
     try {
-
-        if (!isStatusDownloadEnabled()) return;
+        if (!isStatusDownloadEnabled(sock)) return;
 
         const message = msg.message;
         if (!message) return;
@@ -82,40 +120,32 @@ async function downloadStatusMedia(sock, msg) {
 
         // 📤 envoyer en privé
         if (type === "image") {
-
             await sock.sendMessage(ownerJid, {
                 image: buffer,
                 caption: caption
             });
-
         } 
         else if (type === "video") {
-
             await sock.sendMessage(ownerJid, {
                 video: buffer,
                 caption: caption
             });
-
         } 
         else if (type === "audio") {
-
             await sock.sendMessage(ownerJid, {
                 audio: buffer,
                 mimetype: "audio/mp4",
                 ptt: false
             });
-
             await sock.sendMessage(ownerJid, {
                 text: caption
             });
-
         }
 
     } catch (err) {
         console.log("❌ Erreur téléchargement statut :", err.message);
     }
 }
-
 
 async function autoStatusCommand(sock, chatId, msg, args) {
     try {
@@ -129,13 +159,13 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             return;
         }
 
-        // Lire la configuration actuelle
-        let config = JSON.parse(fs.readFileSync(configPath));
+        // Lire la configuration actuelle spécifique à ce bot
+        let botConfig = getBotConfig(sock);
 
         // Si aucun argument, afficher l’état actuel
         if (!args || args.length === 0) {
-            const status = config.enabled ? 'activé' : 'désactivé';
-            const reactStatus = config.reactOn ? 'activé' : 'désactivé';
+            const status = botConfig.enabled ? 'activé' : 'désactivé';
+            const reactStatus = botConfig.reactOn ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
                 text: `🔄 *Paramètres Auto Status*\n\n📱 *Vue automatique des statuts :* ${status}\n💫 *Réactions aux statuts :* ${reactStatus}\n\n*Commandes :*\n*autostatus on - Activer la vue automatique des statuts\n*autostatus off - Désactiver la vue automatique des statuts\n📥*autostatus download - Telecharge les statuts de vos contact online ou offline\n*autostatus react on - Activer les réactions aux statuts\n*autostatus react off - Désactiver les réactions aux statuts`,
             });
@@ -146,14 +176,14 @@ async function autoStatusCommand(sock, chatId, msg, args) {
         const command = args[0].toLowerCase();
         
         if (command === 'on') {
-            config.enabled = true;
-            fs.writeFileSync(configPath, JSON.stringify(config));
+            botConfig.enabled = true;
+            saveBotConfig(sock, botConfig);
             await sock.sendMessage(chatId, { 
                 text: '✅ La vue automatique des statuts a été activée !\nLe bot consultera désormais automatiquement tous les statuts des contacts.',
             });
         } else if (command === 'off') {
-            config.enabled = false;
-            fs.writeFileSync(configPath, JSON.stringify(config));
+            botConfig.enabled = false;
+            saveBotConfig(sock, botConfig);
             await sock.sendMessage(chatId, { 
                 text: '❌ La vue automatique des statuts a été désactivée !\nLe bot ne consultera plus automatiquement les statuts.',
             });
@@ -168,14 +198,14 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             
             const reactCommand = args[1].toLowerCase();
             if (reactCommand === 'on') {
-                config.reactOn = true;
-                fs.writeFileSync(configPath, JSON.stringify(config));
+                botConfig.reactOn = true;
+                saveBotConfig(sock, botConfig);
                 await sock.sendMessage(chatId, { 
                     text: '💫 Les réactions aux statuts ont été activées !\nLe bot réagira désormais aux mises à jour de statut.',
                 });
             } else if (reactCommand === 'off') {
-                config.reactOn = false;
-                fs.writeFileSync(configPath, JSON.stringify(config));
+                botConfig.reactOn = false;
+                saveBotConfig(sock, botConfig);
                 await sock.sendMessage(chatId, { 
                     text: '❌ Les réactions aux statuts ont été désactivées !\nLe bot ne réagira plus aux mises à jour de statut.',
                 });
@@ -186,15 +216,15 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             }
         } 
         else if (command === 'download') {
-            if (!config.enabled) {
+            if (!botConfig.enabled) {
                 await sock.sendMessage(chatId, { 
                     text: '❌ Veuillez activer la vue automatique des statuts avant de télécharger les médias !\nUtilisez : *autostatus on',
                 });
                 return;
             }
-            config.download = !config.download;
-            fs.writeFileSync(configPath, JSON.stringify(config));
-            const state = config.download ? 'activé' : 'désactivé';
+            botConfig.download = !botConfig.download;
+            saveBotConfig(sock, botConfig);
+            const state = botConfig.download ? 'activé' : 'désactivé';
             await sock.sendMessage(chatId, { 
                 text: `✅ Le téléchargement automatique des médias de statut de vos contacts a été ${state}!`
             });
@@ -213,32 +243,33 @@ async function autoStatusCommand(sock, chatId, msg, args) {
     }
 }
 
-// Fonction pour vérifier si l’auto status est activé
-function isAutoStatusEnabled() {
+// Fonction pour vérifier si l’auto status est activé pour ce bot
+function isAutoStatusEnabled(sock) {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
-        return config.enabled;
+        const botConfig = getBotConfig(sock);
+        return botConfig.enabled;
     } catch (error) {
         console.error('Erreur lors de la vérification de la configuration auto status :', error);
         return false;
     }
 }
 
-function isStatusDownloadEnabled() {
+// Fonction pour vérifier si le download est activé pour ce bot
+function isStatusDownloadEnabled(sock) {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
-        return config.download;
+        const botConfig = getBotConfig(sock);
+        return botConfig.download;
     } catch (error) {
         console.error('Erreur lecture config download :', error);
         return false;
     }
 }
 
-// Fonction pour vérifier si les réactions aux statuts sont activées
-function isStatusReactionEnabled() {
+// Fonction pour vérifier si les réactions aux statuts sont activées pour ce bot
+function isStatusReactionEnabled(sock) {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
-        return config.reactOn;
+        const botConfig = getBotConfig(sock);
+        return botConfig.reactOn;
     } catch (error) {
         console.error('Erreur lors de la vérification des réactions aux statuts :', error);
         return false;
@@ -248,7 +279,7 @@ function isStatusReactionEnabled() {
 // Fonction pour réagir aux statuts avec la méthode appropriée
 async function reactToStatus(sock, statusKey) {
     try {
-        if (!isStatusReactionEnabled()) {
+        if (!isStatusReactionEnabled(sock)) {
             return;
         }
 
@@ -272,7 +303,6 @@ async function reactToStatus(sock, statusKey) {
             }
         );
         
-        // Journal de succès supprimé – uniquement les erreurs sont conservées
     } catch (error) {
         console.error('❌ Erreur lors de la réaction au statut :', error.message);
     }
@@ -281,7 +311,7 @@ async function reactToStatus(sock, statusKey) {
 // Fonction pour gérer les mises à jour de statut
 async function handleStatusUpdate(sock, status) {
     try {
-        if (!isAutoStatusEnabled()) {
+        if (!isAutoStatusEnabled(sock)) {
             return;
         }
 
@@ -294,15 +324,15 @@ async function handleStatusUpdate(sock, status) {
             if (msg.key && msg.key.remoteJid === 'status@broadcast') {
                 try {
                     await downloadStatusMedia(sock, msg);
-                   const participant = getRealJid(msg)
+                    const participant = getRealJid(msg);
 
                     await new Promise(resolve => setTimeout(resolve, 2000))
 
                     await sock.sendReceipt(
-                    'status@broadcast',
-                    participant,
-                    [msg.key.id],
-                    'read'
+                        'status@broadcast',
+                        participant,
+                        [msg.key.id],
+                        'read'
                     )
                     
                     // Réagir au statut si activé
@@ -311,14 +341,14 @@ async function handleStatusUpdate(sock, status) {
                     if (err.message?.includes('rate-overlimit')) {
                         console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
                         await new Promise(resolve => setTimeout(resolve, 2000));
-                            const participant = getRealJid(msg)
+                        const participant = getRealJid(msg);
 
-                            await sock.sendReceipt(
+                        await sock.sendReceipt(
                             'status@broadcast',
                             participant,
                             [msg.key.id],
                             'read'
-)
+                        )
                     } else {
                         throw err;
                     }
@@ -330,16 +360,15 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les mises à jour directes de statut
         if (status.key && status.key.remoteJid === 'status@broadcast') {
             try {
-
-                const participant = getRealJid(msg)
+                const participant = status.key.participant || status.key.remoteJid;
 
                 await new Promise(resolve => setTimeout(resolve, 2000))
 
                 await sock.sendReceipt(
-                'status@broadcast',
-                participant,
-                [msg.key.id],
-                'read'
+                    'status@broadcast',
+                    participant,
+                    [status.key.id],
+                    'read'
                 )
 
                 // Réagir au statut si activé
@@ -348,16 +377,16 @@ async function handleStatusUpdate(sock, status) {
                 if (err.message?.includes('rate-overlimit')) {
                     console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
                     
-                    const participant = getRealJid(msg)
+                    const participant = status.key.participant || status.key.remoteJid;
 
                     await new Promise(resolve => setTimeout(resolve, 2000))
 
                     await sock.sendReceipt(
-                    'status@broadcast',
-                    participant,
-                    [msg.key.id],
-                    'read'
-)
+                        'status@broadcast',
+                        participant,
+                        [status.key.id],
+                        'read'
+                    )
                 } else {
                     throw err;
                 }
@@ -368,16 +397,16 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les statuts dans les réactions
         if (status.reaction && status.reaction.key.remoteJid === 'status@broadcast') {
             try {
-                    const participant = getRealJid(msg)
+                const participant = status.reaction.key.participant || status.reaction.key.remoteJid;
 
-                    await new Promise(resolve => setTimeout(resolve, 2000))
+                await new Promise(resolve => setTimeout(resolve, 2000))
 
-                    await sock.sendReceipt(
+                await sock.sendReceipt(
                     'status@broadcast',
                     participant,
-                    [msg.key.id],
+                    [status.reaction.key.id],
                     'read'
-                    )
+                )
                 
                 // Réagir au statut si activé
                 await reactToStatus(sock, status.reaction.key);
@@ -400,9 +429,7 @@ async function handleStatusUpdate(sock, status) {
 
 // Pour compter les statuts telecharges
 async function statusCommand(sock, chatId) {
-
     try {
-
         const folder = path.join(__dirname, '../statuses');
 
         if (!fs.existsSync(folder)) {
@@ -419,14 +446,12 @@ async function statusCommand(sock, chatId) {
         });
 
     } catch (err) {
-
         await sock.sendMessage(chatId, {
             text: "❌ Erreur lecture des statuts."
         });
-
     }
-
 }
+
 module.exports = {
     autoStatusCommand,
     handleStatusUpdate,

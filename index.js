@@ -50,7 +50,6 @@ const { handleBadwordDetection } = require('./lib/antibadword');
 const {autoDeleteHandler} = require('./commands/autodelete');
 let hasConnected = false;
 
-// ✅ RESTAURATION SESSION MULTI-FICHIERS DEPUIS SESSION_DATA
 const SESSION_DIR = path.join(__dirname, './session');
 const SESSION_ZIP = path.join(__dirname, './session.zip');
 
