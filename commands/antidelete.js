@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { tmpdir } = require('os');
 const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const { writeFile } = require('fs/promises');
 
@@ -32,7 +33,7 @@ const getFolderSizeInMB = (folderPath) => {
     }
 };
 
-// Function to clean temp folder if size exceeds 200MB
+// Function to clean temp folder if size exceeds 10MB
 const cleanTempFolderIfLarge = () => {
     try {
         const sizeMB = getFolderSizeInMB(TEMP_MEDIA_DIR);
@@ -52,49 +53,23 @@ const cleanTempFolderIfLarge = () => {
 // Start periodic cleanup check every 1 minute
 setInterval(cleanTempFolderIfLarge, 60 * 1000);
 
-// --- MULTI-TENANT CONFIGURATION ---
-
-function getConfig() {
-    if (!fs.existsSync(CONFIG_PATH)) {
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify({}));
-    }
+// Load config
+function loadAntideleteConfig() {
     try {
+        if (!fs.existsSync(CONFIG_PATH)) return { enabled: false };
         return JSON.parse(fs.readFileSync(CONFIG_PATH));
     } catch {
-        return {};
+        return { enabled: false };
     }
 }
 
-function getBotId(sock) {
-    if (!sock?.user?.id) return 'default';
-    return sock.user.id.split(':')[0];
-}
-
-function getBotConfig(sock) {
-    let config = getConfig();
-    const botId = getBotId(sock);
-    
-    // Migration depuis l'ancienne structure { enabled: true }
-    if (typeof config.enabled === 'boolean') {
-        config = {}; 
+// Save config
+function saveAntideleteConfig(config) {
+    try {
+        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    } catch (err) {
+        console.error('Config save error:', err);
     }
-    
-    if (!config[botId]) {
-        config[botId] = { enabled: false };
-    }
-    return config[botId];
-}
-
-function saveBotConfig(sock, botConfig) {
-    let config = getConfig();
-    const botId = getBotId(sock);
-    
-    if (typeof config.enabled === 'boolean') {
-        config = {};
-    }
-    
-    config[botId] = botConfig;
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
 }
 
 const isOwnerOrSudo = require('../lib/isOwner');
@@ -108,39 +83,35 @@ async function handleAntideleteCommand(sock, chatId, message, match) {
         return sock.sendMessage(chatId, { text: '*Seul le proprietaire peut utiliser cette commande.*' }, { quoted: message });
     }
 
-    let botConfig = getBotConfig(sock);
+    const config = loadAntideleteConfig();
 
     if (!match) {
         return sock.sendMessage(chatId, {
-            text: `*ANTIDELETE SETUP*\n\nStatut Actuel: ${botConfig.enabled ? '✅ Activer' : '❌ Desactiver'}\n\n* *antidelete on* - Activer\n* *antidelete off* - Desactiver`
+            text: `*ANTIDELETE SETUP*\n\nStatut Actuel: ${config.enabled ? '✅ Activer' : '❌ Desactiver'}\n\n* *antidelete on* - Activer\n* *antidelete off* - Desactiver`
         }, {quoted: message});
     }
 
     if (match === 'on') {
-        botConfig.enabled = true;
+        config.enabled = true;
     } else if (match === 'off') {
-        botConfig.enabled = false;
+        config.enabled = false;
     } else {
         return sock.sendMessage(chatId, { text: '*Commande invalide . Utiliser *antidelete pour voir l\'usage.*' }, {quoted:message});
     }
 
-    saveBotConfig(sock, botConfig);
+    saveAntideleteConfig(config);
     return sock.sendMessage(chatId, { text: `*Antidelete ${match === 'on' ? 'Activer' : 'Desactiver'}*` }, {quoted:message});
 }
 
 // Store incoming messages (also handles anti-view-once by forwarding immediately)
 async function storeMessage(sock, message) {
     try {
-        const botConfig = getBotConfig(sock);
-        if (!botConfig.enabled) return; // Don't store if antidelete is disabled
+        const config = loadAntideleteConfig();
+        if (!config.enabled) return; // Don't store if antidelete is disabled
 
         if (!message.key?.id) return;
 
-        const originalMessageId = message.key.id;
-        const botId = getBotId(sock);
-        // Important: Clé unique par bot pour éviter l'écrasement en cas de bots multiples dans le même groupe
-        const messageKey = `${botId}-${originalMessageId}`; 
-
+        const messageId = message.key.id;
         let content = '';
         let mediaType = '';
         let mediaPath = '';
@@ -156,14 +127,14 @@ async function storeMessage(sock, message) {
                 mediaType = 'image';
                 content = viewOnceContainer.imageMessage.caption || '';
                 const buffer = await downloadContentFromMessage(viewOnceContainer.imageMessage, 'image');
-                mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.jpg`);
+                mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.jpg`);
                 await writeFile(mediaPath, buffer);
                 isViewOnce = true;
             } else if (viewOnceContainer.videoMessage) {
                 mediaType = 'video';
                 content = viewOnceContainer.videoMessage.caption || '';
                 const buffer = await downloadContentFromMessage(viewOnceContainer.videoMessage, 'video');
-                mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.mp4`);
+                mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.mp4`);
                 await writeFile(mediaPath, buffer);
                 isViewOnce = true;
             }
@@ -175,30 +146,29 @@ async function storeMessage(sock, message) {
             mediaType = 'image';
             content = message.message.imageMessage.caption || '';
             const buffer = await downloadContentFromMessage(message.message.imageMessage, 'image');
-            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.jpg`);
+            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.jpg`);
             await writeFile(mediaPath, buffer);
         } else if (message.message?.stickerMessage) {
             mediaType = 'sticker';
             const buffer = await downloadContentFromMessage(message.message.stickerMessage, 'sticker');
-            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.webp`);
+            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.webp`);
             await writeFile(mediaPath, buffer);
         } else if (message.message?.videoMessage) {
             mediaType = 'video';
             content = message.message.videoMessage.caption || '';
             const buffer = await downloadContentFromMessage(message.message.videoMessage, 'video');
-            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.mp4`);
+            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.mp4`);
             await writeFile(mediaPath, buffer);
         } else if (message.message?.audioMessage) {
             mediaType = 'audio';
             const mime = message.message.audioMessage.mimetype || '';
             const ext = mime.includes('mpeg') ? 'mp3' : (mime.includes('ogg') ? 'ogg' : 'mp3');
             const buffer = await downloadContentFromMessage(message.message.audioMessage, 'audio');
-            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageKey}.${ext}`);
+            mediaPath = path.join(TEMP_MEDIA_DIR, `${messageId}.${ext}`);
             await writeFile(mediaPath, buffer);
         }
 
-        // Sauvegarder dans la mémoire cache (Map) avec la clé unique `${botId}-${messageId}`
-        messageStore.set(messageKey, {
+        messageStore.set(messageId, {
             content,
             mediaType,
             mediaPath,
@@ -210,10 +180,11 @@ async function storeMessage(sock, message) {
         // Anti-ViewOnce: forward immediately to owner if captured
         if (isViewOnce && mediaType && fs.existsSync(mediaPath)) {
             try {
-                const ownerNumber = botId + '@s.whatsapp.net';
+                const ownerNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
                 const senderName = sender.split('@')[0];
                 const mediaOptions = {
-                    caption: `*Anti-ViewOnce ${mediaType}*\nFrom: @${senderName}`,
+                    caption: `*Anti-ViewOnce ${mediaType}*
+From: @${senderName}`,
                     mentions: [sender]
                 };
                 if (mediaType === 'image') {
@@ -236,20 +207,16 @@ async function storeMessage(sock, message) {
 // Handle message deletion
 async function handleMessageRevocation(sock, revocationMessage) {
     try {
-        const botConfig = getBotConfig(sock);
-        if (!botConfig.enabled) return;
+        const config = loadAntideleteConfig();
+        if (!config.enabled) return;
 
-        const originalMessageId = revocationMessage.message.protocolMessage.key.id;
-        const botId = getBotId(sock);
-        // Important: Recréer la clé unique
-        const messageKey = `${botId}-${originalMessageId}`;
-
+        const messageId = revocationMessage.message.protocolMessage.key.id;
         const deletedBy = revocationMessage.participant || revocationMessage.key.participant || revocationMessage.key.remoteJid;
-        const ownerNumber = botId + '@s.whatsapp.net';
+        const ownerNumber = sock.user.id.split(':')[0] + '@s.whatsapp.net';
 
-        if (deletedBy.includes(botId) || deletedBy === ownerNumber) return;
+        if (deletedBy.includes(sock.user.id) || deletedBy === ownerNumber) return;
 
-        const original = messageStore.get(messageKey);
+        const original = messageStore.get(messageId);
         if (!original) return;
 
         const sender = original.sender;
@@ -329,7 +296,7 @@ async function handleMessageRevocation(sock, revocationMessage) {
             }
         }
 
-        messageStore.delete(messageKey);
+        messageStore.delete(messageId);
 
     } catch (err) {
         console.error('handleMessageRevocation error:', err);
