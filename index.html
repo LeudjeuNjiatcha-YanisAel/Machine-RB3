@@ -112,7 +112,7 @@
     }
 
     .secondary{
-        background:linear-gradient(45deg,var(--primary),var(--secondary));
+        background:linear-gradient(45deg,var(--secondary),var(--primary));
         box-shadow:0 5px 20px rgba(88,101,242,0.4);
     }
 
@@ -211,7 +211,7 @@ font-weight:800;
 color:#00d4ff;
 position: absolute;
 margin-top:20px;">
-<span id="users">0 / 3 </span> utilisateur(s) connecté(s)
+<span id="users">0 / 4 </span> utilisateur(s) connecté(s)
 </div>
 
 <div class="logo">🤖</div>
@@ -343,7 +343,7 @@ try{
     const users = data.users
 
     if(data.connected){
-        document.getElementById("usersCount").innerText = users + " / 3 utilisateurs connectés"
+        document.getElementById("usersCount").innerText = users + " / 4 utilisateurs connectés"
         document.getElementById("users").style.color = "#0051ff"
         document.getElementById("users").style.fontWeight = "900"
     }
