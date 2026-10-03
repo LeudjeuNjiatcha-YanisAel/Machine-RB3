@@ -2,22 +2,24 @@ const fs = require('fs');
 const path = require('path');
 const isAdmin = require('../lib/isAdmin');
 
-// Define paths
-const databaseDir = path.join(process.cwd(), 'data');
-const warningsPath = path.join(databaseDir, 'warnings.json');
+const { asyncLocalStorage } = require('../lib/context');
 
-// Initialize warnings file if it doesn't exist
-function initializeWarningsFile() {
-    // Create database directory if it doesn't exist
+function getWarningsPath() {
+    const botNumber = asyncLocalStorage.getStore();
+    const databaseDir = botNumber ? path.join(process.cwd(), 'data', botNumber) : path.join(process.cwd(), 'data');
     if (!fs.existsSync(databaseDir)) {
         fs.mkdirSync(databaseDir, { recursive: true });
     }
-    
-    // Create warnings.json if it doesn't exist
+    return path.join(databaseDir, 'warnings.json');
+}
+
+function initializeWarningsFile() {
+    const warningsPath = getWarningsPath();
     if (!fs.existsSync(warningsPath)) {
         fs.writeFileSync(warningsPath, JSON.stringify({}), 'utf8');
     }
 }
+
 
 async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
     try {
@@ -79,6 +81,7 @@ async function warnCommand(sock, chatId, senderId, mentionedJids, message) {
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         try {
+            const warningsPath = getWarningsPath();
             // Read warnings, create empty object if file is empty
             let warnings = {};
             try {

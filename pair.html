@@ -6,371 +6,448 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MACHINE VB3 | Pair Bot</title>
+<meta name="description" content="Connectez votre numéro WhatsApp avec un code de liaison.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-
     :root{
-    --primary:#5865F2;
-    --secondary:#00d4ff;
-    --secon:#ef0f17;
-    --bg:#050507;
-    --card:rgba(255,255,255,0.05);
-    --text:#ffffff;
-    --text-dim:#9ca3af;
+        --primary:#5865F2;
+        --secondary:#00d4ff;
+        --danger:#ef0f17;
+        --bg:#050507;
+        --card:rgba(255,255,255,0.04);
+        --card-hover:rgba(255,255,255,0.07);
+        --border:rgba(255,255,255,0.07);
+        --text:#ffffff;
+        --text-dim:#8b95a5;
+        --text-muted:#5a6372;
+        --radius:16px;
+        --radius-lg:24px;
     }
 
     *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Outfit',sans-serif;
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Inter',system-ui,-apple-system,sans-serif;
     }
 
     body{
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:40px;
-
-    background-image:
-    radial-gradient(circle at 20% 30%,rgba(88,101,242,0.15),transparent 40%),
-    radial-gradient(circle at 80% 70%,rgba(0,212,255,0.12),transparent 40%);
+        background:var(--bg);
+        color:var(--text);
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        padding:40px 20px;
+        background-image:
+        radial-gradient(circle at 20% 15%,rgba(88,101,242,0.12),transparent 45%),
+        radial-gradient(circle at 85% 75%,rgba(0,212,255,0.08),transparent 45%);
     }
 
     .container{
-    max-width:900px;
-    width:100%;
-    background:var(--card);
-    border:1px solid rgba(255,255,255,0.08);
-    border-radius:25px;
-    backdrop-filter:blur(15px);
-    padding:50px;
-    text-align:center;
-    box-shadow:0 10px 40px rgba(0,0,0,0.5);
+        max-width:640px;
+        width:100%;
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:var(--radius-lg);
+        backdrop-filter:blur(20px);
+        padding:48px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.4);
+        animation:fadeIn 0.6s cubic-bezier(0.16,1,0.3,1);
+        position:relative;
     }
 
-    .logo{
-    font-size:55px;
-    margin-bottom:15px;
+    @keyframes fadeIn{
+        from{opacity:0;transform:translateY(20px);}
+        to{opacity:1;transform:translateY(0);}
     }
+
+    /* Back link */
+    .back-link{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        font-size:14px;
+        font-weight:500;
+        text-decoration:none;
+        color:var(--text-dim);
+        transition:color 0.2s;
+        margin-bottom:32px;
+    }
+
+    .back-link i{width:16px;height:16px;}
+
+    .back-link:hover{color:var(--secondary);}
+
+    /* Status badge */
+    .status-badge{
+        position:absolute;
+        top:24px;
+        right:24px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-size:12px;
+        font-weight:600;
+        padding:5px 12px;
+        border-radius:20px;
+    }
+
+    .status-badge.offline{
+        color:#ff5c5c;
+        background:rgba(255,59,59,0.1);
+        border:1px solid rgba(255,59,59,0.15);
+    }
+
+    .status-badge.online{
+        color:#34d399;
+        background:rgba(52,211,153,0.1);
+        border:1px solid rgba(52,211,153,0.15);
+    }
+
+    .status-dot{
+        width:7px;
+        height:7px;
+        border-radius:50%;
+        background:currentColor;
+    }
+
+    .status-badge.online .status-dot{
+        animation:pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot{
+        0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(52,211,153,0.4);}
+        50%{opacity:0.8;box-shadow:0 0 0 6px rgba(52,211,153,0);}
+    }
+
+    /* Hero */
+    .hero{
+        text-align:center;
+        margin-bottom:36px;
+    }
+
+    .logo-icon{
+        width:56px;
+        height:56px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
+        border-radius:16px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:18px;
+        box-shadow:0 8px 30px rgba(88,101,242,0.3);
+    }
+
+    .logo-icon i{width:28px;height:28px;color:white;}
 
     h1{
-    font-size:40px;
-    font-weight:700;
-    background:linear-gradient(45deg,var(--primary),var(--secondary));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    margin-bottom:10px;
+        font-size:32px;
+        font-weight:800;
+        letter-spacing:-0.5px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        background-clip:text;
+        margin-bottom:8px;
     }
 
     .subtitle{
-    color:var(--text-dim);
-    font-size:18px;
-    margin-bottom:30px;
+        color:var(--text-dim);
+        font-size:15px;
+        line-height:1.5;
     }
 
-    /* input */
-
+    /* Form */
     input{
-    width:100%;
-    padding:15px;
-    border-radius:10px;
-    border:none;
-    background:rgba(255,255,255,0.08);
-    color:white;
-    margin-bottom:20px;
-    font-size:16px;
-    text-align:center;
+        width:100%;
+        padding:14px 18px;
+        border-radius:12px;
+        border:1px solid var(--border);
+        background:rgba(255,255,255,0.05);
+        color:white;
+        margin-bottom:20px;
+        font-size:15px;
+        text-align:center;
+        font-family:inherit;
+        outline:none;
+        transition:border-color 0.2s;
+    }
+
+    input:focus{
+        border-color:var(--primary);
+        box-shadow:0 0 0 3px rgba(88,101,242,0.15);
     }
 
     input::placeholder{
-    color:#aaa;
+        color:var(--text-muted);
     }
 
-    /* buttons */
-
+    /* Buttons */
     .buttons{
-    display:flex;
-    gap:15px;
-    justify-content:center;
-    flex-wrap:wrap;
-    margin-bottom:25px;
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        margin-bottom:24px;
     }
 
     .btn{
-    padding:14px 28px;
-    border-radius:12px;
-    font-weight:600;
-    font-size:15px;
-    border:none;
-    cursor:pointer;
-    color:white;
-    transition:0.25s;
+        padding:12px 24px;
+        border-radius:12px;
+        font-weight:600;
+        font-size:14px;
+        border:none;
+        cursor:pointer;
+        color:white;
+        transition:all 0.2s;
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
     }
 
+    .btn i{width:16px;height:16px;}
+
     .connect{
-    background:linear-gradient(45deg,var(--primary),var(--secondary));
-    box-shadow:0 5px 20px rgba(88,101,242,0.4);
+        background:linear-gradient(135deg,var(--primary),#7c8af8);
+        box-shadow:0 4px 16px rgba(88,101,242,0.3);
     }
 
     .disconnect{
-    background:linear-gradient(45deg,var(--primary),var(--secon));
-    box-shadow:0 5px 20px rgba(253, 30, 30, 0.4);
+        background:linear-gradient(135deg,#ef4444,#dc2626);
+        box-shadow:0 4px 16px rgba(239,68,68,0.25);
     }
 
     .btn:hover{
-    transform:translateY(-3px);
-    filter:brightness(1.1);
+        transform:translateY(-2px);
+        filter:brightness(1.1);
     }
 
+    /* Code display */
     @keyframes pulse{
-    0%{opacity:1}
-    50%{opacity:0.5}
-    100%{opacity:1}
+        0%,100%{opacity:1}
+        50%{opacity:0.5}
     }
 
     .codeBox{
-    margin-top:15px;
-    font-size:22px;
-    letter-spacing:3px;
-    font-weight:600;
-    color:var(--secondary);
-    animation:pulse 1.5s infinite;
+        margin-top:16px;
+        font-size:28px;
+        letter-spacing:4px;
+        font-weight:700;
+        color:var(--secondary);
+        animation:pulse 1.5s infinite;
+        font-family:'JetBrains Mono',monospace;
     }
 
     .prefixBox{
-    margin-top:10px;
-    font-size:22px;
-    font-weight:700;
-    color:var(--primary);
-    animation: pulse 1.5s infinite
+        margin-top:8px;
+        font-size:16px;
+        font-weight:600;
+        color:var(--primary);
     }
-    /* console */
+
+    /* Console */
+    .console-header{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin:28px 0 10px;
+        color:var(--text-dim);
+        font-size:13px;
+        font-weight:600;
+    }
+
+    .console-header i{width:16px;height:16px;color:var(--secondary);}
 
     .console{
-    margin-top:35px;
-    background:#000;
-    border-radius:10px;
-    padding:15px;
-    text-align:left;
-    height:220px;
-    overflow-y:auto;
-    font-size:13px;
-    border:1px solid rgba(255,255,255,0.1);
+        background:rgba(0,0,0,0.6);
+        border-radius:12px;
+        padding:16px;
+        text-align:left;
+        height:200px;
+        overflow-y:auto;
+        font-size:13px;
+        border:1px solid var(--border);
     }
+
+    .console::-webkit-scrollbar{width:4px;}
+    .console::-webkit-scrollbar-track{background:transparent;}
+    .console::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px;}
 
     .log{
-    color:#9effff;
-    margin-bottom:4px;
-    font-family:monospace;
+        color:rgba(0,212,255,0.8);
+        margin-bottom:4px;
+        font-family:'JetBrains Mono',monospace;
+        font-size:12px;
     }
 
-    /* footer */
-
+    /* Footer */
     .footer{
-    margin-top:30px;
-    font-size:13px;
-    color:var(--text-dim);
+        margin-top:28px;
+        text-align:center;
+        font-size:12px;
+        color:var(--text-muted);
     }
 
+    @media(max-width:640px){
+        .container{padding:28px 20px;}
+        h1{font-size:26px;}
+    }
 </style>
 </head>
 
 <body>
 
 <div class="container">
-<a href="/" style="
-position:absolute;
-left:20px;
-top:20px;
-font-weight: 500;
-font-size:20px;
-text-decoration:none;
-color:rgb(16, 152, 93);
-">
-⬅ Retour
-</a>
 
-<div style="margin-top:20px;position:absolute;left:80%;">
-<span id="botStatus" style="font-weight:900;color:#ff3b3b;font-size:20px">
-● Bot hors ligne
-</span>
+<div class="status-badge offline" id="botStatus">
+    <span class="status-dot"></span>
+    Hors ligne
 </div>
 
-<div class="logo">📱</div>
+<a href="/" class="back-link">
+    <i data-lucide="arrow-left"></i>
+    Retour
+</a>
 
-<h1>Code WhatsApp</h1>
+<div class="hero">
+    <div class="logo-icon">
+        <i data-lucide="smartphone"></i>
+    </div>
+    <h1>Code WhatsApp</h1>
+    <p class="subtitle">Connectez votre numéro WhatsApp avec un code de liaison</p>
+</div>
 
-<p class="subtitle">
-    Connectez votre numéro WhatsApp avec un code de liaison
-</p>
-
-<input id="number" placeholder="Entrer numero (ex: 2376xxxxxxxx)">
+<input id="number" placeholder="Entrer numéro (ex: 2376xxxxxxxx)">
 
 <div class="buttons">
-
-<button class="btn connect" onclick="connectBot()">
-Connecter
-</button>
-
-<button class="btn disconnect" onclick="disconnectBot()">
-Deconnecter
-</button>
-
+    <button class="btn connect" onclick="connectBot()">
+        <i data-lucide="plug"></i>
+        Connecter
+    </button>
+    <button class="btn disconnect" onclick="disconnectBot()">
+        <i data-lucide="unplug"></i>
+        Déconnecter
+    </button>
 </div>
 
 <div class="codeBox" id="pairCode"></div>
 <div class="prefixBox" id="prefixUser"></div>
 
+<div class="console-header">
+    <i data-lucide="terminal"></i>
+    Console
+</div>
 <div class="console" id="console"></div>
 
 <div class="footer">
-MACHINE VB3 • Pair Interface
+    MACHINE VB3 · Pair Interface
 </div>
 
 </div>
 
 <script>
+lucide.createIcons();
 
 async function checkBot(){
+    try{
+        const res = await fetch("/status")
+        const data = await res.json()
+        const badge = document.getElementById("botStatus")
 
-const res = await fetch("/status")
-const data = await res.json()
-
-const status = document.getElementById("botStatus")
-
-if(data.connected){
-
-status.innerText="● Bot connecté"
-status.style.color="#00ff88"
-status.style.fontWeight="900"
-
-}else{
-
-status.innerText="● Bot hors ligne"
-status.style.color="#ff3b3b"
-status.style.fontWeight="900"
-
-}
+        if(data.connected){
+            badge.className="status-badge online"
+            badge.innerHTML='<span class="status-dot"></span>Connecté'
+        }else{
+            badge.className="status-badge offline"
+            badge.innerHTML='<span class="status-dot"></span>Hors ligne'
+        }
+    }catch(e){}
 }
 
 function log(msg){
-
-const consoleBox = document.getElementById("console")
-
-const div = document.createElement("div")
-div.className = "log"
-div.innerText = msg
-
-consoleBox.appendChild(div)
-
-consoleBox.scrollTop = consoleBox.scrollHeight
-
+    const consoleBox = document.getElementById("console")
+    const div = document.createElement("div")
+    div.className = "log"
+    div.innerText = msg
+    consoleBox.appendChild(div)
+    consoleBox.scrollTop = consoleBox.scrollHeight
 }
 
 async function connectBot(){
+    let number = document.getElementById("number").value
+    number = number.replace(/[^0-9]/g,"")
 
-let number = document.getElementById("number").value
-number = number.replace(/[^0-9]/g,"")
+    if(!number){
+        log("[ERREUR] Entrer votre numéro de téléphone")
+        return
+    }
 
-if(!number){
-log("❌ Entrer votre numero de telephone")
-return
-}
+    log("[INFO] Connexion en cours...")
 
-log("⏳ Connection...")
+    const res = await fetch("/connect",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number})
+    })
 
-const res = await fetch("/connect",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({number})
-})
+    const data = await res.json()
 
-const data = await res.json()
+    if(data.code){
+        document.getElementById("pairCode").innerText = data.code
+        document.getElementById("prefixUser").innerText =
+            "Préfixe utilisateur : " + data.prefix
 
-if(data.code){
-
-document.getElementById("pairCode").innerText = data.code
-document.getElementById("prefixUser").innerText =
-"Prefix utilisateur : " + data.prefix
-
-log("✅ Code d'association generer")
-log("⚙️ Prefix utilisateur : "+data.prefix)
-
-}else{
-    log("❌ Erreur de connection")
-}
-
+        log("[OK] Code d'association généré")
+        log("[INFO] Préfixe utilisateur : "+data.prefix)
+    }else{
+        log("[ERREUR] Erreur de connexion")
+    }
 }
 
 async function disconnectBot(){
+    let number = document.getElementById("number").value
+    number = number.replace(/[^0-9]/g,"")
 
-let number = document.getElementById("number").value
-number = number.replace(/[^0-9]/g,"")
+    if(!number){
+        log("[ERREUR] Entrer votre numéro")
+        return
+    }
 
-if(!number){
-log("❌ Entrer votre numero")
-return
-}
+    const res = await fetch("/disconnect",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number})
+    })
 
-const res = await fetch("/disconnect",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({number})
-})
+    const data = await res.json()
 
-const data = await res.json()
-
-if(data.success){
-
-document.getElementById("pairCode").innerText=""
-document.getElementById("prefixUser").innerText=""
-
-log("❌ Bot supprimé : "+number)
-
-}else{
-
-log("⚠ "+data.message)
-
-}
-
-}
-async function checkStatus(){
-
-const res = await fetch("/status")
-const data = await res.json()
-
-if(data.connected){
-
-log("✅ Bot connecter")
-
-}
-
+    if(data.success){
+        document.getElementById("pairCode").innerText=""
+        document.getElementById("prefixUser").innerText=""
+        log("[INFO] Bot supprimé : "+number)
+    }else{
+        log("[ATTENTION] "+data.message)
+    }
 }
 
 let lastLog = 0
 
 async function getLogs(){
+    try{
+        const res = await fetch("/logs")
+        const data = await res.json()
 
-const res = await fetch("/logs")
-const data = await res.json()
+        for(let i = lastLog; i < data.length; i++){
+            const l = data[i]
+            log("["+l.time+"] "+l.msg)
+        }
 
-for(let i = lastLog; i < data.length; i++){
-
-const l = data[i]
-
-log("["+l.time+"] "+l.msg)
-
-}
-
-lastLog = data.length
-
+        lastLog = data.length
+    }catch(e){}
 }
 
 checkBot()
@@ -378,7 +455,6 @@ getLogs()
 
 setInterval(checkBot,5000)
 setInterval(getLogs,4000)
-
 </script>
 
 </body>

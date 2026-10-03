@@ -1,14 +1,28 @@
 const fs = require('fs');
 const path = require('path');
+const { asyncLocalStorage } = require('../lib/context');
 
-const warningsFilePath = path.join(__dirname, '../data/warnings.json');
+function getWarningsFilePath() {
+    const botNumber = asyncLocalStorage.getStore();
+    const filename = botNumber ? `../data/${botNumber}/warnings.json` : '../data/warnings.json';
+    return path.join(__dirname, filename);
+}
 
 function loadWarnings() {
-    if (!fs.existsSync(warningsFilePath)) {
-        fs.writeFileSync(warningsFilePath, JSON.stringify({}), 'utf8');
+    const filePath = getWarningsFilePath();
+    if (!fs.existsSync(filePath)) {
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(filePath, JSON.stringify({}), 'utf8');
     }
-    const data = fs.readFileSync(warningsFilePath, 'utf8');
-    return JSON.parse(data);
+    try {
+        const data = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch {
+        return {};
+    }
 }
 
 async function warningsCommand(sock, chatId, mentionedJidList) {
@@ -20,9 +34,10 @@ async function warningsCommand(sock, chatId, mentionedJidList) {
     }
 
     const userToCheck = mentionedJidList[0];
-    const warningCount = warnings[userToCheck] || 0;
+    // Fix: query warning count from the group JID context, matching warn.js structure
+    const warningCount = warnings[chatId]?.[userToCheck] || 0;
 
-    await sock.sendMessage(chatId, { text: `Utilisateur a ${warningCount} avertissement(s).` });
+    await sock.sendMessage(chatId, { text: `L'utilisateur a ${warningCount} avertissement(s) dans ce groupe.` });
 }
 
 module.exports = warningsCommand;

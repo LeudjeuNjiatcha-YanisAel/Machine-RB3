@@ -6,26 +6,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MACHINE VB3 | WhatsApp AI Bot</title>
+<meta name="description" content="Bot WhatsApp nouvelle génération propulsé par l'IA. Automatisation, modération et outils média.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
     :root{
         --primary:#5865F2;
         --secondary:#00d4ff;
-        --secon:#ef0f17;
+        --danger:#ef0f17;
         --bg:#050507;
-        --card:rgba(255,255,255,0.05);
+        --card:rgba(255,255,255,0.04);
+        --card-hover:rgba(255,255,255,0.07);
+        --border:rgba(255,255,255,0.07);
+        --border-hover:rgba(88,101,242,0.5);
         --text:#ffffff;
-        --text-dim:#9ca3af;
+        --text-dim:#8b95a5;
+        --text-muted:#5a6372;
+        --radius:16px;
+        --radius-lg:24px;
     }
 
     *{
         margin:0;
         padding:0;
         box-sizing:border-box;
-        font-family:'Outfit',sans-serif;
+        font-family:'Inter',system-ui,-apple-system,sans-serif;
     }
 
     body{
@@ -34,164 +42,325 @@
         min-height:100vh;
         display:flex;
         justify-content:center;
-        align-items:center;
-        padding:40px;
+        align-items:flex-start;
+        padding:40px 20px;
         background-image:
-        radial-gradient(circle at 20% 30%,rgba(88,101,242,0.15),transparent 40%),
-        radial-gradient(circle at 80% 70%,rgba(0,212,255,0.12),transparent 40%);
+        radial-gradient(circle at 20% 15%,rgba(88,101,242,0.12),transparent 45%),
+        radial-gradient(circle at 85% 75%,rgba(0,212,255,0.08),transparent 45%);
     }
 
     .container{
-        max-width:900px;
+        max-width:920px;
         width:100%;
         background:var(--card);
-        border:1px solid rgba(255,255,255,0.08);
-        border-radius:25px;
-        backdrop-filter:blur(15px);
-        padding:50px;
-        text-align:center;
-        box-shadow:0 10px 40px rgba(0,0,0,0.5);
-        animation:fadeIn 0.8s ease;
+        border:1px solid var(--border);
+        border-radius:var(--radius-lg);
+        backdrop-filter:blur(20px);
+        padding:48px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.4);
+        animation:fadeIn 0.6s cubic-bezier(0.16,1,0.3,1);
+        position:relative;
     }
 
     @keyframes fadeIn{
-        from{opacity:0; transform:translateY(30px);}
+        from{opacity:0; transform:translateY(20px);}
         to{opacity:1; transform:translateY(0);}
     }
 
-    .logo{
-        font-size:55px;
-        margin-bottom:15px;
+    /* Header */
+    .header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:40px;
+    }
+
+    .header-left{
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }
+
+    .header-left .user-count{
+        font-size:14px;
+        font-weight:600;
+        color:var(--secondary);
+        background:rgba(0,212,255,0.1);
+        padding:6px 14px;
+        border-radius:20px;
+        border:1px solid rgba(0,212,255,0.15);
+    }
+
+    .status-badge{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-size:13px;
+        font-weight:600;
+        padding:6px 14px;
+        border-radius:20px;
+    }
+
+    .status-badge.offline{
+        color:#ff5c5c;
+        background:rgba(255,59,59,0.1);
+        border:1px solid rgba(255,59,59,0.15);
+    }
+
+    .status-badge.online{
+        color:#34d399;
+        background:rgba(52,211,153,0.1);
+        border:1px solid rgba(52,211,153,0.15);
+    }
+
+    .status-dot{
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        background:currentColor;
+    }
+
+    .status-badge.online .status-dot{
+        animation:pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot{
+        0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(52,211,153,0.4);}
+        50%{opacity:0.8;box-shadow:0 0 0 6px rgba(52,211,153,0);}
+    }
+
+    /* Hero */
+    .hero{
+        text-align:center;
+        margin-bottom:48px;
+    }
+
+    .logo-icon{
+        width:64px;
+        height:64px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
+        border-radius:18px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:20px;
+        box-shadow:0 8px 30px rgba(88,101,242,0.3);
+    }
+
+    .logo-icon i{
+        width:32px;
+        height:32px;
+        color:white;
     }
 
     h1{
-        font-size:42px;
-        font-weight:700;
-        background:linear-gradient(45deg,var(--primary),var(--secondary));
+        font-size:44px;
+        font-weight:800;
+        letter-spacing:-1px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
         -webkit-background-clip:text;
         -webkit-text-fill-color:transparent;
-        margin-bottom:10px;
+        background-clip:text;
+        margin-bottom:12px;
     }
 
     h2{
-        font-size:35px;
+        font-size:28px;
         font-weight:700;
-        background:linear-gradient(45deg,var(--primary),var(--secondary));
+        letter-spacing:-0.5px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
         -webkit-background-clip:text;
         -webkit-text-fill-color:transparent;
-        margin-bottom:20px;
+        background-clip:text;
+        margin-bottom:8px;
     }
 
     .subtitle{
         color:var(--text-dim);
-        font-size:18px;
-        margin-bottom:35px;
+        font-size:16px;
+        line-height:1.6;
+        max-width:560px;
+        margin:0 auto;
     }
 
+    /* Buttons */
     .buttons{
         display:flex;
-        gap:20px;
+        gap:14px;
         justify-content:center;
         flex-wrap:wrap;
-        margin-bottom:40px;
+        margin:32px 0 48px;
     }
 
     .btn{
-        padding:14px 30px;
+        padding:13px 28px;
         border-radius:12px;
         font-weight:600;
-        font-size:16px;
+        font-size:14px;
         text-decoration:none;
         color:white;
-        transition:0.25s;
+        transition:all 0.2s ease;
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        border:none;
+        cursor:pointer;
     }
+
+    .btn i{width:18px;height:18px;}
 
     .primary{
-        background:linear-gradient(45deg,var(--primary),var(--secondary));
-        box-shadow:0 5px 20px rgba(88,101,242,0.4);
+        background:linear-gradient(135deg,var(--primary),#7c8af8);
+        box-shadow:0 4px 16px rgba(88,101,242,0.3);
     }
 
-    .secondary{
-        background:linear-gradient(45deg,var(--secondary),var(--primary));
-        box-shadow:0 5px 20px rgba(88,101,242,0.4);
+    .secondary-btn{
+        background:linear-gradient(135deg,#0ea5e9,var(--secondary));
+        box-shadow:0 4px 16px rgba(0,212,255,0.25);
     }
 
-    @keyframes pulse{
-        0%{opacity:1}
-        50%{opacity:0.5}
-        100%{opacity:1}
+    .admin-btn{
+        background:linear-gradient(135deg,#f97316,#ef4444);
+        box-shadow:0 4px 16px rgba(239,68,68,0.25);
     }
 
-    .admin{
-        border-style:none;
-        background:linear-gradient(45deg,#ff7b00,#ff004c);
-        box-shadow:0 5px 20px rgba(255,0,80,0.4);
-        cursor:pointer;
-        animation: pulse 2.5s infinite;
-    }
-
-    .admin:hover{
-        animation:none;
-    }
     .btn:hover{
-        transform:translateY(-3px);
+        transform:translateY(-2px);
         filter:brightness(1.1);
-        /* box-shadow:0 5px 10px rgba(0, 195, 255, 0.625); */
     }
 
-
-
-    .features{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-        gap:20px;
-        margin-top:30px;
+    /* Section titles */
+    .section-title{
+        text-align:center;
+        margin:48px 0 24px;
     }
 
-    .feature{
-        background:rgba(255,255,255,0.04);
-        padding:20px;
-        border-radius:15px;
-        border:1px solid rgba(255,255,255,0.08);
-        transition:0.3s;
-    }
-
-    .feature:hover{
-        transform:translateY(-5px);
-        border-color:var(--primary);
-        box-shadow:0 10px 30px rgba(0, 81, 255, 0.64);
-    }
-
-    .feature span{
-        font-size:28px;
-        display:block;
+    .section-label{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        font-size:12px;
+        font-weight:600;
+        text-transform:uppercase;
+        letter-spacing:1.5px;
+        color:var(--secondary);
         margin-bottom:10px;
     }
 
+    .section-label i{width:14px;height:14px;}
+
+    /* Feature grid */
+    .features{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:16px;
+    }
+
+    .feature{
+        background:var(--card);
+        padding:24px;
+        border-radius:var(--radius);
+        border:1px solid var(--border);
+        transition:all 0.25s ease;
+        text-align:left;
+    }
+
+    .feature:hover{
+        transform:translateY(-4px);
+        border-color:var(--border-hover);
+        background:var(--card-hover);
+        box-shadow:0 12px 32px rgba(88,101,242,0.12);
+    }
+
+    .feature-icon{
+        width:40px;
+        height:40px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:14px;
+    }
+
+    .feature-icon i{width:20px;height:20px;}
+
+    .feature-icon.blue{background:rgba(88,101,242,0.12);color:var(--primary);}
+    .feature-icon.cyan{background:rgba(0,212,255,0.12);color:var(--secondary);}
+    .feature-icon.green{background:rgba(52,211,153,0.12);color:#34d399;}
+    .feature-icon.orange{background:rgba(249,115,22,0.12);color:#f97316;}
+    .feature-icon.red{background:rgba(239,68,68,0.12);color:#ef4444;}
+    .feature-icon.purple{background:rgba(168,85,247,0.12);color:#a855f7;}
+
     .feature h3{
-        font-size:16px;
+        font-size:15px;
+        font-weight:600;
         margin-bottom:6px;
     }
 
     .feature p{
         font-size:13px;
         color:var(--text-dim);
+        line-height:1.5;
     }
 
-    /* footer */
+    /* Console */
+    .console-wrapper{
+        margin-top:40px;
+    }
 
+    .console-header{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:10px;
+        color:var(--text-dim);
+        font-size:13px;
+        font-weight:600;
+    }
+
+    .console-header i{width:16px;height:16px;color:var(--secondary);}
+
+    .console{
+        background:rgba(0,0,0,0.6);
+        border-radius:12px;
+        padding:16px;
+        text-align:left;
+        height:200px;
+        overflow-y:auto;
+        font-size:13px;
+        border:1px solid var(--border);
+    }
+
+    .console::-webkit-scrollbar{width:4px;}
+    .console::-webkit-scrollbar-track{background:transparent;}
+    .console::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px;}
+
+    .log{
+        color:rgba(0,212,255,0.8);
+        margin-bottom:4px;
+        font-family:'JetBrains Mono',monospace;
+        font-size:12px;
+    }
+
+    /* Footer */
     .footer{
         margin-top:40px;
-        font-size:13px;
-        color:var(--text-dim);
+        text-align:center;
+        font-size:12px;
+        color:var(--text-muted);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
     }
 
-    @keyframes onlineGlow{
-        0%{color:#00ff88}
-        50%{color:#00ff00}
-        100%{color:#00ff88}
-    }
+    .footer i{width:12px;height:12px;}
 
+    @media(max-width:640px){
+        .container{padding:28px 20px;}
+        h1{font-size:32px;}
+        .header{flex-direction:column;gap:12px;}
+    }
 </style>
 </head>
 
@@ -199,220 +368,194 @@
 
 <div class="container">
 
-<div style="margin-top:20px;position:absolute;left:80%;">
-<span id="botStatus" style="font-weight:900;color:#ff3b3b;font-size:20px">
-● Bot hors ligne
-</span>
+<!-- Header bar -->
+<div class="header">
+    <div class="header-left">
+        <div class="user-count" id="usersCount">
+            <span id="users">0</span> / 4 connectés
+        </div>
+    </div>
+    <div class="status-badge offline" id="botStatus">
+        <span class="status-dot"></span>
+        Hors ligne
+    </div>
 </div>
 
-<div id="usersCount" style="
-font-size:19px;
-font-weight:800;
-color:#00d4ff;
-position: absolute;
-margin-top:20px;">
-<span id="users">0 / 4 </span> utilisateur(s) connecté(s)
+<!-- Hero section -->
+<div class="hero">
+    <div class="logo-icon">
+        <i data-lucide="bot"></i>
+    </div>
+    <h1>MACHINE VB3</h1>
+    <p class="subtitle">
+        Bot WhatsApp nouvelle génération propulsé par l'IA.<br>
+        Automatisation des discussions, modération et outils média.
+    </p>
 </div>
 
-<div class="logo">🤖</div>
-
-<h1>MACHINE VB3</h1>
-
-<p class="subtitle">
-Bot WhatsApp nouvelle génération propulsé par l'IA.
-Automatisation des discussions, réactions et outils média.
-</p>
-
+<!-- Action buttons -->
 <div class="buttons">
+    <a href="/pair" class="btn primary">
+        <i data-lucide="link"></i>
+        Associer avec un code
+    </a>
+    <a href="/qr" class="btn secondary-btn">
+        <i data-lucide="scan"></i>
+        Scanner QR Code
+    </a>
+    <button onclick="openAdmin()" class="btn admin-btn">
+        <i data-lucide="shield"></i>
+        Administration
+    </button>
+</div>
 
-<a href="/pair" class="btn primary">
-Associer avec un code
-</a>
-
-<a href="/qr" class="btn secondary">
-Scanner QR Code
-</a>
-<button onclick="openAdmin()" class="btn admin">
-Admin
-</button>
+<!-- Features section -->
+<div class="section-title">
+    <div class="section-label"><i data-lucide="sparkles"></i> Fonctionnalités</div>
+    <h2>Un bot complet</h2>
 </div>
 
 <div class="features">
-
-<div class="feature">
-<span>⚡</span>
-<h3>Ultra rapide</h3>
-<p>Automatisation instantanée de WhatsApp grâce à Baileys.</p>
+    <div class="feature">
+        <div class="feature-icon blue"><i data-lucide="zap"></i></div>
+        <h3>Ultra rapide</h3>
+        <p>Automatisation instantanée de WhatsApp grâce à Baileys.</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon cyan"><i data-lucide="brain"></i></div>
+        <h3>Réponses IA</h3>
+        <p>Conversations intelligentes propulsées par Gemini, GPT et plus.</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon green"><i data-lucide="download"></i></div>
+        <h3>Outils Média</h3>
+        <p>Télécharger les médias à visionnage unique et convertir les fichiers.</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon red"><i data-lucide="shield-check"></i></div>
+        <h3>Modération</h3>
+        <p>Anti-badword, anti-link, réactions et gestion automatique des groupes.</p>
+    </div>
 </div>
 
-<div class="feature">
-<span>🤖</span>
-<h3>Réponses IA</h3>
-<p>Réponses automatiques de l'IA et conversations intelligentes.</p>
+<!-- Commands section -->
+<div class="section-title">
+    <div class="section-label"><i data-lucide="terminal"></i> Commandes</div>
+    <h2>Commandes du Bot</h2>
+    <p class="subtitle" style="margin-top:6px;">
+        Utilisez les commandes avec votre préfixe attribué lors de l'appairage.
+    </p>
 </div>
-
-<div class="feature">
-<span>📥</span>
-<h3>Outils Media</h3>
-<p>Télécharger les médias à visionnage unique et convertir les fichiers.</p>
-</div>
-
-<div class="feature">
-<span>🛡</span>
-<h3>Moderation</h3>
-<p>Lutte contre les gros mots, les réactions et la gestion automatique.</p>
-</div>
-
-</div>
-
-<h2 style="margin-top:40px" >Commandes du Bot</h2>
-<p class="subtitle">
-Utiliser les commandes avec votre prefixe attribuer lors de l'apparaige.
-</p>
 
 <div class="features">
-
-<div class="feature">
-<span>⚙️</span>
-<h3>Système</h3>
-<p>help / menu • ping • sticker • groupinfo • transcribe • chatbot</p>
+    <div class="feature">
+        <div class="feature-icon blue"><i data-lucide="settings"></i></div>
+        <h3>Système</h3>
+        <p>help / menu · ping · sticker · groupinfo · transcribe · chatbot</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon red"><i data-lucide="shield"></i></div>
+        <h3>Administration</h3>
+        <p>mute · unmute · tagall · delete · antibadword · kick · autodelete</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon orange"><i data-lucide="wrench"></i></div>
+        <h3>Outils</h3>
+        <p>tts · character · sand · matrix · emojimix · audit · codefix · osint</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon cyan"><i data-lucide="cpu"></i></div>
+        <h3>Intelligence Artificielle</h3>
+        <p>gpt · gemini · deepseek · nano · cerebras · llama · hackbox</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon green"><i data-lucide="download-cloud"></i></div>
+        <h3>Download</h3>
+        <p>play · youtube · ytmp4 · ytsearch · music</p>
+    </div>
+    <div class="feature">
+        <div class="feature-icon purple"><i data-lucide="gamepad-2"></i></div>
+        <h3>Games Center</h3>
+        <p>tictactoe · million · capital</p>
+    </div>
 </div>
 
-<div class="feature">
-<span>🛡</span>
-<h3>Administration</h3>
-<p>mute • unmute • tagall • delete • antibadword • kick • autodelete</p>
+<!-- Console -->
+<div class="console-wrapper">
+    <div class="console-header">
+        <i data-lucide="terminal"></i>
+        Console de connexion
+    </div>
+    <div class="console" id="console"></div>
 </div>
 
-<div class="feature">
-<span>🛠</span>
-<h3>Outils</h3>
-<p>tts • character • sand • matrix • emojimix • audit • codefix • osint</p>
-</div>
-
-<div class="feature">
-<span>🤖</span>
-<h3>Intelligence Artificielle</h3>
-<p>gpt • gemini • deepseek • nano • cerebras • llama • hackbox</p>
-</div>
-
-<div class="feature">
-<span>📥</span>
-<h3>Download</h3>
-<p>play • youtube • ytmp4 • ytsearch • music</p>
-</div>
-
-<div class="feature">
-<span>🎮</span>
-<h3>Games Center</h3>
-<p>tictactoe • million • capital</p>
-</div>
-
-</div>
-
-<h3 style="margin-top:40px;font-size:30px;">Console de connexion </h2>
-
-<div id="console" style="
-background:#000;
-padding:15px;
-height:200px;
-overflow-y:auto;
-border-radius:10px;
-margin-top:10px;
-font-size:13px;
-font-family:monospace;
-"></div>
-
-
+<!-- Footer -->
 <div class="footer">
- MACHINE VB3 - Bot IA WhatsApp de nouvelle génération. © 2026 Tous droits réservés.
+    <i data-lucide="copyright"></i>
+    MACHINE VB3 — Bot IA WhatsApp de nouvelle génération. 2026 Tous droits réservés.
 </div>
 
 </div>
 
 </body>
 <script>
-
+lucide.createIcons();
 
 async function updateUsers(){
-
-try{
-    const res = await fetch("/status")
-    const data = await res.json()
-
-    const users = data.users
-
-    if(data.connected){
-        document.getElementById("usersCount").innerText = users + " / 4 utilisateurs connectés"
-        document.getElementById("users").style.color = "#0051ff"
-        document.getElementById("users").style.fontWeight = "900"
-    }
-
-}catch(e){}
-
+    try{
+        const res = await fetch("/status")
+        const data = await res.json()
+        const el = document.getElementById("users")
+        if(data.connected){
+            el.innerText = data.users
+        }
+    }catch(e){}
 }
-
 setInterval(updateUsers,2000)
-
 updateUsers()
 
 async function checkBot(){
+    try{
+        const res = await fetch("/status")
+        const data = await res.json()
+        const badge = document.getElementById("botStatus")
 
-    const res = await fetch("/status")
-    const data = await res.json()
-
-    const status = document.getElementById("botStatus")
-
-    if(data.connected){
-        status.innerText="● Bot connecté"
-        status.style.animation="onlineGlow 2s infinite"
-        status.style.fontWeight="900"
-    }else{
-        status.innerText="● Bot hors ligne"
-        status.style.color="#ff3b3b"
-        status.style.animation="none"
-    }
-
+        if(data.connected){
+            badge.className="status-badge online"
+            badge.innerHTML='<span class="status-dot"></span>Connecté'
+        }else{
+            badge.className="status-badge offline"
+            badge.innerHTML='<span class="status-dot"></span>Hors ligne'
+        }
+    }catch(e){}
 }
 setInterval(checkBot,2000)
 
 async function updateLogs(){
-    const res = await fetch("/logs")
-    const logs = await res.json()
-
-    const consoleBox = document.getElementById("console")
-
-    consoleBox.innerHTML=""
-
-    logs.forEach(l=>{
-
-    const line = document.createElement("div")
-
-    line.innerText = "["+l.time+"] "+l.msg
-
-    consoleBox.appendChild(line)
-
-    })
-
-    consoleBox.scrollTop = consoleBox.scrollHeight
+    try{
+        const res = await fetch("/logs")
+        const logs = await res.json()
+        const consoleBox = document.getElementById("console")
+        consoleBox.innerHTML=""
+        logs.forEach(l=>{
+            const line = document.createElement("div")
+            line.className="log"
+            line.innerText = "["+l.time+"] "+l.msg
+            consoleBox.appendChild(line)
+        })
+        consoleBox.scrollTop = consoleBox.scrollHeight
+    }catch(e){}
 }
-
 setInterval(updateLogs,2000)
 
 function openAdmin(){
     const pass = prompt("Mot de passe administrateur")
-
     if(pass === "yanisael2007"){
-
-    sessionStorage.setItem("adminAccess","ok")
-    window.location.href="/admin"
-
+        sessionStorage.setItem("adminAccess","ok")
+        window.location.href="/admin"
     }else{
-
-    alert("Mot de passe incorrect")
-
+        alert("Mot de passe incorrect")
     }
 }
-
 </script>
 </html>

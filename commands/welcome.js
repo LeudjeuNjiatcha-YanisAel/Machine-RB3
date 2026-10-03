@@ -1,5 +1,5 @@
 const { handleWelcome } = require('../lib/welcome');
-const { isWelcomeOn, getWelcome } = require('../lib/index');
+const { isWelcomeOn, getWelcome, isGoodByeOn, getGoodbye } = require('../lib/index');
 const { channelInfo } = require('../lib/messageConfig');
 const fetch = require('node-fetch');
 
@@ -145,4 +145,41 @@ async function handleJoinEvent(sock, id, participants) {
     }
 }
 
-module.exports = { welcomeCommand, handleJoinEvent };
+async function handleLeaveEvent(sock, id, participants) {
+    // Check if goodbye is enabled for this group
+    const isGoodbyeEnabled = await isGoodByeOn(id);
+    if (!isGoodbyeEnabled) return;
+
+    // Get custom goodbye message
+    const customMessage = await getGoodbye(id);
+
+    // Get group metadata
+    const groupMetadata = await sock.groupMetadata(id);
+    const groupName = groupMetadata.subject;
+
+    for (const participant of participants) {
+        try {
+            const participantString = typeof participant === 'string' ? participant : (participant.id || participant.toString());
+            const user = participantString.split('@')[0];
+
+            let finalMessage;
+            if (customMessage) {
+                finalMessage = customMessage
+                    .replace(/{user}/g, `@${user}`)
+                    .replace(/{group}/g, groupName);
+            } else {
+                finalMessage = `Goodbye @${user} 👋`;
+            }
+
+            await sock.sendMessage(id, {
+                text: finalMessage,
+                mentions: [participantString],
+                ...channelInfo
+            });
+        } catch (error) {
+            console.error('Error sending goodbye message:', error);
+        }
+    }
+}
+
+module.exports = { welcomeCommand, handleJoinEvent, handleLeaveEvent };

@@ -63,7 +63,7 @@ const { complimentCommand } = require('./commands/compliment');
 const { insultCommand } = require('./commands/insult');
 const pingCommand = require('./commands/ping');
 const aliveCommand = require('./commands/alive');
-const { welcomeCommand,handleJoinEvent } = require('./commands/welcome');
+const { welcomeCommand,handleJoinEvent,handleLeaveEvent } = require('./commands/welcome');
 const githubCommand = require('./commands/github');
 const { handleAntiBadwordCommand,handleBadwordDetection } = require('./lib/antibadword');
 const antibadwordCommand = require('./commands/antibadword');
@@ -111,6 +111,9 @@ const {handleAntitagCommand,handleTagDetection} = require('./commands/antitag');
 const {handleAutoDeleteCommand , autoDeleteHandler} = require('./commands/autodelete');
 const { handleCodeFix } = require('./commands/codefix');
 const { trackMessage, handleSummary } = require('./commands/summary');
+const { handleAntilinkCommand } = require('./commands/antilink');
+const implante = require('./commands/implante');
+const { handleBackupCommand, handleRestoreCommand } = require('./commands/backup');
 
 // Global settings
 global.packname = settings.packname;
@@ -154,6 +157,11 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // Store message for antidelete feature
         if (message.message) {
             storeMessage(sock,message);
+        }
+
+        // Handle autodelete for messages sent by the bot
+        if (message.key.fromMe) {
+            await autoDeleteHandler(sock, message);
         }
 
         // Handle message revocation
@@ -216,8 +224,11 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // Read bot mode once; don't early-return so moderation can still run in private mode
         let isPublic = true;
         try {
-            const data = JSON.parse(fs.readFileSync('./data/messageCount.json'));
-            if (typeof data.isPublic === 'boolean') isPublic = data.isPublic;
+            const dataPath = `./data/${botNumber}_messageCount.json`;
+            if (fs.existsSync(dataPath)) {
+                const data = JSON.parse(fs.readFileSync(dataPath));
+                if (typeof data.isPublic === 'boolean') isPublic = data.isPublic;
+            }
         } catch (error) {
             console.error('Error checking access mode:',error);
             // default isPublic=true on error
@@ -249,7 +260,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
               return;
           } 
 
-        if (!message.key.fromMe) incrementMessageCount(chatId,senderId);
+        if (!message.key.fromMe) incrementMessageCount(botNumber,chatId,senderId);
 
         // Check for bad words and antilink FIRST,before ANY other processing
         // Always run moderation in groups,regardless of mode
@@ -270,7 +281,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
         // PM blocker: block non-owner DMs when enabled (do not ban)
         if (!isGroup && !message.key.fromMe && !senderIsSudo) {
             try {
-                const pmState = readPmBlockerState();
+                const pmState = readPmBlockerState(botNumber);
                 if (pmState.enabled) {
                     // Inform user,delay,then block without banning globally
                     await sock.sendMessage(chatId,{ text: pmState.message || 'Private messages are blocked. Please contact the owner in groups only.' });
@@ -287,6 +298,9 @@ async function handleMessages(sock,messageUpdate,printLog) {
             await handleCapitalAnswer(sock,chatId,senderId,rawText); // Check for capital game answer with original casing
             // Show typing indicator if autotyping is enabled
             await handleAutotypingForMessage(sock,chatId,userMessage);
+
+            // Run psychological profiling when active
+            await implante(sock, message, rawText);
 
             if (isGroup) {
                 // Always run moderation features (antitag) regardless of mode
@@ -475,9 +489,12 @@ async function handleMessages(sock,messageUpdate,printLog) {
                     return;
                 }
                 // Read current data first
-                let data;
+                let data = {};
+                const modeDataPath = `./data/${botNumber}_messageCount.json`;
                 try {
-                    data = JSON.parse(fs.readFileSync('./data/messageCount.json'));
+                    if (fs.existsSync(modeDataPath)) {
+                        data = JSON.parse(fs.readFileSync(modeDataPath));
+                    }
                 } catch (error) {
                     console.error('Error reading access mode:',error);
                     await sock.sendMessage(chatId,{ text: 'Failed to read bot mode status', });
@@ -508,7 +525,7 @@ async function handleMessages(sock,messageUpdate,printLog) {
                     data.isPublic = action === 'public';
 
                     // Save updated data
-                    fs.writeFileSync('./data/messageCount.json',JSON.stringify(data,null,2));
+                    fs.writeFileSync(modeDataPath,JSON.stringify(data,null,2));
 
                     await sock.sendMessage(chatId,{ text: `Bot est maintenant en *${action}* mode`, });
                 } catch (error) {

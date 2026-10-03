@@ -1,19 +1,22 @@
 const fs = require('fs-extra');
 const path = require('path');
 const archiver = require('archiver');
+const { asyncLocalStorage } = require('../lib/context');
 
-async function runSessionCommand({ sock, msg, replyWithTag }) {
+async function runSessionCommand({ sock, msg }) {
+    const chatId = msg.key.remoteJid;
     try {
-        const SESSION_DIR = path.join(__dirname, "../session");
-        const ZIP_PATH = path.join(__dirname, "../session.zip");
+        const botNumber = asyncLocalStorage.getStore();
+        if (!botNumber) {
+            return sock.sendMessage(chatId, { text: "❌ Aucun numéro de bot associé à cette session." }, { quoted: msg });
+        }
+
+        // Sessions are saved inside "./sessions/[botNumber]"
+        const SESSION_DIR = path.join(process.cwd(), "sessions", botNumber);
+        const ZIP_PATH = path.join(process.cwd(), `session_${botNumber}.zip`);
 
         if (!fs.existsSync(SESSION_DIR)) {
-            return replyWithTag(
-                sock,
-                msg.key.remoteJid,
-                msg,
-                "❌ Aucune session trouvée."
-            );
+            return sock.sendMessage(chatId, { text: "❌ Aucune session trouvée pour ce bot." }, { quoted: msg });
         }
 
         // Supprime ancien zip
@@ -55,7 +58,7 @@ async function runSessionCommand({ sock, msg, replyWithTag }) {
         console.log("📦 Taille session minimale (base64):", sessionBase64.length);
 
         await sock.sendMessage(
-            msg.key.remoteJid,
+            chatId,
             {
                 text:
 `🤫 *SESSION DATA MINIMAL*
@@ -75,12 +78,7 @@ ${sessionBase64}
 
     } catch (err) {
         console.error("SESSION CMD ERROR:", err);
-        await replyWithTag(
-            sock,
-            msg.key.remoteJid,
-            msg,
-            "❌ Erreur lors de la génération de la session."
-        );
+        await sock.sendMessage(chatId, { text: "❌ Erreur lors de la génération de la session." }, { quoted: msg });
     }
 }
 

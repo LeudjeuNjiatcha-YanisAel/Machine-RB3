@@ -8,14 +8,16 @@ const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
 
 // Path to store the configuration
-const configPath = path.join(__dirname, '..', 'data', 'autotyping.json');
-
+function getConfigPath(botNumber) {
+    return path.join(__dirname, '..', 'data', `${botNumber}_autotyping.json`);
+}
 
 function isSocketConnected(sock) {
     return sock?.user && sock?.ws?.readyState === 1;
 }
 // Initialize configuration file if it doesn't exist
-function initConfig() {
+function initConfig(botNumber) {
+    const configPath = getConfigPath(botNumber);
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, JSON.stringify({ enabled: false }, null, 2));
     }
@@ -25,6 +27,7 @@ function initConfig() {
 // Toggle autotyping feature
 async function autotypingCommand(sock, chatId, message) {
     try {
+        const botNumber = sock.user.id.split(':')[0];
         const senderId = message.key.participant || message.key.remoteJid;
         const isOwner = await isOwnerOrSudo(senderId, sock, chatId);
         
@@ -42,7 +45,7 @@ async function autotypingCommand(sock, chatId, message) {
                     [];
         
         // Initialize or read config
-        const config = initConfig();
+        const config = initConfig(botNumber);
         
         // Toggle based on argument or toggle current state if no argument
         if (args.length > 0) {
@@ -64,6 +67,7 @@ async function autotypingCommand(sock, chatId, message) {
         }
         
         // Save updated configuration
+        const configPath = getConfigPath(botNumber);
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
         
         // Send confirmation message
@@ -82,9 +86,9 @@ async function autotypingCommand(sock, chatId, message) {
 }
 
 // Function to check if autotyping is enabled
-function isAutotypingEnabled() {
+function isAutotypingEnabled(botNumber) {
     try {
-        const config = initConfig();
+        const config = initConfig(botNumber);
         return config.enabled;
     } catch (error) {
         console.error('Error checking autotyping status:', error);
@@ -94,7 +98,8 @@ function isAutotypingEnabled() {
 
 // Function to handle autotyping for regular messages
 async function handleAutotypingForMessage(sock, chatId, userMessage) {
-    if (!isAutotypingEnabled()) return false;
+    const botNumber = sock.user.id.split(':')[0];
+    if (!isAutotypingEnabled(botNumber)) return false;
 
     if (!sock?.user || sock?.ws?.readyState !== 1) return false;
 
@@ -119,7 +124,8 @@ async function handleAutotypingForMessage(sock, chatId, userMessage) {
 }
 // Function to handle autotyping for commands - BEFORE command execution (not used anymore)
 async function handleAutotypingForCommand(sock, chatId) {
-    if (isAutotypingEnabled()) {
+    const botNumber = sock.user.id.split(':')[0];
+    if (isAutotypingEnabled(botNumber)) {
         try {
             // First subscribe to presence updates for this chat
             await sock.presenceSubscribe(chatId);
@@ -153,7 +159,8 @@ async function handleAutotypingForCommand(sock, chatId) {
 
 // Function to show typing status AFTER command execution
 async function showTypingAfterCommand(sock, chatId) {
-    if (isAutotypingEnabled()) {
+    const botNumber = sock.user.id.split(':')[0];
+    if (isAutotypingEnabled(botNumber)) {
         try {
             // This function runs after the command has been executed and response sent
             // So we just need to show a brief typing indicator

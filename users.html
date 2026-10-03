@@ -5,27 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MACHINE VB3 | Users</title>
+<meta name="description" content="Gestion des utilisateurs MACHINE VB3.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-
     :root{
         --primary:#5865F2;
         --secondary:#00d4ff;
-        --danger:#ef0f17;
+        --danger:#ef4444;
         --bg:#050507;
-        --card:rgba(255,255,255,0.05);
+        --card:rgba(255,255,255,0.04);
+        --card-hover:rgba(255,255,255,0.07);
+        --border:rgba(255,255,255,0.07);
+        --border-hover:rgba(0,212,255,0.3);
         --text:#ffffff;
-        --text-dim:#9ca3af;
+        --text-dim:#8b95a5;
+        --text-muted:#5a6372;
+        --radius:16px;
+        --radius-lg:24px;
     }
+
     *{
         margin:0;
         padding:0;
         box-sizing:border-box;
-        font-family:'Outfit',sans-serif;
+        font-family:'Inter',system-ui,-apple-system,sans-serif;
     }
+
     body{
         background:var(--bg);
         color:var(--text);
@@ -33,94 +42,171 @@
         display:flex;
         justify-content:center;
         align-items:center;
-        padding:40px;
+        padding:40px 20px;
         background-image:
-        radial-gradient(circle at 20% 30%,rgba(88,101,240,0.15),transparent 40%),
-        radial-gradient(circle at 80% 70%,rgba(0,212,255,0.15),transparent 40%);
+        radial-gradient(circle at 20% 15%,rgba(88,101,242,0.12),transparent 45%),
+        radial-gradient(circle at 85% 75%,rgba(0,212,255,0.08),transparent 45%);
     }
+
     .userContainer{
-        max-width:900px;
+        max-width:700px;
         width:100%;
         background:var(--card);
-        border:1px solid rgba(255,255,255,0.08);
-        border-radius:25px;
-        backdrop-filter:blur(15px);
-        padding:50px;
+        border:1px solid var(--border);
+        border-radius:var(--radius-lg);
+        backdrop-filter:blur(20px);
+        padding:48px;
         text-align:center;
-        box-shadow:0 10px 40px rgba(0,0,0,0.5);
-        animation:fade 0.8s ease;
+        box-shadow:0 20px 60px rgba(0,0,0,0.4);
+        animation:fadeIn 0.6s cubic-bezier(0.16,1,0.3,1);
         position:relative;
     }
 
-    @keyframes fade{
-        from{opacity:0;transform:translateY(30px);}
+    @keyframes fadeIn{
+        from{opacity:0;transform:translateY(20px);}
         to{opacity:1;transform:translateY(0);}
     }
-    .logo{
-        font-size:55px;
-        margin-bottom:15px;
+
+    .back-link{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        font-size:14px;
+        font-weight:500;
+        text-decoration:none;
+        color:var(--text-dim);
+        transition:color 0.2s;
+        position:absolute;
+        top:24px;
+        left:24px;
     }
+
+    .back-link i{width:16px;height:16px;}
+    .back-link:hover{color:var(--secondary);}
+
+    .logo-icon{
+        width:56px;
+        height:56px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
+        border-radius:16px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        margin:24px auto 18px;
+        box-shadow:0 8px 30px rgba(88,101,242,0.3);
+    }
+
+    .logo-icon i{width:28px;height:28px;color:white;}
+
     h1{
-        font-size:42px;
-        font-weight:700;
-        background:linear-gradient(45deg,var(--primary),var(--secondary));
+        font-size:28px;
+        font-weight:800;
+        letter-spacing:-0.5px;
+        background:linear-gradient(135deg,var(--primary),var(--secondary));
         -webkit-background-clip:text;
         -webkit-text-fill-color:transparent;
-        margin-bottom:10px;
+        background-clip:text;
+        margin-bottom:8px;
     }
+
     .title{
         color:var(--text-dim);
-        font-size:18px;
-        margin-bottom:40px;
+        font-size:14px;
+        margin-bottom:32px;
     }
+
+    /* User cards */
     .userCard{
-        background:rgba(255,255,255,0.04);
-        border:1px solid rgba(255,255,255,0.08);
-        border-radius:15px;
-        padding:20px;
-        margin-bottom:20px;
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        padding:20px 24px;
+        margin-bottom:12px;
         display:flex;
         justify-content:space-between;
         align-items:center;
-        transition:0.3s;
+        transition:all 0.25s;
     }
+
     .userCard:hover{
-        border-color:var(--secondary);
-        box-shadow:0 10px 30px rgba(0,212,255,0.15);
-        transform:translateY(-4px) scale(1.02);
+        border-color:var(--border-hover);
+        background:var(--card-hover);
+        transform:translateY(-2px);
+        box-shadow:0 8px 24px rgba(0,0,0,0.2);
     }
+
     .userInfo{
         text-align:left;
+        display:flex;
+        align-items:center;
+        gap:16px;
     }
-    .userInfo h3{
-        font-size:18px;
-        margin-bottom:5px;
+
+    .user-avatar{
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:rgba(88,101,242,0.12);
+        color:var(--primary);
+        flex-shrink:0;
     }
-    .userInfo span{
-        color:var(--secondary);
+
+    .user-avatar i{width:20px;height:20px;}
+
+    .user-avatar.empty{
+        background:rgba(255,255,255,0.04);
+        color:var(--text-muted);
+    }
+
+    .user-details h3{
         font-size:15px;
-    }
-
-    .disconnect{
-        background:linear-gradient(45deg,var(--danger),#ff5c5c);
-        padding:10px 18px;
-        border-radius:10px;
-        cursor:pointer;
-        border:none;
-        color:white;
         font-weight:600;
-        transition:0.2s;
-    }
-    .disconnect:hover{
-        transform:scale(1.05);
+        margin-bottom:3px;
     }
 
-    .footer{
-        margin-top:30px;
+    .user-details span{
         font-size:13px;
         color:var(--text-dim);
     }
-    /* message de confirmation */
+
+    .user-details .prefix{
+        color:var(--secondary);
+        font-weight:500;
+    }
+
+    .disconnect{
+        background:rgba(239,68,68,0.1);
+        border:1px solid rgba(239,68,68,0.15);
+        padding:8px 16px;
+        border-radius:10px;
+        cursor:pointer;
+        color:#ef4444;
+        font-weight:600;
+        font-size:13px;
+        transition:all 0.2s;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+    }
+
+    .disconnect i{width:14px;height:14px;}
+
+    .disconnect:hover{
+        background:rgba(239,68,68,0.2);
+        transform:scale(1.03);
+    }
+
+    /* Footer */
+    .footer{
+        margin-top:28px;
+        font-size:12px;
+        color:var(--text-muted);
+    }
+
+    /* Confirmation modal */
     .confirmOverlay{
         position:fixed;
         top:0;
@@ -128,54 +214,87 @@
         width:100%;
         height:100%;
         background:rgba(0,0,0,0.7);
+        backdrop-filter:blur(4px);
         display:flex;
         justify-content:center;
         align-items:center;
         z-index:999;
     }
+
     .confirmModal{
-        background:rgba(20,20,25,0.95);
-        padding:30px;
-        border-radius:15px;
+        background:rgba(20,20,28,0.98);
+        padding:36px;
+        border-radius:var(--radius-lg);
         text-align:center;
-        width:320px;
-        border:1px solid rgba(255,255,255,0.08);
-        box-shadow:0 0 25px rgba(0,0,0,0.6);
-        animation:fade 0.3s ease;
+        width:340px;
+        border:1px solid var(--border);
+        box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        animation:fadeIn 0.3s ease;
     }
+
+    .confirmModal .modal-icon{
+        width:48px;
+        height:48px;
+        border-radius:14px;
+        background:rgba(239,68,68,0.12);
+        color:#ef4444;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        margin-bottom:16px;
+    }
+
+    .confirmModal .modal-icon i{width:24px;height:24px;}
+
     .confirmModal h2{
-        margin-bottom:15px;
+        font-size:18px;
+        font-weight:700;
+        margin-bottom:8px;
+        background:none;
+        -webkit-text-fill-color:var(--text);
     }
+
+    .confirmModal p{
+        color:var(--text-dim);
+        font-size:14px;
+        margin-bottom:24px;
+    }
+
     .confirmButtons{
-        margin-top:20px;
         display:flex;
-        justify-content:space-around;
+        gap:12px;
+        justify-content:center;
     }
+
+    .yesBtn,.noBtn{
+        border:none;
+        padding:10px 24px;
+        border-radius:10px;
+        color:white;
+        cursor:pointer;
+        font-weight:600;
+        font-size:14px;
+        transition:all 0.2s;
+    }
+
     .yesBtn{
-        background:#1bd96a;
-        border:none;
-        padding:10px 20px;
-        border-radius:8px;
-        color:white;
-        cursor:pointer;
-        font-weight:600;
+        background:linear-gradient(135deg,#ef4444,#dc2626);
+        box-shadow:0 4px 12px rgba(239,68,68,0.3);
     }
+
     .noBtn{
-        background:#ff3b3b;
-        border:none;
-        padding:10px 20px;
-        border-radius:8px;
-        color:white;
-        cursor:pointer;
-        font-weight:600;
+        background:rgba(255,255,255,0.08);
+        border:1px solid var(--border);
     }
-    .yesBtn:hover{
-        transform:scale(1.05);
-        box-shadow:0 5px 10px rgba(27, 217, 106, 0.833);
+
+    .yesBtn:hover,.noBtn:hover{
+        transform:translateY(-2px);
     }
-    .noBtn:hover{
-        transform:scale(1.05);
-        box-shadow: 0 5px 10px rgba(255, 59, 59, 0.835);
+
+    @media(max-width:640px){
+        .userContainer{padding:28px 20px;}
+        h1{font-size:24px;}
+        .userCard{flex-direction:column;gap:12px;}
     }
 </style>
 </head>
@@ -183,108 +302,101 @@
 <body>
 
 <div class="userContainer">
-    <a href="/admin" style="
-    position:absolute;
-    left:20px;
-    top:20px;
-    font-size:18px;
-    text-decoration:none;
-    color:#1bd96a;
-    ">
-    ⬅ Retour
-    </a>
-    <div class="logo">🤖</div>
 
-    <h1>MACHINE VB3<br>USERS</h1>
+<a href="/admin" class="back-link">
+    <i data-lucide="arrow-left"></i>
+    Retour
+</a>
 
-    <p class="title">
-        Gérez les utilisateurs connectés à votre bot WhatsApp en toute simplicite.
-    </p>
+<div class="logo-icon">
+    <i data-lucide="users"></i>
+</div>
 
-    <div id="usersContainer"></div>
+<h1>MACHINE VB3<br>USERS</h1>
 
-    <div class="footer">
-        MACHINE VB3 • User Interface
-    </div>
+<p class="title">
+    Gérez les utilisateurs connectés à votre bot WhatsApp.
+</p>
+
+<div id="usersContainer"></div>
+
+<div class="footer">
+    MACHINE VB3 · User Interface
+</div>
 
 </div>
 
+<!-- Confirmation modal -->
+<div id="confirmBox" style="display:none;" class="confirmOverlay">
+    <div class="confirmModal">
+        <div class="modal-icon">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <h2>Confirmer la déconnexion</h2>
+        <p id="confirmText"></p>
+        <div class="confirmButtons">
+            <button class="yesBtn" onclick="confirmDisconnect()">Confirmer</button>
+            <button class="noBtn" onclick="closeConfirm()">Annuler</button>
+        </div>
+    </div>
+</div>
+
 <script>
+lucide.createIcons();
 
 async function loadUsers(){
+    try{
+        const res = await fetch("/status")
+        const data = await res.json()
+        const container = document.getElementById("usersContainer")
+        container.innerHTML = ""
+        const maxUsers = 3
 
-    const res = await fetch("/status")
-    const data = await res.json()
-
-    const container = document.getElementById("usersContainer")
-
-    container.innerHTML = ""
-
-    const maxUsers = 3
-
-    for(let i=0;i<maxUsers;i++){
-        let user = data.list[i]
-        if(user){
-            container.innerHTML += `
-            <div class="userCard">
-
-            <div class="userInfo">
-            <h3>Utilisateur ${i+1}</h3>
-            <div>Numéro : ${user.number}</div>
-            <span>Prefix : ${user.prefix}</span>
-            </div>
-
-            <button class="disconnect" onclick="askDisconnect('${user.number}')">
-            Deconnecter
-            </button>
-
-            </div>
-            `
-
+        for(let i=0;i<maxUsers;i++){
+            let user = data.list[i]
+            if(user){
+                container.innerHTML += `
+                <div class="userCard">
+                    <div class="userInfo">
+                        <div class="user-avatar">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="user-details">
+                            <h3>Utilisateur ${i+1}</h3>
+                            <span>Numéro : ${user.number}</span><br>
+                            <span class="prefix">Préfixe : ${user.prefix}</span>
+                        </div>
+                    </div>
+                    <button class="disconnect" onclick="askDisconnect('${user.number}')">
+                        <i data-lucide="unplug"></i>
+                        Déconnecter
+                    </button>
+                </div>`
+            }else{
+                container.innerHTML += `
+                <div class="userCard">
+                    <div class="userInfo">
+                        <div class="user-avatar empty">
+                            <i data-lucide="user-x"></i>
+                        </div>
+                        <div class="user-details">
+                            <h3>Utilisateur ${i+1}</h3>
+                            <span>Aucun utilisateur connecté</span>
+                        </div>
+                    </div>
+                </div>`
+            }
         }
-        else{
-            container.innerHTML += `
-            <div class="userCard">
-
-            <div class="userInfo">
-            <h3>Utilisateur ${i+1}</h3>
-            <div>Aucun utilisateur connecté</div>
-            </div>
-
-            </div>
-            `
-        }
-    }
+        lucide.createIcons();
+    }catch(e){}
 }
 
-async function disconnectUser(number){
-
-    const res = await fetch("/disconnect",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({number})
-    })
-
-    const data = await res.json()
-
-    if(data.success){
-        alert("Utilisateur déconnecté")
-        loadUsers()
-    }
-    else{
-        alert(data.message)
-    }
-
-}
-
-// Message d confirmation 
 let selectedNumber = null
+
 function askDisconnect(number){
     selectedNumber = number
-
     document.getElementById("confirmText").innerText =
-    "Voulez-vous vraiment déconnecter " + number + " ?"
-
+        "Voulez-vous vraiment déconnecter " + number + " ?"
     document.getElementById("confirmBox").style.display = "flex"
 }
 
@@ -297,13 +409,12 @@ async function confirmDisconnect(){
     if(!selectedNumber) return
 
     const res = await fetch("/disconnect",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({number:selectedNumber})
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({number:selectedNumber})
     })
 
     const data = await res.json()
-
     closeConfirm()
 
     if(data.success){
@@ -312,24 +423,11 @@ async function confirmDisconnect(){
     }else{
         alert(data.message)
     }
-
 }
 
 loadUsers()
 setInterval(loadUsers,5000)
-
 </script>
-
-<div id="confirmBox" style="display:none;" class="confirmOverlay">
-    <div class="confirmModal">
-        <h2>Confirmer la déconnexion ?</h2>
-        <p id="confirmText"></p>
-        <div class="confirmButtons">
-        <button class="yesBtn" onclick="confirmDisconnect()">Oui</button>
-        <button class="noBtn" onclick="closeConfirm()">Non</button>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

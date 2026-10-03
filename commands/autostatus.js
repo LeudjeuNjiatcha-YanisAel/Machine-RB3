@@ -2,16 +2,33 @@ const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
 const { downloadMediaMessage } = require('@whiskeysockets/baileys');
-// Chemin pour stocker la configuration de l’auto status
-const configPath = path.join(__dirname, '../data/autoStatus.json');
+const { asyncLocalStorage } = require('../lib/context');
 
-// Initialiser le fichier de configuration s’il n’existe pas
-if (!fs.existsSync(configPath)) {
-    fs.writeFileSync(configPath, JSON.stringify({ 
-        enabled: false, 
-        reactOn: false,
-        download: false 
-    }));
+function getConfigPath() {
+    const botNumber = asyncLocalStorage.getStore();
+    const filename = botNumber ? `../data/${botNumber}/autoStatus.json` : '../data/autoStatus.json';
+    const filePath = path.join(__dirname, filename);
+    if (!fs.existsSync(filePath)) {
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(filePath, JSON.stringify({ 
+            enabled: false, 
+            reactOn: false,
+            download: false 
+        }));
+    }
+    return filePath;
+}
+
+function getStatusesFolder() {
+    const botNumber = asyncLocalStorage.getStore() || 'global';
+    const folder = path.join(__dirname, `../statuses/${botNumber}`);
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder, { recursive: true });
+    }
+    return folder;
 }
 
 function getRealJid(msg) {
@@ -25,7 +42,6 @@ function getRealJid(msg) {
 
 async function downloadStatusMedia(sock, msg) {
     try {
-
         if (!isStatusDownloadEnabled()) return;
 
         const message = msg.message;
@@ -38,11 +54,7 @@ async function downloadStatusMedia(sock, msg) {
             { logger: sock.logger }
         );
 
-        const folder = path.join(__dirname, '../statuses');
-
-        if (!fs.existsSync(folder)) {
-            fs.mkdirSync(folder);
-        }
+        const folder = getStatusesFolder();
 
         // 👤 récupérer le contact
         const jid = msg.key.participant || msg.key.remoteJid;
@@ -82,23 +94,18 @@ async function downloadStatusMedia(sock, msg) {
 
         // 📤 envoyer en privé
         if (type === "image") {
-
             await sock.sendMessage(ownerJid, {
                 image: buffer,
                 caption: caption
             });
-
         } 
         else if (type === "video") {
-
             await sock.sendMessage(ownerJid, {
                 video: buffer,
                 caption: caption
             });
-
         } 
         else if (type === "audio") {
-
             await sock.sendMessage(ownerJid, {
                 audio: buffer,
                 mimetype: "audio/mp4",
@@ -108,14 +115,12 @@ async function downloadStatusMedia(sock, msg) {
             await sock.sendMessage(ownerJid, {
                 text: caption
             });
-
         }
 
     } catch (err) {
         console.log("❌ Erreur téléchargement statut :", err.message);
     }
 }
-
 
 async function autoStatusCommand(sock, chatId, msg, args) {
     try {
@@ -129,6 +134,7 @@ async function autoStatusCommand(sock, chatId, msg, args) {
             return;
         }
 
+        const configPath = getConfigPath();
         // Lire la configuration actuelle
         let config = JSON.parse(fs.readFileSync(configPath));
 
@@ -213,10 +219,9 @@ async function autoStatusCommand(sock, chatId, msg, args) {
     }
 }
 
-// Fonction pour vérifier si l’auto status est activé
 function isAutoStatusEnabled() {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
+        const config = JSON.parse(fs.readFileSync(getConfigPath()));
         return config.enabled;
     } catch (error) {
         console.error('Erreur lors de la vérification de la configuration auto status :', error);
@@ -226,7 +231,7 @@ function isAutoStatusEnabled() {
 
 function isStatusDownloadEnabled() {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
+        const config = JSON.parse(fs.readFileSync(getConfigPath()));
         return config.download;
     } catch (error) {
         console.error('Erreur lecture config download :', error);
@@ -234,10 +239,9 @@ function isStatusDownloadEnabled() {
     }
 }
 
-// Fonction pour vérifier si les réactions aux statuts sont activées
 function isStatusReactionEnabled() {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath));
+        const config = JSON.parse(fs.readFileSync(getConfigPath()));
         return config.reactOn;
     } catch (error) {
         console.error('Erreur lors de la vérification des réactions aux statuts :', error);
@@ -245,14 +249,12 @@ function isStatusReactionEnabled() {
     }
 }
 
-// Fonction pour réagir aux statuts avec la méthode appropriée
 async function reactToStatus(sock, statusKey) {
     try {
         if (!isStatusReactionEnabled()) {
             return;
         }
 
-        // Utiliser la méthode relayMessage pour les réactions aux statuts
         await sock.relayMessage(
             'status@broadcast',
             {
@@ -271,21 +273,17 @@ async function reactToStatus(sock, statusKey) {
                 statusJidList: [statusKey.remoteJid, statusKey.participant || statusKey.remoteJid]
             }
         );
-        
-        // Journal de succès supprimé – uniquement les erreurs sont conservées
     } catch (error) {
         console.error('❌ Erreur lors de la réaction au statut :', error.message);
     }
 }
 
-// Fonction pour gérer les mises à jour de statut
 async function handleStatusUpdate(sock, status) {
     try {
         if (!isAutoStatusEnabled()) {
             return;
         }
 
-        // Ajouter un délai pour éviter le rate limit
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Gérer les statuts depuis messages.upsert
@@ -294,31 +292,30 @@ async function handleStatusUpdate(sock, status) {
             if (msg.key && msg.key.remoteJid === 'status@broadcast') {
                 try {
                     await downloadStatusMedia(sock, msg);
-                   const participant = getRealJid(msg)
+                    const participant = getRealJid(msg);
 
-                    await new Promise(resolve => setTimeout(resolve, 2000))
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
                     await sock.sendReceipt(
-                    'status@broadcast',
-                    participant,
-                    [msg.key.id],
-                    'read'
-                    )
+                        'status@broadcast',
+                        participant,
+                        [msg.key.id],
+                        'read'
+                    );
                     
-                    // Réagir au statut si activé
                     await reactToStatus(sock, msg.key);
                 } catch (err) {
                     if (err.message?.includes('rate-overlimit')) {
                         console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
                         await new Promise(resolve => setTimeout(resolve, 2000));
-                            const participant = getRealJid(msg)
+                        const participant = getRealJid(msg);
 
-                            await sock.sendReceipt(
+                        await sock.sendReceipt(
                             'status@broadcast',
                             participant,
                             [msg.key.id],
                             'read'
-)
+                        );
                     } else {
                         throw err;
                     }
@@ -330,34 +327,31 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les mises à jour directes de statut
         if (status.key && status.key.remoteJid === 'status@broadcast') {
             try {
+                const participant = getRealJid(status);
 
-                const participant = getRealJid(msg)
-
-                await new Promise(resolve => setTimeout(resolve, 2000))
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
                 await sock.sendReceipt(
-                'status@broadcast',
-                participant,
-                [msg.key.id],
-                'read'
-                )
+                    'status@broadcast',
+                    participant,
+                    [status.key.id],
+                    'read'
+                );
 
-                // Réagir au statut si activé
                 await reactToStatus(sock, status.key);
             } catch (err) {
                 if (err.message?.includes('rate-overlimit')) {
                     console.log('⚠️ Limite de requêtes atteinte, attente avant réessai...');
-                    
-                    const participant = getRealJid(msg)
+                    const participant = getRealJid(status);
 
-                    await new Promise(resolve => setTimeout(resolve, 2000))
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
                     await sock.sendReceipt(
-                    'status@broadcast',
-                    participant,
-                    [msg.key.id],
-                    'read'
-)
+                        'status@broadcast',
+                        participant,
+                        [status.key.id],
+                        'read'
+                    );
                 } else {
                     throw err;
                 }
@@ -368,18 +362,17 @@ async function handleStatusUpdate(sock, status) {
         // Gérer les statuts dans les réactions
         if (status.reaction && status.reaction.key.remoteJid === 'status@broadcast') {
             try {
-                    const participant = getRealJid(msg)
+                const participant = getRealJid(status.reaction);
 
-                    await new Promise(resolve => setTimeout(resolve, 2000))
+                await new Promise(resolve => setTimeout(resolve, 2000));
 
-                    await sock.sendReceipt(
+                await sock.sendReceipt(
                     'status@broadcast',
                     participant,
-                    [msg.key.id],
+                    [status.reaction.key.id],
                     'read'
-                    )
+                );
                 
-                // Réagir au statut si activé
                 await reactToStatus(sock, status.reaction.key);
             } catch (err) {
                 if (err.message?.includes('rate-overlimit')) {
@@ -398,13 +391,9 @@ async function handleStatusUpdate(sock, status) {
     }
 }
 
-// Pour compter les statuts telecharges
 async function statusCommand(sock, chatId) {
-
     try {
-
-        const folder = path.join(__dirname, '../statuses');
-
+        const folder = getStatusesFolder();
         if (!fs.existsSync(folder)) {
             await sock.sendMessage(chatId, {
                 text: "📭 Aucun statut téléchargé."
@@ -419,14 +408,12 @@ async function statusCommand(sock, chatId) {
         });
 
     } catch (err) {
-
         await sock.sendMessage(chatId, {
             text: "❌ Erreur lecture des statuts."
         });
-
     }
-
 }
+
 module.exports = {
     autoStatusCommand,
     handleStatusUpdate,

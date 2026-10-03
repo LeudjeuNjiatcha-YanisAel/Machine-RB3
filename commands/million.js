@@ -2,7 +2,9 @@ const MillionGame = require("../lib/million");
 const games = {};
 
 async function sendQuestion(sock, chatId) {
-    const game = games[chatId];
+    const botNumber = sock.user.id.split(':')[0];
+    const gameId = `${botNumber}_${chatId}`;
+    const game = games[gameId];
     if (!game) return;
 
     const q = game.currentQuestion;
@@ -51,7 +53,7 @@ D) ${q.choices[3]}
                 mentions: [winner]
             });
 
-            delete games[chatId];
+            delete games[gameId];
             return;
         }
     }
@@ -66,9 +68,11 @@ async function execute(sock, msg, args) {
     const chatId = msg.key.remoteJid;
     const sender = msg.key.participant || msg.key.remoteJid;
     
+    const botNumber = sock.user.id.split(':')[0];
+    const gameId = `${botNumber}_${chatId}`;
     
     if (args[0] === "join") {
-    const game = games[chatId];
+    const game = games[gameId];
     if (!game)
         return sock.sendMessage(chatId, { text: "❌ Aucune partie." });
 
@@ -80,7 +84,7 @@ async function execute(sock, msg, args) {
     });
     }
     if (args[0] === "go") {
-    const game = games[chatId];
+    const game = games[gameId];
     if (!game)
         return sock.sendMessage(chatId, { text: "❌ Aucune partie." });
 
@@ -91,10 +95,10 @@ async function execute(sock, msg, args) {
     }
 
     if (!args[0] || args[0] === "start") {
-        if (games[chatId])
+        if (games[gameId])
             return sock.sendMessage(chatId, { text: "❌ Partie déjà en cours." });
 
-                games[chatId] = new MillionGame(sender);
+                games[gameId] = new MillionGame(sender);
 
                 await sock.sendMessage(chatId, {
                     text:
@@ -111,7 +115,7 @@ async function execute(sock, msg, args) {
     }
 
     if (args[0] === "stop") {
-        delete games[chatId];
+        delete games[gameId];
         return sock.sendMessage(chatId, { text: "🛑 Partie arrêtée." });
     }
 }
@@ -119,7 +123,9 @@ async function execute(sock, msg, args) {
 async function handleSlam(sock, msg, text) {
     const chatId = msg.key.remoteJid;
     const sender = msg.key.participant || msg.key.remoteJid;
-    const game = games[chatId];
+    const botNumber = sock.user.id.split(':')[0];
+    const gameId = `${botNumber}_${chatId}`;
+    const game = games[gameId];
     if (!game) return;
     if (!game.players.includes(sender)) {
     await sock.sendMessage(chatId, {
@@ -169,7 +175,7 @@ async function handleSlam(sock, msg, text) {
                 mentions: [winner]
             });
 
-            delete games[chatId];
+            delete games[gameId];
             return;
         }
 

@@ -2,22 +2,42 @@ const fs = require('fs');
 const path = require('path');
 const isOwnerOrSudo = require('../lib/isOwner');
 
-const CONFIG_PATH = path.join(__dirname, '../data/autodelete.json');
+const { asyncLocalStorage } = require('../lib/context');
 
-if (!fs.existsSync(CONFIG_PATH)) {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify({
-        enabled: false,
-        delay: 5
-    }, null, 2));
+function getConfigFile() {
+    const botNumber = asyncLocalStorage.getStore();
+    const filename = botNumber ? `../data/${botNumber}/autodelete.json` : '../data/autodelete.json';
+    return path.join(__dirname, filename);
 }
 
 function getConfig() {
-    return JSON.parse(fs.readFileSync(CONFIG_PATH));
+    const filePath = getConfigFile();
+    if (!fs.existsSync(filePath)) {
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(filePath, JSON.stringify({
+            enabled: false,
+            delay: 5
+        }, null, 2));
+    }
+    try {
+        return JSON.parse(fs.readFileSync(filePath));
+    } catch {
+        return { enabled: false, delay: 5 };
+    }
 }
 
 function saveConfig(data) {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(data, null, 2));
+    const filePath = getConfigFile();
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
+
 
 async function handleAutoDeleteCommand(sock, msg, args) {
 

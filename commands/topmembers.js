@@ -1,9 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const dataFilePath = path.join(__dirname, '..', 'data', 'messageCount.json');
+function getDataFilePath(botNumber) {
+    return path.join(__dirname, '..', 'data', `${botNumber}_messageCount.json`);
+}
 
-function loadMessageCounts() {
+function loadMessageCounts(botNumber) {
+    const dataFilePath = getDataFilePath(botNumber);
     if (fs.existsSync(dataFilePath)) {
         try {
             const data = fs.readFileSync(dataFilePath, 'utf8');
@@ -18,12 +21,13 @@ function loadMessageCounts() {
 }
 
 
-function saveMessageCounts(messageCounts) {
+function saveMessageCounts(botNumber, messageCounts) {
+    const dataFilePath = getDataFilePath(botNumber);
     fs.writeFileSync(dataFilePath, JSON.stringify(messageCounts, null, 2));
 }
 
-function incrementMessageCount(groupId, userId) {
-    const messageCounts = loadMessageCounts();
+function incrementMessageCount(botNumber, groupId, userId) {
+    const messageCounts = loadMessageCounts(botNumber);
 
     if (!messageCounts[groupId]) {
         messageCounts[groupId] = {};
@@ -35,7 +39,7 @@ function incrementMessageCount(groupId, userId) {
 
     messageCounts[groupId][userId] += 1;
 
-    saveMessageCounts(messageCounts);
+    saveMessageCounts(botNumber, messageCounts);
 }
 
 function topMembers(sock, chatId, isGroup) {
@@ -44,7 +48,8 @@ function topMembers(sock, chatId, isGroup) {
         return;
     }
 
-    const messageCounts = loadMessageCounts();
+    const botNumber = sock.user.id.split(':')[0];
+    const messageCounts = loadMessageCounts(botNumber);
     const groupCounts = messageCounts[chatId] || {};
 
     const sortedMembers = Object.entries(groupCounts)

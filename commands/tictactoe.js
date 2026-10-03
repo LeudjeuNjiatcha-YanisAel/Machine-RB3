@@ -6,9 +6,12 @@ const games = {};
 
 async function tictactoeCommand(sock, chatId, senderId, text) {
     try {
+        const botNumber = sock.user.id.split(':')[0];
         // Vérifier si le joueur est déjà dans une partie
         if (Object.values(games).find(room => 
             room.id.startsWith('tictactoe') && 
+            room.botNumber === botNumber &&
+            room.chatId === chatId &&
             [room.game.playerX, room.game.playerO].includes(senderId)
         )) {
             await sock.sendMessage(chatId, { 
@@ -20,6 +23,8 @@ async function tictactoeCommand(sock, chatId, senderId, text) {
         // Rechercher une salle existante
         let room = Object.values(games).find(room => 
             room.state === 'WAITING' && 
+            room.botNumber === botNumber &&
+            room.chatId === chatId &&
             (text ? room.name === text : true)
         );
 
@@ -123,6 +128,8 @@ ${arr.slice(90, 100).join('')}
             // Créer une nouvelle salle
             room = {
                 id: 'tictactoe-' + (+new Date),
+                botNumber,
+                chatId,
                 x: chatId,
                 o: '',
                 game: new TicTacToe(senderId, 'o'),
@@ -153,8 +160,11 @@ async function handleTicTacToeMove(sock, chatId, senderId, text) {
         const cleaned = text.replace(/[^\d]/g, '');
         const move = cleaned ? parseInt(cleaned, 10) : NaN;
 
+        const botNumber = sock.user.id.split(':')[0];
         const room = Object.values(games).find(room => 
             room.id.startsWith('tictactoe') && 
+            room.botNumber === botNumber &&
+            room.chatId === chatId &&
             [room.game.playerX, room.game.playerO].includes(senderId) && 
             room.state === 'PLAYING'
         );

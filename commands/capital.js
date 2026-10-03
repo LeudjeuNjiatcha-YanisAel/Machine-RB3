@@ -21,7 +21,10 @@ function advanceTurn(room) {
 /* LANCER / REJOINDRE PARTIE */
 async function capitalCommand(sock, chatId, senderId) {
     try {
+        const botNumber = sock.user.id.split(':')[0];
         const existingRoom = Object.values(games).find(r =>
+            r.botNumber === botNumber &&
+            r.chatId === chatId &&
             r.game &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );
@@ -32,7 +35,7 @@ async function capitalCommand(sock, chatId, senderId) {
             });
         }
 
-        let room = Object.values(games).find(r => r.state === 'WAITING');
+        let room = Object.values(games).find(r => r.state === 'WAITING' && r.botNumber === botNumber && r.chatId === chatId);
 
         if (room) {
             room.playerB = senderId;
@@ -60,6 +63,7 @@ Joueur : @${room.game.currentTurn.split('@')[0]}
         } else {
             room = {
             id: 'capital-' + Date.now(),
+            botNumber,
             chatId,
             playerA: senderId,
             playerB: null,
@@ -158,8 +162,10 @@ ${tourFinished
 /* REPONSE JOUEUR */
 async function handleCapitalAnswer(sock, chatId, senderId, text) {
     try {
+        const botNumber = sock.user.id.split(':')[0];
         const room = Object.values(games).find(r =>
             r.state === 'PLAYING' &&
+            r.botNumber === botNumber &&
             r.chatId === chatId &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );
@@ -270,7 +276,8 @@ Tapez *capital* pour rejouer !`,
 /* STOP / QUIT / CLEANUP */
 async function stopCapitalGame(sock, chatId, senderId) {
     try {
-        const room = Object.values(games).find(r => r.chatId === chatId && r.state === 'PLAYING');
+        const botNumber = sock.user.id.split(':')[0];
+        const room = Object.values(games).find(r => r.botNumber === botNumber && r.chatId === chatId && r.state === 'PLAYING');
         if (!room) return sock.sendMessage(chatId, { text: '❌ Aucune partie CAPITAL en cours à arrêter.' });
 
         clearTimeout(room.timer);
@@ -287,8 +294,10 @@ async function stopCapitalGame(sock, chatId, senderId) {
 
 async function quitCapitalGame(sock, chatId, senderId) {
     try {
+        const botNumber = sock.user.id.split(':')[0];
         const room = Object.values(games).find(r =>
             r.state === 'PLAYING' &&
+            r.botNumber === botNumber &&
             r.chatId === chatId &&
             [r.game.playerA, r.game.playerB].includes(senderId)
         );

@@ -14,7 +14,10 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
 const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
         });
-const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
+// Path generation will use number
+function getUserGroupFile(number){
+    return path.join(__dirname,`../data/${number}_userGroupData.json`);
+}
 
 // const memory = {
 //     messages: new Map(),
@@ -22,8 +25,14 @@ const USER_GROUP_DATA = path.join(__dirname, '../data/userGroupData.json');
 // };
 const botMemory = new Map();
 
-function getUserGroupFile(number){
-    return path.join(__dirname,`../data/${number}/group.json`);
+function addMessageToMemory(number, senderId, role, text) {
+    const memory = getBotMemory(number);
+    if (!memory.messages.has(senderId)) {
+        memory.messages.set(senderId, []);
+    }
+    const history = memory.messages.get(senderId);
+    history.push({ role, text });
+    if (history.length > 20) history.shift();
 }
 
 // Pour la rotation des cles 
@@ -332,7 +341,8 @@ async function handleChatbotCommand(number,sock, chatId, message, match) {
     if (action === "off")
         delete data.chatbot[chatId];
 
-    fs.writeFileSync(USER_GROUP_DATA, JSON.stringify(data,null,2));
+    const file = getUserGroupFile(number);
+    fs.writeFileSync(file, JSON.stringify(data,null,2));
 
     return sock.sendMessage(chatId,{
         text:`✅ Chatbot ${action === "on" ? "activé" : "désactivé"}`
